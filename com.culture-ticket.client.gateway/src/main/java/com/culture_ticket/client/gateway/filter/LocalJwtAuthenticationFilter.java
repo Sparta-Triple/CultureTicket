@@ -45,12 +45,14 @@ public class LocalJwtAuthenticationFilter implements GlobalFilter {
       }
       exchange = validateToken(token, exchange);
     } catch (Exception exception) {
-      return handleTokenException(exception, exchange);
+      handleTokenException(exception);
+      exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+      return exchange.getResponse().setComplete();
     }
     return chain.filter(exchange);
   }
 
-  private Mono<Void> handleTokenException(Exception exception, ServerWebExchange exchange) {
+  private void handleTokenException(Exception exception) {
     if (exception instanceof SecurityException || exception instanceof MalformedJwtException
         || exception instanceof SignatureException) {
       log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.", exception);
@@ -63,8 +65,6 @@ public class LocalJwtAuthenticationFilter implements GlobalFilter {
     } else {
       log.error("An error occurred while validating the token.", exception);
     }
-    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-    return exchange.getResponse().setComplete();
   }
 
   private String extractToken(ServerWebExchange exchange) {
