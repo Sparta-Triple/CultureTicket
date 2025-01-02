@@ -75,6 +75,17 @@ public class PaymentService {
             .collect(Collectors.toList());
     }
 
+    public PaymentResponse getPayment(Long userId, UUID paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+            .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_PAYMENT));
+
+        if (!payment.getUserId().equals(userId)) {
+            // 결제 정보가 해당 유저의 것이 아닐 경우
+            throw new CustomException(ErrorType.FORBIDDEN_ACCESS);
+        }
+        return new PaymentResponse(payment.getId(), payment.getTotalPrice());
+    }
+
     // 더미 좌석 정보 생성
     private List<SeatResponse> getSeats(List<UUID> seatIds) {
         List<SeatResponse> dummySeats = List.of(

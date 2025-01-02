@@ -8,9 +8,11 @@ import com.culture_ticket.client.reservation_payment.common.ResponseDataDto;
 import com.culture_ticket.client.reservation_payment.common.ResponseStatus;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +37,12 @@ public class PaymentController {
     public ResponseEntity<ResponseDataDto<List<PaymentResponse>>> getPaymentList() {
         return ResponseEntity.ok(new ResponseDataDto<>(ResponseStatus.GET_PAYMENT_SUCCESS,
             paymentService.getPaymentList(1L)));
+    }
+
+    @GetMapping("/{paymentId}")
+    public ResponseEntity<ResponseDataDto<PaymentResponse>> getPayment(
+        @PathVariable UUID paymentId) {
+        return ResponseEntity.ok(new ResponseDataDto<>(ResponseStatus.GET_PAYMENT_SUCCESS,
+            paymentService.getPayment(1L, paymentId)));
     }
 }
