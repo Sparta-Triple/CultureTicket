@@ -3,6 +3,7 @@ package com.culture_ticket.client.reservation_payment.application.service;
 import com.culture_ticket.client.reservation_payment.application.dto.requestDto.ReservationRequest;
 import com.culture_ticket.client.reservation_payment.application.dto.requestDto.SeatSelectionRequest;
 import com.culture_ticket.client.reservation_payment.application.dto.responseDto.CreatePaymentResponse;
+import com.culture_ticket.client.reservation_payment.application.dto.responseDto.PaymentResponse;
 import com.culture_ticket.client.reservation_payment.application.dto.responseDto.SeatResponse;
 import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
@@ -12,6 +13,7 @@ import com.culture_ticket.client.reservation_payment.domain.repository.PaymentRe
 import com.culture_ticket.client.reservation_payment.domain.repository.SeatPaymentRepository;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -65,6 +67,13 @@ public class PaymentService {
         return new CreatePaymentResponse(totalPrice);
     }
 
+    public List<PaymentResponse> getPaymentList(Long userId) {
+        List<Payment> payments = paymentRepository.findByUserId(userId);
+
+        return payments.stream()
+            .map(payment -> new PaymentResponse(payment.getId(), payment.getTotalPrice()))
+            .collect(Collectors.toList());
+    }
 
     // 더미 좌석 정보 생성
     private List<SeatResponse> getSeats(List<UUID> seatIds) {
