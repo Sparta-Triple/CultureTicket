@@ -1,6 +1,6 @@
 package com.culture_ticket.client.performance.domain.model;
 
-import com.culture_ticket.client.performance.application.dto.requestDto.CategoryRequest;
+import com.culture_ticket.client.performance.application.dto.requestDto.CategoryRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "p_category")
-public class Category extends Base {
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -24,16 +24,16 @@ public class Category extends Base {
     @Column(name = "category_name", nullable = false)
     private String name;
 
+//    @OneToMany(mappedBy = "category")
+//    private List<Performance> performances = new ArrayList<>();
 
-    @Builder
-    public static Category createCategory(CategoryRequest request) {
-
+    public static Category createCategory(CategoryRequestDto request) {
         return Category.builder()
                 .name(request.getName())
                 .build();
     }
 
-    public void setCreatedBy(String createdBy){
+    public void setCreatedBy(String createdBy) {
         createdBy(createdBy);
     }
 

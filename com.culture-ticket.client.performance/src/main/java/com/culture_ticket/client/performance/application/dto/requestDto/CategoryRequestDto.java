@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class CategoryRequest {
+public class CategoryRequestDto {
     private String name;
 }

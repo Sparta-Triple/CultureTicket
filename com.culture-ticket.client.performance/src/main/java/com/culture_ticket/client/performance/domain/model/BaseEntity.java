@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Base {
+public abstract class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -33,22 +33,22 @@ public abstract class Base {
 
     private Boolean isDeleted = false;
 
-    protected void createdBy(String email) {
-        this.createdBy = email;
-        this.updatedBy = email;
+    protected void createdBy(String username) {
+        this.createdBy = username;
+        this.updatedBy = username;
     }
 
-    protected void updatedBy(String email){
-        this.updatedBy = email;
+    protected void updatedBy(String username){
+        this.updatedBy = username;
     }
 
-    protected void softDeletedBy(String email) {
+    protected void softDeletedBy(String username) {
         this.isDeleted = true;
-        this.deletedBy = email;
+        this.deletedBy = username;
         this.deletedAt = LocalDateTime.now();
     }
 
-    protected void restoreBy(String email){
+    protected void restoreBy(String username){
         this.isDeleted = false;
         this.deletedBy = null;
         this.deletedAt = null;

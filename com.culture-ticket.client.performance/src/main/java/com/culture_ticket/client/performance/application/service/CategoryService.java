@@ -1,7 +1,7 @@
 package com.culture_ticket.client.performance.application.service;
 
-import com.culture_ticket.client.performance.application.dto.requestDto.CategoryRequest;
-import com.culture_ticket.client.performance.application.dto.responseDto.CategoryResponse;
+import com.culture_ticket.client.performance.application.dto.requestDto.CategoryRequestDto;
+import com.culture_ticket.client.performance.application.dto.responseDto.CategoryResponseDto;
 import com.culture_ticket.client.performance.common.CustomException;
 import com.culture_ticket.client.performance.common.ErrorType;
 import com.culture_ticket.client.performance.domain.model.Category;
@@ -26,9 +26,9 @@ public class CategoryService {
 
     // 카테고리 생성
     @Transactional
-    public void createCategory(CategoryRequest categoryRequest) {
+    public void createCategory(CategoryRequestDto categoryRequestDto) {
 
-        Optional<Category> existCategoryOpt = categoryRepository.findCategoryByName(categoryRequest.getName());
+        Optional<Category> existCategoryOpt = categoryRepository.findByNameAndIsDeletedFalse(categoryRequestDto.getName());
         Category category;
 
         if (existCategoryOpt.isPresent()) {
@@ -36,12 +36,12 @@ public class CategoryService {
 
             // isDeleted=true, 생성 가능
             if (existCategory.getIsDeleted()) {
-                category = Category.createCategory(categoryRequest);
+                category = Category.createCategory(categoryRequestDto);
             } else {
                 throw new CustomException(ErrorType.CATEGORY_DUPLICATE);
             }
         } else {
-            category = Category.createCategory(categoryRequest);
+            category = Category.createCategory(categoryRequestDto);
         }
         category.setCreatedBy("test@email.com");
         categoryRepository.save(category);
@@ -49,22 +49,29 @@ public class CategoryService {
 
     // 카테고리 단일 조회
     @Transactional(readOnly = true)
-    public CategoryResponse getCategory(UUID categoryId) {
+    public CategoryResponseDto getCategory(UUID categoryId) {
         Category category = findCategoryById(categoryId);
-        return new CategoryResponse(category);
+        return new CategoryResponseDto(category);
     }
 
     // 카테고리 목록 조회 & 검색
     @Transactional(readOnly = true)
-    public Page<CategoryResponse> getCategories(String keyword, Pageable pageable) {
-        return categoryRepository.findCategoriesWithConditions(keyword, pageable);
+    public Page<CategoryResponseDto> getCategories(String keyword, Pageable pageable) {
+        Page<Category> categories;
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            categories = categoryRepository.findByIsDeletedFalse(pageable);
+        } else {
+            categories = categoryRepository.findByNameContainingAndIsDeletedFalse(keyword, pageable);
+        }
+        return categories.map(CategoryResponseDto::new);
     }
 
     // 카테고리 수정
     @Transactional
-    public void updateCategory(UUID categoryId, CategoryRequest categoryRequest) {
+    public void updateCategory(UUID categoryId, CategoryRequestDto categoryRequestDto) {
         Category category = findCategoryById(categoryId);
-        category.setUpdateBy(categoryRequest.getName(), "test@eamil.com");
+        category.setUpdateBy(categoryRequestDto.getName(), "test@eamil.com");
     }
 
     // 카테고리 삭제
@@ -73,10 +80,6 @@ public class CategoryService {
         Category category = findCategoryById(categoryId);
         category.setDeletedBy("test@eamil.com");
     }
-
-
-
-
 
 
     private Category findCategoryById(UUID categoryId) {
