@@ -1,17 +1,20 @@
 package com.culture_ticket.client.user.presentation.controller;
 
 import com.culture_ticket.client.user.application.dto.request.SignupRequestDto;
+import com.culture_ticket.client.user.application.dto.request.UserInfoUpdateRequestDto;
 import com.culture_ticket.client.user.application.dto.response.UserInfoResponseDto;
 import com.culture_ticket.client.user.application.service.UserService;
 import com.culture_ticket.client.user.common.ResponseDataDto;
 import com.culture_ticket.client.user.common.ResponseMessageDto;
 import com.culture_ticket.client.user.common.ResponseStatus;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,12 +28,14 @@ public class UserController {
 
   private final UserService userService;
 
+  // 회원 가입
   @PostMapping("/signup")
-  public ResponseMessageDto signup(@RequestBody SignupRequestDto signupRequestDto) {
+  public ResponseMessageDto signup(@Valid @RequestBody SignupRequestDto signupRequestDto) {
     userService.signup(signupRequestDto);
     return new ResponseMessageDto(ResponseStatus.SIGNUP_SUCCESS);
   }
 
+  // 사용자 정보 목록 조회
   @Secured("ROLE_ADMIN")
   @GetMapping("/info")
   public ResponseDataDto<Page<UserInfoResponseDto>> getUserInfos(
@@ -39,11 +44,21 @@ public class UserController {
     return new ResponseDataDto<>(ResponseStatus.GET_USER_SUCCESS, userInfos);
   }
 
+  // 사용자 정보 단일 조회
   @Secured("ROLE_ADMIN")
   @GetMapping("/info/{userId}")
   public ResponseDataDto<UserInfoResponseDto> getUserInfo(@PathVariable Long userId) {
     UserInfoResponseDto userInfo = userService.getUserInfo(userId);
     return new ResponseDataDto<>(ResponseStatus.GET_USER_SUCCESS, userInfo);
+  }
+
+  // 사용자 정보 수정
+  @PatchMapping("/info/{userId}")
+  public ResponseMessageDto updateUserInfo(
+      @RequestBody UserInfoUpdateRequestDto requestDto,
+      @PathVariable Long userId) {
+    userService.updateUserInfo(requestDto, userId);
+    return new ResponseMessageDto(ResponseStatus.UPDATE_USER_SUCCESS);
   }
 
 //  테스트용 API

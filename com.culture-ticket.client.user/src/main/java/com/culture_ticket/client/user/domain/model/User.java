@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -59,5 +60,12 @@ public class User extends Base {
         .role(role).build();
     user.createdBy(username);
     return user;
+  }
+
+  public void update(String nickname, String password, String phone, LocalDate birth) {
+    this.nickname = Objects.nonNull(nickname) ?  nickname : this.nickname;
+    this.password = Objects.nonNull(password) ?  password : this.password;
+    this.phone = Objects.nonNull(phone) ?  phone : this.phone;
+    this.birth = Objects.nonNull(birth) ?  birth : this.birth;
   }
 }

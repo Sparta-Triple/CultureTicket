@@ -1,6 +1,7 @@
 package com.culture_ticket.client.user.application.service;
 
 import com.culture_ticket.client.user.application.dto.request.SignupRequestDto;
+import com.culture_ticket.client.user.application.dto.request.UserInfoUpdateRequestDto;
 import com.culture_ticket.client.user.application.dto.response.UserInfoResponseDto;
 import com.culture_ticket.client.user.common.CustomException;
 import com.culture_ticket.client.user.common.ErrorType;
@@ -51,5 +52,16 @@ public class UserService {
         () -> new CustomException(ErrorType.NOT_FOUND_USER)
     );
     return new UserInfoResponseDto(user);
+  }
+
+  public void updateUserInfo(UserInfoUpdateRequestDto requestDto, Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(
+        () -> new CustomException(ErrorType.NOT_FOUND_USER)
+    );
+    user.update(requestDto.getNickname(),
+        passwordEncoder.encode(requestDto.getPassword()),
+        requestDto.getPhone(),
+        requestDto.getBirth()
+    );
   }
 }
