@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: user-service
+  # DB 설정
+  datasource:
+    url: jdbc:postgresql://localhost:5432/users
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+# server port
+server:
+  port: 19092
+
+# eureka 설정
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+
+service:
+  jwt:
+    access-expiration: 36000000000
+    secret-key: "c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXNwYXJ0YS1ib290Y2FtcC1jaDItc3BhcnRhLWxvZ2lzdGljcy1tYWRlLWJ5LWphYmJlcndvY2tlcjA0"
+
+admin:
+  code: "1234"
