@@ -48,20 +48,31 @@ public class UserService {
   }
 
   public UserInfoResponseDto getUserInfo(Long userId) {
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new CustomException(ErrorType.NOT_FOUND_USER)
-    );
+    User user = findUserById(userId);
     return new UserInfoResponseDto(user);
   }
 
   public void updateUserInfo(UserInfoUpdateRequestDto requestDto, Long userId) {
-    User user = userRepository.findById(userId).orElseThrow(
-        () -> new CustomException(ErrorType.NOT_FOUND_USER)
-    );
+    User user = findUserById(userId);
     user.update(requestDto.getNickname(),
         passwordEncoder.encode(requestDto.getPassword()),
         requestDto.getPhone(),
         requestDto.getBirth()
+    );
+  }
+
+  public void deleteUser(Long userId, Long requestUserId, Role role) {
+    User user = findUserById(userId);
+    User requestUser = findUserById(requestUserId);
+    if (!role.equals(Role.ADMIN) || !userId.equals(requestUserId)) {
+      throw new CustomException(ErrorType.ACCESS_DENIED);
+    }
+    user.deletedBy(requestUser.getUsername());
+  }
+
+  private User findUserById(Long userId){
+    return userRepository.findById(userId).orElseThrow(
+        () -> new CustomException(ErrorType.NOT_FOUND_USER)
     );
   }
 }

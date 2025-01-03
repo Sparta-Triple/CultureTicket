@@ -68,4 +68,8 @@ public class User extends Base {
     this.phone = Objects.nonNull(phone) ?  phone : this.phone;
     this.birth = Objects.nonNull(birth) ?  birth : this.birth;
   }
+
+  public void deletedBy(String username) {
+    this.softDeletedBy(username);
+  }
 }
