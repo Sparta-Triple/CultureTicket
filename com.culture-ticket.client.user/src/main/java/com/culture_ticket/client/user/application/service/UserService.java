@@ -55,7 +55,7 @@ public class UserService {
   public void updateUserInfo(Long userId, Long requestUserId, UserInfoUpdateRequestDto requestDto) {
     User user = findUserById(userId);
     User requestUser = findUserById(requestUserId);
-    user.update(requestDto.getNickname(),
+    user.updated(requestDto.getNickname(),
         passwordEncoder.encode(requestDto.getPassword()),
         requestDto.getPhone(),
         requestDto.getBirth(),
@@ -69,7 +69,16 @@ public class UserService {
     if (!role.equals(Role.ADMIN) || !userId.equals(requestUserId)) {
       throw new CustomException(ErrorType.ACCESS_DENIED);
     }
-    user.deletedBy(requestUser.getUsername());
+    user.deleted(requestUser.getUsername());
+  }
+
+  public void restoreUser(Long userId, Long requestUserId, Role role) {
+    User user = findUserById(userId);
+    User requestUser = findUserById(requestUserId);
+    if (!role.equals(Role.ADMIN) || !userId.equals(requestUserId)) {
+      throw new CustomException(ErrorType.ACCESS_DENIED);
+    }
+    user.restored(requestUser.getUsername());
   }
 
   private User findUserById(Long userId){
@@ -77,4 +86,5 @@ public class UserService {
         () -> new CustomException(ErrorType.NOT_FOUND_USER)
     );
   }
+
 }

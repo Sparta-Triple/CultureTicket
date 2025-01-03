@@ -62,7 +62,7 @@ public class User extends BaseEntity {
     return user;
   }
 
-  public void update(String nickname, String password, String phone, LocalDate birth, String requestUserName) {
+  public void updated(String nickname, String password, String phone, LocalDate birth, String requestUserName) {
     this.nickname = Objects.nonNull(nickname) ?  nickname : this.nickname;
     this.password = Objects.nonNull(password) ?  password : this.password;
     this.phone = Objects.nonNull(phone) ?  phone : this.phone;
@@ -70,7 +70,11 @@ public class User extends BaseEntity {
     this.updatedBy(requestUserName);
   }
 
-  public void deletedBy(String username) {
-    this.softDeletedBy(username);
+  public void deleted(String requestUserName) {
+    this.softDeletedBy(requestUserName);
+  }
+
+  public void restored(String requestUserName) {
+    this.restoreBy(requestUserName);
   }
 }

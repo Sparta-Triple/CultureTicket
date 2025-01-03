@@ -66,12 +66,22 @@ public class UserController {
   }
 
   // 회원 탈퇴
-  @DeleteMapping("{userId}")
+  @DeleteMapping("/{userId}")
   public ResponseMessageDto deleteUser(
       @PathVariable Long userId,
       @RequestHeader(value = "X-User-Id") Long requestUserId,
       @RequestHeader(value = "X-User-Role") Role role) {
     userService.deleteUser(userId, requestUserId, role);
+    return new ResponseMessageDto(ResponseStatus.DELETE_USER_SUCCESS);
+  }
+
+  // 회원 복구
+  @PatchMapping("/{userId}")
+  public ResponseMessageDto restoreUser(
+      @PathVariable Long userId,
+      @RequestHeader(value = "X-User-Id") Long requestUserId,
+      @RequestHeader(value = "X-User-Role") Role role) {
+    userService.restoreUser(userId, requestUserId, role);
     return new ResponseMessageDto(ResponseStatus.DELETE_USER_SUCCESS);
   }
 
