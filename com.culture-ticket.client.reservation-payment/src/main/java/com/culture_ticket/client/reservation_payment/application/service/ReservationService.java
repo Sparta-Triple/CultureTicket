@@ -1,7 +1,7 @@
 package com.culture_ticket.client.reservation_payment.application.service;
 
-import com.culture_ticket.client.reservation_payment.application.dto.responseDto.ReservationResponseDto;
 import com.culture_ticket.client.reservation_payment.application.dto.requestDto.ReservationRequestDto;
+import com.culture_ticket.client.reservation_payment.application.dto.responseDto.ReservationResponseDto;
 import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
 import com.culture_ticket.client.reservation_payment.domain.model.Payment;
@@ -14,8 +14,6 @@ import com.culture_ticket.client.reservation_payment.domain.model.User;
 import com.culture_ticket.client.reservation_payment.domain.repository.PaymentRepository;
 import com.culture_ticket.client.reservation_payment.domain.repository.ReservationRepository;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.PerformanceClient;
-import com.culture_ticket.client.reservation_payment.infrastructure.client.SeatClient;
-import com.culture_ticket.client.reservation_payment.infrastructure.client.TimeTableClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.UserClient;
 import java.util.List;
 import java.util.UUID;
@@ -34,8 +32,6 @@ public class ReservationService {
     private final PaymentRepository paymentRepository;
     private final UserClient userClient;
     private final PerformanceClient performanceClient;
-    private final TimeTableClient timeTableClient;
-    private final SeatClient seatClient;
 
     /**
      * 예약 내역 전체 조회
@@ -58,7 +54,7 @@ public class ReservationService {
             // 좌석 정보 가져오기
             List<Seat> seats = seatPayments.stream()
                 .map(seatPayment -> {
-                    Seat seat = seatClient.getSeat(seatPayment.getSeatId()).getData();
+                    Seat seat = performanceClient.getSeat(seatPayment.getSeatId()).getData();
                     return Seat.from(seat);
                 })
                 .collect(Collectors.toList());
@@ -68,7 +64,7 @@ public class ReservationService {
             TimeTable timeTable = null;
             if (!seats.isEmpty()) {
                 UUID timeTableId = seats.get(0).getTimeTableId();
-                timeTable = timeTableClient.getTimeTable(timeTableId).getData();
+                timeTable = performanceClient.getTimeTable(timeTableId).getData();
                 performance = performanceClient.getPerfomance(timeTable.getPerfomanceId()).getData();
             }
 
