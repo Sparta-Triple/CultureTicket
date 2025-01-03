@@ -82,7 +82,7 @@ public class UserController {
       @RequestHeader(value = "X-User-Id") Long requestUserId,
       @RequestHeader(value = "X-User-Role") Role role) {
     userService.restoreUser(userId, requestUserId, role);
-    return new ResponseMessageDto(ResponseStatus.DELETE_USER_SUCCESS);
+    return new ResponseMessageDto(ResponseStatus.RESTORE_USER_SUCCESS);
   }
 
 //  테스트용 API
