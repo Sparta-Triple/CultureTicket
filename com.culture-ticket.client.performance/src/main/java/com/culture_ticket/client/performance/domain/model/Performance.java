@@ -1,6 +1,7 @@
 package com.culture_ticket.client.performance.domain.model;
 
 
+import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,4 +47,22 @@ public class Performance extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+
+    public static Performance createPerformance(PerformanceCreateRequestDto performanceCreateRequestDto, Category category){
+        return Performance.builder()
+                .title(performanceCreateRequestDto.getTitle())
+                .content(performanceCreateRequestDto.getContent())
+                .venue(performanceCreateRequestDto.getVenue())
+                .casting(performanceCreateRequestDto.getCasting())
+                .startDate(performanceCreateRequestDto.getStartDate())
+                .endDate(performanceCreateRequestDto.getEndDate())
+                .performanceStatus(performanceCreateRequestDto.getPerformanceStatus())
+                .category(category)
+                .build();
+    }
+
+    public void setCreatedBy(String createdBy) {
+        createdBy(createdBy);
+    }
 }

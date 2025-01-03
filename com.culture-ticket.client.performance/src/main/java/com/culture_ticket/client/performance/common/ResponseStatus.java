@@ -27,7 +27,10 @@ public enum ResponseStatus {
     CREATE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 생성에 성공했습니다."),
     GET_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 조회에 성공했습니다."),
     UPDATE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 수정에 성공했습니다."),
-    DELETE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 삭제에 성공했습니다.");
+    DELETE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 삭제에 성공했습니다."),
+
+    // performance
+    CREATE_PERFORMANCE_SUCCESS(HttpStatus.CREATED, "공연 생성에 성공했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
