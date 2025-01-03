@@ -5,7 +5,6 @@ import com.culture_ticket.client.reservation_payment.application.service.Reserva
 import com.culture_ticket.client.reservation_payment.common.ResponseDataDto;
 import com.culture_ticket.client.reservation_payment.common.ResponseStatus;
 import com.culture_ticket.client.reservation_payment.common.util.PageableUtil;
-import jakarta.ws.rs.Path;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -51,12 +50,24 @@ public class ReservationController {
             new ResponseDataDto<>(ResponseStatus.RESERVATION_GET_SUCCESS, responseDto));
     }
 
+    /**
+     * 예약 내역 단일 조회
+     *
+     * @param userId
+     * @param role
+     * @param reservationId
+     * @return
+     */
     @GetMapping("/{reservationId}")
-    public ResponseDataDto<ResponseDataDto<ReservationResponseDto>> getReservation(
-        @RequestHeader(value = "X-User-Id", required = true) String userId,
+    public ResponseEntity<ResponseDataDto<ReservationResponseDto>> getReservation(
         @RequestHeader(value = "X-Role", required = true) String role,
         @PathVariable UUID reservationId
     ) {
-        ReservationResponseDto responseDto = reservationService.getReservation()
+        // TODO: role 검사 (admin, user)
+
+        ReservationResponseDto responseDto = reservationService.getReservation(reservationId);
+
+        return ResponseEntity.ok(
+            new ResponseDataDto<>(ResponseStatus.RESERVATION_GET_SUCCESS, responseDto));
     }
 }

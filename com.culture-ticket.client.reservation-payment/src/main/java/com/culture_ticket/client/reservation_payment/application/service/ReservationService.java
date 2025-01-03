@@ -44,31 +44,7 @@ public class ReservationService {
 
         // reservationPage 하나 당 데이터 가져오기
         Page<ReservationResponseDto> responseDtoPage = reservationPage.map(reservation -> {
-            Long userId = reservation.getUserId();
-            User user = userClient.getUser(userId).getData();
-
-            // seatPayment 정보 가져오기
-            Payment payment = reservation.getPayment();
-            List<SeatPayment> seatPayments = payment.getSeatPayments();
-
-            // 좌석 정보 가져오기
-            List<Seat> seats = seatPayments.stream()
-                .map(seatPayment -> {
-                    Seat seat = performanceClient.getSeat(seatPayment.getSeatId()).getData();
-                    return Seat.from(seat);
-                })
-                .collect(Collectors.toList());
-
-            // 공연과 타임테이블 정보 가져오기
-            Performance performance = null;
-            TimeTable timeTable = null;
-            if (!seats.isEmpty()) {
-                UUID timeTableId = seats.get(0).getTimeTableId();
-                timeTable = performanceClient.getTimeTable(timeTableId).getData();
-                performance = performanceClient.getPerfomance(timeTable.getPerfomanceId()).getData();
-            }
-
-            return ReservationResponseDto.of(reservation, user, seats, performance, timeTable);
+            return getReservationResponseDto(reservation);
         });
 
         return responseDtoPage;
@@ -85,5 +61,45 @@ public class ReservationService {
             .build();
         reservationRepository.save(reservation);
         //TODO 예매를 생성한 뒤 좌석 상태 비활성화 처리
+    }
+
+    /**
+     * 예약 내역 단일 조회
+     * @param reservationId
+     * @return
+     */
+    public ReservationResponseDto getReservation(UUID reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
+            new CustomException(ErrorType.NOT_FOUND_RESERVATION));
+
+        return getReservationResponseDto(reservation);
+    }
+
+    private ReservationResponseDto getReservationResponseDto(Reservation reservation) {
+        Long userId = reservation.getUserId();
+        User user = userClient.getUser(userId).getData();
+
+        // seatPayment 정보 가져오기
+        Payment payment = reservation.getPayment();
+        List<SeatPayment> seatPayments = payment.getSeatPayments();
+
+        // 좌석 정보 가져오기
+        List<Seat> seats = seatPayments.stream()
+            .map(seatPayment -> {
+                Seat seat = performanceClient.getSeat(seatPayment.getSeatId()).getData();
+                return Seat.from(seat);
+            })
+            .collect(Collectors.toList());
+
+        // 공연과 타임테이블 정보 가져오기
+        Performance performance = null;
+        TimeTable timeTable = null;
+        if (!seats.isEmpty()) {
+            UUID timeTableId = seats.get(0).getTimeTableId();
+            timeTable = performanceClient.getTimeTable(timeTableId).getData();
+            performance = performanceClient.getPerfomance(timeTable.getPerfomanceId()).getData();
+        }
+
+        return ReservationResponseDto.of(reservation, user, seats, performance, timeTable);
     }
 }
