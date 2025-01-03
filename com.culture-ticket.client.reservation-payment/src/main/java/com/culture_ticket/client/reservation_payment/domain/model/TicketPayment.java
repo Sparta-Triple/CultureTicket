@@ -1,12 +1,11 @@
 package com.culture_ticket.client.reservation_payment.domain.model;
 
-import com.culture_ticket.client.reservation_payment.common.Base;
 import jakarta.persistence.*;
 
 import java.util.UUID;
 
 @Entity
-public class TicketPayment extends Base {
+public class TicketPayment extends BaseEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;

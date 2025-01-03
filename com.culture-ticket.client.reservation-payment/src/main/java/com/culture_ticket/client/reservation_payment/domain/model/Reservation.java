@@ -1,6 +1,5 @@
 package com.culture_ticket.client.reservation_payment.domain.model;
 
-import com.culture_ticket.client.reservation_payment.common.Base;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import java.util.UUID;
 @Table(name = "resevation-payment")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Reservation extends Base {
+public class Reservation extends BaseEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")

@@ -1,4 +1,4 @@
-package com.culture_ticket.client.reservation_payment.common;
+package com.culture_ticket.client.reservation_payment.domain.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Base {
+public abstract class BaseEntity {
 
     @CreatedDate
     @Column(updatable = false, nullable = false)
@@ -35,9 +35,9 @@ public abstract class Base {
 
     private Boolean isDeleted = false;
 
-    protected void createdBy(String email) {
-        this.createdBy = email;
-        this.updatedBy = email;
+    protected void createdBy(String username) {
+        this.createdBy = username;
+        this.updatedBy = username;
     }
 
     protected void updatedBy(String email){
@@ -50,7 +50,7 @@ public abstract class Base {
         this.deletedAt = LocalDateTime.now();
     }
 
-    protected void restoreBy(String email){
+    protected void restoreBy(String email) {
         this.isDeleted = false;
         this.deletedBy = null;
         this.deletedAt = null;
