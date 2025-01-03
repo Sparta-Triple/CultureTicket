@@ -39,7 +39,7 @@ public class ReservationService {
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<ReservationResponseDto> getReservation(Pageable pageable) {
+    public Page<ReservationResponseDto> getReservations(Pageable pageable) {
         Page<Reservation> reservationPage = reservationRepository.findAll(pageable);
 
         // reservationPage 하나 당 데이터 가져오기

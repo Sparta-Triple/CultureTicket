@@ -5,6 +5,8 @@ import com.culture_ticket.client.reservation_payment.application.service.Reserva
 import com.culture_ticket.client.reservation_payment.common.ResponseDataDto;
 import com.culture_ticket.client.reservation_payment.common.ResponseStatus;
 import com.culture_ticket.client.reservation_payment.common.util.PageableUtil;
+import jakarta.ws.rs.Path;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +23,7 @@ public class ReservationController {
 
     /**
      * 예약 내역 전체 조회
+     *
      * @param userId
      * @param role
      * @param page
@@ -30,20 +33,30 @@ public class ReservationController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<ResponseDataDto<Page<ReservationResponseDto>>> getReservation(
-            @RequestHeader(value = "X-User-Id", required = true) String userId,
-            @RequestHeader(value = "X-Role" ,required = true) String role,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Sort.Direction direction,
-            @RequestParam(required = false) String sort
+    public ResponseEntity<ResponseDataDto<Page<ReservationResponseDto>>> getReservations(
+        @RequestHeader(value = "X-User-Id", required = true) String userId,
+        @RequestHeader(value = "X-Role", required = true) String role,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false) Sort.Direction direction,
+        @RequestParam(required = false) String sort
     ) {
         // TODO: role 검사 (admin)
 
         Pageable pageable = PageableUtil.createPageable(page, size, direction, sort);
 
-        Page<ReservationResponseDto> responseDto = reservationService.getReservation(pageable);
+        Page<ReservationResponseDto> responseDto = reservationService.getReservations(pageable);
 
-        return ResponseEntity.ok(new ResponseDataDto<>(ResponseStatus.RESERVATION_GET_SUCCESS, responseDto));
+        return ResponseEntity.ok(
+            new ResponseDataDto<>(ResponseStatus.RESERVATION_GET_SUCCESS, responseDto));
+    }
+
+    @GetMapping("/{reservationId}")
+    public ResponseDataDto<ResponseDataDto<ReservationResponseDto>> getReservation(
+        @RequestHeader(value = "X-User-Id", required = true) String userId,
+        @RequestHeader(value = "X-Role", required = true) String role,
+        @PathVariable UUID reservationId
+    ) {
+        ReservationResponseDto responseDto = reservationService.getReservation()
     }
 }
