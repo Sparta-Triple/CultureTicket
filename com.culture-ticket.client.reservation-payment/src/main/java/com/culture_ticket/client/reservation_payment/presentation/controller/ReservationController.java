@@ -19,6 +19,16 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
+    /**
+     * 예약 내역 전체 조회
+     * @param userId
+     * @param role
+     * @param page
+     * @param size
+     * @param direction
+     * @param sort
+     * @return
+     */
     @GetMapping
     public ResponseEntity<ResponseDataDto<Page<ResGetReservationDto>>> getReservation(
             @RequestHeader(value = "X-User-Id", required = true) String userId,
