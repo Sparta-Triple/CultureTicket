@@ -21,15 +21,9 @@ public class Reservation extends BaseEntity {
     private long userId;
 
     @Column(nullable = false)
-    private UUID ticketId;
-
-    @Column(nullable = false)
-    private UUID timeTableId;
-
-    @Column(nullable = false)
     private ReservationStatus reservationStatus;
 
     @OneToOne
     @JoinColumn(name = "payment_id")
-    private Payment paymentId;
+    private Payment payment;
 }

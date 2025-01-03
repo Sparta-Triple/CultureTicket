@@ -16,6 +16,6 @@ public class Payment {
 
     private long totalPrice;
 
-    @OneToMany(mappedBy = "ticket_payment_id")
-    private List<TicketPayment> ticketPayments;
+    @OneToMany(mappedBy = "seat_payment_id")
+    private List<SeatPayment> SeatPayments;
 }
