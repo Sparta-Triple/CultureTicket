@@ -1,11 +1,16 @@
 package com.culture_ticket.client.user.application.service;
 
 import com.culture_ticket.client.user.application.dto.request.SignupRequestDto;
+import com.culture_ticket.client.user.application.dto.response.UserInfoResponseDto;
+import com.culture_ticket.client.user.common.CustomException;
+import com.culture_ticket.client.user.common.ErrorType;
 import com.culture_ticket.client.user.domain.model.Role;
 import com.culture_ticket.client.user.domain.model.User;
 import com.culture_ticket.client.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,5 +39,17 @@ public class UserService {
         role
     );
     userRepository.save(user);
+  }
+
+  public Page<UserInfoResponseDto> getUserInfos(Pageable pageable) {
+    Page<User> usersPage = userRepository.findAllByIsDeletedFalse(pageable);
+    return usersPage.map(UserInfoResponseDto::new);
+  }
+
+  public UserInfoResponseDto getUserInfo(Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(
+        () -> new CustomException(ErrorType.NOT_FOUND_USER)
+    );
+    return new UserInfoResponseDto(user);
   }
 }

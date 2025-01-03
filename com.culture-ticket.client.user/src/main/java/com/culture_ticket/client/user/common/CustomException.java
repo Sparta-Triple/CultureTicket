@@ -1,6 +1,5 @@
 package com.culture_ticket.client.user.common;
 
-import javax.lang.model.type.ErrorType;
 import lombok.Getter;
 
 @Getter
