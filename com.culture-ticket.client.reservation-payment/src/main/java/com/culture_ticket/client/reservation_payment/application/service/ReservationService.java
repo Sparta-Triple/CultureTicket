@@ -68,11 +68,29 @@ public class ReservationService {
      * @param reservationId
      * @return
      */
+    @Transactional(readOnly = true)
     public ReservationResponseDto getReservation(UUID reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
             new CustomException(ErrorType.NOT_FOUND_RESERVATION));
 
         return getReservationResponseDto(reservation);
+    }
+
+    /**
+     * 내 예약 내역 조회
+     * @param userId
+     * @param pageable
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Page<ReservationResponseDto> getMeReservation(String userId, Pageable pageable) {
+        Page<Reservation> reservationPage = reservationRepository.findAllByUserId(userId, pageable);
+
+        Page<ReservationResponseDto> responseDtoPage = reservationPage.map(reservation -> {
+            return getReservationResponseDto(reservation);
+        });
+
+        return responseDtoPage;
     }
 
     private ReservationResponseDto getReservationResponseDto(Reservation reservation) {
