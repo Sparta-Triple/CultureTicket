@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -31,7 +32,13 @@ public class Performance extends BaseEntity {
     private String venue;
 
     @Column(nullable = false)
-    private String performanceCast;
+    private String casting;
+
+    @Column(nullable = false)
+    private LocalDate startDate;
+
+    @Column(nullable = false)
+    private LocalDate endDate;
 
     @Column(nullable = false)
     private PerformanceStatusEnum performanceStatus;
