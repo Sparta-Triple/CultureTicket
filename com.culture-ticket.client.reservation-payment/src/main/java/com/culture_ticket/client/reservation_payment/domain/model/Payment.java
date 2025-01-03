@@ -5,8 +5,10 @@ import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.UUID;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Payment {
     @Id
     @GeneratedValue(generator = "UUID")
