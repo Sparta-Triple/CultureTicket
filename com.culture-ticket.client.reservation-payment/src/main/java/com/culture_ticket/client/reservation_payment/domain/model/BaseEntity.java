@@ -1,13 +1,16 @@
 package com.culture_ticket.client.reservation_payment.domain.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -40,17 +43,17 @@ public abstract class BaseEntity {
         this.updatedBy = username;
     }
 
-    protected void updatedBy(String email){
-        this.updatedBy = email;
+    protected void updatedBy(String username){
+        this.updatedBy = username;
     }
 
-    protected void softDeletedBy(String email) {
+    protected void softDeletedBy(String username) {
         this.isDeleted = true;
-        this.deletedBy = email;
+        this.deletedBy = username;
         this.deletedAt = LocalDateTime.now();
     }
 
-    protected void restoreBy(String email) {
+    protected void restoreBy(String username){
         this.isDeleted = false;
         this.deletedBy = null;
         this.deletedAt = null;

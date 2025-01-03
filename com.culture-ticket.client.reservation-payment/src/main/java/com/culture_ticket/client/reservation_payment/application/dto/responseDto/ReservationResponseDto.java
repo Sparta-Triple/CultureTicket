@@ -1,4 +1,4 @@
-package com.culture_ticket.client.reservation_payment.application.dto;
+package com.culture_ticket.client.reservation_payment.application.dto.responseDto;
 
 import com.culture_ticket.client.reservation_payment.domain.model.Performance;
 import com.culture_ticket.client.reservation_payment.domain.model.Reservation;

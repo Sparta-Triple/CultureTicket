@@ -1,6 +1,6 @@
 package com.culture_ticket.client.reservation_payment.presentation.controller;
 
-import com.culture_ticket.client.reservation_payment.application.dto.ReservationResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.responseDto.ReservationResponseDto;
 import com.culture_ticket.client.reservation_payment.application.service.ReservationService;
 import com.culture_ticket.client.reservation_payment.common.ResponseDataDto;
 import com.culture_ticket.client.reservation_payment.common.ResponseStatus;

@@ -1,6 +1,9 @@
 package com.culture_ticket.client.reservation_payment.application.service;
 
-import com.culture_ticket.client.reservation_payment.application.dto.ReservationResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.responseDto.ReservationResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.requestDto.ReservationRequestDto;
+import com.culture_ticket.client.reservation_payment.common.CustomException;
+import com.culture_ticket.client.reservation_payment.common.ErrorType;
 import com.culture_ticket.client.reservation_payment.domain.model.Payment;
 import com.culture_ticket.client.reservation_payment.domain.model.Performance;
 import com.culture_ticket.client.reservation_payment.domain.model.Reservation;
@@ -75,4 +78,16 @@ public class ReservationService {
         return responseDtoPage;
     }
 
+    public void createReservation(ReservationRequestDto request) {
+
+        Payment payment = paymentRepository.findById(request.getPaymentId())
+            .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_PAYMENT));
+
+        Reservation reservation = Reservation.builder()
+            .userId(request.getUserId())
+            .payment(payment)
+            .build();
+        reservationRepository.save(reservation);
+        //TODO 예매를 생성한 뒤 좌석 상태 비활성화 처리
+    }
 }

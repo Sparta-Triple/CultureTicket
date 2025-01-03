@@ -4,16 +4,16 @@ import lombok.Getter;
 
 @Getter
 public class ResponseDataDto<T> {
-  private int status;
-  private String message;
-  private T data;
+    private int status;
+    private String message;
+    private T data;
 
-  public ResponseDataDto(ResponseStatus responseStatus, T data) {
-    this.status = responseStatus.getHttpStatus().value();
-    this.message = responseStatus.getMessage();
-    this.data = data;
-  }
+    public ResponseDataDto(ResponseStatus responseStatus, T data) {
+        this.status = responseStatus.getHttpStatus().value();
+        this.message = responseStatus.getMessage();
+        this.data = data;
+    }
 
-  // 사용 예시
-  // return ResponseEntity.ok(new ResponseDataDto<>(ResponseStatus.CARD_UPDATE_SUCCESS, responseDto));
+    // 사용 예시
+    // return ResponseEntity.ok(new ResponseDataDto<>(ResponseStatus.CARD_UPDATE_SUCCESS, responseDto));
 }
