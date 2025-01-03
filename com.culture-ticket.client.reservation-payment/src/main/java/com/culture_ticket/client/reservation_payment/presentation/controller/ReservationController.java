@@ -1,6 +1,6 @@
 package com.culture_ticket.client.reservation_payment.presentation.controller;
 
-import com.culture_ticket.client.reservation_payment.application.dto.ResGetReservationDto;
+import com.culture_ticket.client.reservation_payment.application.dto.ReservationResponseDto;
 import com.culture_ticket.client.reservation_payment.application.service.ReservationService;
 import com.culture_ticket.client.reservation_payment.common.ResponseDataDto;
 import com.culture_ticket.client.reservation_payment.common.ResponseStatus;
@@ -30,7 +30,7 @@ public class ReservationController {
      * @return
      */
     @GetMapping
-    public ResponseEntity<ResponseDataDto<Page<ResGetReservationDto>>> getReservation(
+    public ResponseEntity<ResponseDataDto<Page<ReservationResponseDto>>> getReservation(
             @RequestHeader(value = "X-User-Id", required = true) String userId,
             @RequestHeader(value = "X-Role" ,required = true) String role,
             @RequestParam(defaultValue = "0") int page,
@@ -42,7 +42,7 @@ public class ReservationController {
 
         Pageable pageable = PageableUtil.createPageable(page, size, direction, sort);
 
-        Page<ResGetReservationDto> responseDto = reservationService.getReservation(pageable);
+        Page<ReservationResponseDto> responseDto = reservationService.getReservation(pageable);
 
         return ResponseEntity.ok(new ResponseDataDto<>(ResponseStatus.RESERVATION_GET_SUCCESS, responseDto));
     }

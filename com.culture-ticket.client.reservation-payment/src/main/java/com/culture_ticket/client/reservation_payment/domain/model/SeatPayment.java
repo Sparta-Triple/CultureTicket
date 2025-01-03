@@ -5,13 +5,13 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-public class TicketPayment extends BaseEntity {
+public class SeatPayment extends BaseEntity {
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
 
     @Column
-    private UUID ticketId;
+    private UUID seatId;
 
     @ManyToOne
     @JoinColumn(name = "payment_id")
