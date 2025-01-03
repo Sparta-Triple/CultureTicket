@@ -2,14 +2,15 @@ package com.culture_ticket.client.performance.presentation.controller;
 
 
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
+import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
 import com.culture_ticket.client.performance.application.service.PerformanceService;
+import com.culture_ticket.client.performance.common.ResponseDataDto;
 import com.culture_ticket.client.performance.common.ResponseMessageDto;
 import com.culture_ticket.client.performance.common.ResponseStatus;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +29,12 @@ public class PerformanceController {
     }
 
     // 공연 단일 조회 (performanceId)
+    @GetMapping("/{performanceId}")
+    public ResponseDataDto<PerformanceResponseDto> getPerformance(@PathVariable UUID performanceId){
+        PerformanceResponseDto performanceResponseDto = performanceService.getPerformance(performanceId);
+        return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performanceResponseDto);
+    }
+
 
     // 공연 목록 조회
 

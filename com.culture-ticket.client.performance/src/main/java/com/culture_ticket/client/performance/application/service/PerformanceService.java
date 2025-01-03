@@ -1,6 +1,7 @@
 package com.culture_ticket.client.performance.application.service;
 
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
+import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
 import com.culture_ticket.client.performance.common.CustomException;
 import com.culture_ticket.client.performance.common.ErrorType;
 import com.culture_ticket.client.performance.domain.model.Category;
@@ -9,6 +10,8 @@ import com.culture_ticket.client.performance.domain.repository.CategoryRepositor
 import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 public class PerformanceService {
@@ -39,10 +42,30 @@ public class PerformanceService {
     }
 
 
+    // 공연 단일 조회
+    @Transactional(readOnly = true)
+    public PerformanceResponseDto getPerformance(UUID performanceId) {
+        Performance performance = findPerformanceById(performanceId);
+        return new PerformanceResponseDto(performance);
+    }
+
+
     private void checkDuplicateTitle(String title) {
         if (performanceRepository.existsByTitle(title)) {
             throw new CustomException(ErrorType.PERFORMANCE_DUPLICATE);
         }
     }
+
+    private Performance findPerformanceById(UUID performanceId) {
+        // 공연 조회
+        Performance performance = performanceRepository.findPerformanceById(performanceId)
+                .orElseThrow(()-> new CustomException(ErrorType.PERFORMANCE_NOT_FOUND));
+        // 삭제된 상태인지 확인
+        if(performance.getIsDeleted()){
+            throw new CustomException(ErrorType.PERFORMANCE_NOT_FOUND);
+        }
+        return performance;
+    }
+
 
 }
