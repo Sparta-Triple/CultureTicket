@@ -52,12 +52,14 @@ public class UserService {
     return new UserInfoResponseDto(user);
   }
 
-  public void updateUserInfo(UserInfoUpdateRequestDto requestDto, Long userId) {
+  public void updateUserInfo(Long userId, Long requestUserId, UserInfoUpdateRequestDto requestDto) {
     User user = findUserById(userId);
+    User requestUser = findUserById(requestUserId);
     user.update(requestDto.getNickname(),
         passwordEncoder.encode(requestDto.getPassword()),
         requestDto.getPhone(),
-        requestDto.getBirth()
+        requestDto.getBirth(),
+        requestUser.getUsername()
     );
   }
 

@@ -62,11 +62,12 @@ public class User extends Base {
     return user;
   }
 
-  public void update(String nickname, String password, String phone, LocalDate birth) {
+  public void update(String nickname, String password, String phone, LocalDate birth, String requestUserName) {
     this.nickname = Objects.nonNull(nickname) ?  nickname : this.nickname;
     this.password = Objects.nonNull(password) ?  password : this.password;
     this.phone = Objects.nonNull(phone) ?  phone : this.phone;
     this.birth = Objects.nonNull(birth) ?  birth : this.birth;
+    this.updatedBy(requestUserName);
   }
 
   public void deletedBy(String username) {

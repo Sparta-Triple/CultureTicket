@@ -58,9 +58,10 @@ public class UserController {
   // 사용자 정보 수정
   @PatchMapping("/info/{userId}")
   public ResponseMessageDto updateUserInfo(
-      @RequestBody UserInfoUpdateRequestDto requestDto,
-      @PathVariable Long userId) {
-    userService.updateUserInfo(requestDto, userId);
+      @RequestHeader(value = "X-User-Id") Long requestUserId,
+      @PathVariable Long userId,
+      @RequestBody UserInfoUpdateRequestDto requestDto) {
+    userService.updateUserInfo(userId, requestUserId, requestDto);
     return new ResponseMessageDto(ResponseStatus.UPDATE_USER_SUCCESS);
   }
 
