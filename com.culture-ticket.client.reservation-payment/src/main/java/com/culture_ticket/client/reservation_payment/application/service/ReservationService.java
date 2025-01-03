@@ -1,6 +1,6 @@
 package com.culture_ticket.client.reservation_payment.application.service;
 
-import com.culture_ticket.client.reservation_payment.application.dto.requestDto.ReservationRequest;
+import com.culture_ticket.client.reservation_payment.application.dto.requestDto.ReservationRequestDto;
 import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
 import com.culture_ticket.client.reservation_payment.domain.model.Payment;
@@ -17,7 +17,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final PaymentRepository paymentRepository;
 
-    public void createReservation(ReservationRequest request) {
+    public void createReservation(ReservationRequestDto request) {
 
         Payment payment = paymentRepository.findById(request.getPaymentId())
             .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_PAYMENT));

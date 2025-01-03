@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PaymentResponse {
+public class PaymentResponseDto {
 
     private UUID id;
     private Long totalPrice;

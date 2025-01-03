@@ -1,9 +1,9 @@
 package com.culture_ticket.client.reservation_payment.application.service;
 
-import com.culture_ticket.client.reservation_payment.application.dto.requestDto.ReservationRequest;
-import com.culture_ticket.client.reservation_payment.application.dto.requestDto.SeatSelectionRequest;
-import com.culture_ticket.client.reservation_payment.application.dto.responseDto.CreatePaymentResponse;
-import com.culture_ticket.client.reservation_payment.application.dto.responseDto.PaymentResponse;
+import com.culture_ticket.client.reservation_payment.application.dto.requestDto.ReservationRequestDto;
+import com.culture_ticket.client.reservation_payment.application.dto.requestDto.SeatSelectionRequestDto;
+import com.culture_ticket.client.reservation_payment.application.dto.responseDto.CreatePaymentResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.responseDto.PaymentResponseDto;
 import com.culture_ticket.client.reservation_payment.application.dto.responseDto.SeatResponse;
 import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
@@ -25,7 +25,7 @@ public class PaymentService {
     private final SeatPaymentRepository seatPaymentRepository;
     private final ReservationService reservationService;
 
-    public CreatePaymentResponse createPayment(Long userId, SeatSelectionRequest request) {
+    public CreatePaymentResponseDto createPayment(Long userId, SeatSelectionRequestDto request) {
         // 좌석 유효성 검사
         // 타임 테이블을 통해서 좌석 데이터를 아예 가져와서 좌석 상태랑 존재 여부 확인 ?
         List<SeatResponse> seats = getSeats(request.getSeatIds());
@@ -63,19 +63,19 @@ public class PaymentService {
         seatPaymentRepository.saveAll(seatPayments);
 
         // 예매 생성
-        reservationService.createReservation(new ReservationRequest(savedPayment.getId(), userId));
-        return new CreatePaymentResponse(totalPrice);
+        reservationService.createReservation(new ReservationRequestDto(savedPayment.getId(), userId));
+        return new CreatePaymentResponseDto(totalPrice);
     }
 
-    public List<PaymentResponse> getPaymentList(Long userId) {
+    public List<PaymentResponseDto> getPaymentList(Long userId) {
         List<Payment> payments = paymentRepository.findByUserId(userId);
 
         return payments.stream()
-            .map(payment -> new PaymentResponse(payment.getId(), payment.getTotalPrice()))
+            .map(payment -> new PaymentResponseDto(payment.getId(), payment.getTotalPrice()))
             .collect(Collectors.toList());
     }
 
-    public PaymentResponse getPayment(Long userId, UUID paymentId) {
+    public PaymentResponseDto getPayment(Long userId, UUID paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
             .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_PAYMENT));
 
@@ -83,7 +83,7 @@ public class PaymentService {
             // 결제 정보가 해당 유저의 것이 아닐 경우
             throw new CustomException(ErrorType.FORBIDDEN_ACCESS);
         }
-        return new PaymentResponse(payment.getId(), payment.getTotalPrice());
+        return new PaymentResponseDto(payment.getId(), payment.getTotalPrice());
     }
 
     // 더미 좌석 정보 생성

@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.Getter;
 
 @Getter
-public class SeatSelectionRequest {
+public class SeatSelectionRequestDto {
 
     @NotEmpty
     private List<UUID> seatIds;

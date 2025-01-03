@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class ReservationRequest {
+public class ReservationRequestDto {
 
     private UUID paymentId;
     private Long userId;
