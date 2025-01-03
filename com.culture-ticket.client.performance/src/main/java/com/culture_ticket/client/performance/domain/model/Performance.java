@@ -65,4 +65,13 @@ public class Performance extends BaseEntity {
     public void setCreatedBy(String createdBy) {
         createdBy(createdBy);
     }
+
+    public void setUpdateBy(String updatedBy) {
+        updatedBy(updatedBy);
+    }
+
+    public void updatePerformanceStatus(PerformanceStatusEnum performanceStatus, String updatedBy) {
+        this.performanceStatus = performanceStatus;
+        setUpdateBy(updatedBy);
+    }
 }

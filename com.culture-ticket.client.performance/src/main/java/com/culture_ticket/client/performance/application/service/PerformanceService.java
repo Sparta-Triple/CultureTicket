@@ -1,6 +1,7 @@
 package com.culture_ticket.client.performance.application.service;
 
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
+import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceStatusRequestDto;
 import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
 import com.culture_ticket.client.performance.common.CustomException;
 import com.culture_ticket.client.performance.common.ErrorType;
@@ -41,13 +42,27 @@ public class PerformanceService {
         performanceRepository.save(performance);
     }
 
-
     // 공연 단일 조회
     @Transactional(readOnly = true)
     public PerformanceResponseDto getPerformance(UUID performanceId) {
         Performance performance = findPerformanceById(performanceId);
         return new PerformanceResponseDto(performance);
     }
+
+    // 공연 목록 조회
+
+    // 공연 검색 (title)
+
+    // 공연 상태 수정
+    @Transactional
+    public void updatePerformanceStatus(UUID performanceId, UpdatePerformanceStatusRequestDto updatePerformanceStatusRequestDto) {
+        Performance performance = findPerformanceById(performanceId);
+        performance.updatePerformanceStatus(updatePerformanceStatusRequestDto.getPerformanceStatus(), "test@email.com");
+    }
+
+    // 공연 내용 수정
+
+    // 공연 삭제
 
 
     private void checkDuplicateTitle(String title) {
