@@ -26,8 +26,8 @@ public class Category extends BaseEntity {
     @Column(name = "category_name", nullable = false)
     private String name;
 
-    // 카테고리 삭제 시, 공연도 함께 삭제
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Performance> performances = new ArrayList<>();
 
     public static Category createCategory(CategoryRequestDto request) {
