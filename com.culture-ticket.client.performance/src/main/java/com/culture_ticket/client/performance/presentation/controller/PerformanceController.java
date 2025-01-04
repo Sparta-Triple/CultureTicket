@@ -10,6 +10,9 @@ import com.culture_ticket.client.performance.common.ResponseDataDto;
 import com.culture_ticket.client.performance.common.ResponseMessageDto;
 import com.culture_ticket.client.performance.common.ResponseStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -32,22 +35,29 @@ public class PerformanceController {
 
     // 공연 단일 조회 (performanceId)
     @GetMapping("/{performanceId}")
-    public ResponseDataDto<PerformanceResponseDto> getPerformance(@PathVariable UUID performanceId){
+    public ResponseDataDto<PerformanceResponseDto> getPerformance(@PathVariable UUID performanceId) {
         PerformanceResponseDto performanceResponseDto = performanceService.getPerformance(performanceId);
         return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performanceResponseDto);
     }
 
 
-    // 공연 목록 조회
-
-    // 공연 검색 (title)
+    // 공연 목록 조회 & 검색 (title)
+    @GetMapping
+    public ResponseDataDto<Page<PerformanceResponseDto>> getPerformances(
+            @RequestParam(value = "condition", required = false) String condition,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @PageableDefault Pageable pageable
+    ) {
+        Page<PerformanceResponseDto> performances = performanceService.getPerformances(condition, keyword, pageable);
+        return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performances);
+    }
 
     // 공연 상태 수정
     @PatchMapping("/{performanceId}")
     public ResponseMessageDto updatePerformanceStatus(
             @PathVariable UUID performanceId,
             @RequestBody UpdatePerformanceStatusRequestDto updatePerformanceStatusRequestDto
-    ){
+    ) {
         performanceService.updatePerformanceStatus(performanceId, updatePerformanceStatusRequestDto);
         return new ResponseMessageDto(ResponseStatus.UPDATE_PERFORMANCE_STATUS_SUCCESS);
     }
@@ -57,14 +67,14 @@ public class PerformanceController {
     public ResponseMessageDto updatePerformance(
             @PathVariable UUID performanceId,
             @RequestBody UpdatePerformanceRequestDto updatePerformanceRequestDto
-    ){
+    ) {
         performanceService.updatePerformance(performanceId, updatePerformanceRequestDto);
         return new ResponseMessageDto(ResponseStatus.UPDATE_PERFORMANCE);
     }
 
     // 공연 삭제
     @DeleteMapping("/{performanceId}")
-    public ResponseMessageDto deletePerformance(@PathVariable UUID performanceId){
+    public ResponseMessageDto deletePerformance(@PathVariable UUID performanceId) {
         performanceService.deletePerformance(performanceId);
         return new ResponseMessageDto(ResponseStatus.DELETE_PERFORMANCE_SUCCESS);
     }

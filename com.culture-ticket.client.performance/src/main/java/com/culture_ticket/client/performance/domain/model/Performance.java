@@ -50,7 +50,7 @@ public class Performance extends BaseEntity {
     private Category category;
 
 
-    public static Performance createPerformance(PerformanceCreateRequestDto performanceCreateRequestDto, Category category){
+    public static Performance createPerformance(PerformanceCreateRequestDto performanceCreateRequestDto, Category category) {
         return Performance.builder()
                 .title(performanceCreateRequestDto.getTitle())
                 .content(performanceCreateRequestDto.getContent())

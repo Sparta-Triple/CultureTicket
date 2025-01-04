@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface PerformanceRepository extends JpaRepository<Performance, UUID> {
+public interface PerformanceRepository extends JpaRepository<Performance, UUID>, PerformanceRepositoryCustom {
     boolean existsByTitle(String title);
 
     Optional<Performance> findPerformanceById(UUID performanceId);

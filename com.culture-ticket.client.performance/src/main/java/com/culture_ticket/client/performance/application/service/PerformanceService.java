@@ -10,6 +10,8 @@ import com.culture_ticket.client.performance.domain.model.Category;
 import com.culture_ticket.client.performance.domain.model.Performance;
 import com.culture_ticket.client.performance.domain.repository.CategoryRepository;
 import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +33,8 @@ public class PerformanceService {
     @Transactional
     public void createPerformance(PerformanceCreateRequestDto performanceCreateRequestDto) {
 
-        // title 중복 확인
         checkDuplicateTitle(performanceCreateRequestDto.getTitle());
 
-        // 카테고리가 존재 하는지 확인
         Category category = categoryRepository.findByNameAndIsDeletedFalse(performanceCreateRequestDto.getCategory())
                 .orElseThrow(() -> new CustomException(ErrorType.CATEGORY_NOT_FOUND));
 
@@ -50,9 +50,12 @@ public class PerformanceService {
         return new PerformanceResponseDto(performance);
     }
 
-    // 공연 목록 조회
+    // 공연 전체 조회 & 검색 (title)
+    @Transactional(readOnly = true)
+    public Page<PerformanceResponseDto> getPerformances(String condition, String keyword, Pageable pageable) {
+        return performanceRepository.findPerformanceWithConditions(condition, keyword, pageable);
 
-    // 공연 검색 (title)
+    }
 
     // 공연 상태 수정
     @Transactional
@@ -84,11 +87,11 @@ public class PerformanceService {
     }
 
     private Performance findPerformanceById(UUID performanceId) {
-        // 공연 조회
+
         Performance performance = performanceRepository.findPerformanceById(performanceId)
-                .orElseThrow(()-> new CustomException(ErrorType.PERFORMANCE_NOT_FOUND));
-        // 삭제된 상태인지 확인
-        if(performance.getIsDeleted()){
+                .orElseThrow(() -> new CustomException(ErrorType.PERFORMANCE_NOT_FOUND));
+
+        if (performance.getIsDeleted()) {
             throw new CustomException(ErrorType.PERFORMANCE_NOT_FOUND);
         }
         return performance;
@@ -96,7 +99,6 @@ public class PerformanceService {
 
     private Category findCategoryByName(String categoryName) {
         return categoryRepository.findByNameAndIsDeletedFalse(categoryName)
-                .orElseThrow(()-> new CustomException(ErrorType.CATEGORY_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorType.CATEGORY_NOT_FOUND));
     }
-
 }
