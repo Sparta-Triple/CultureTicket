@@ -70,7 +70,11 @@ public class PerformanceService {
     }
 
     // 공연 삭제
-
+    @Transactional
+    public void deletePerformance(UUID performanceId) {
+        Performance performance = findPerformanceById(performanceId);
+        performance.setDeletedBy("deleteTest@email.com");
+    }
 
 
     private void checkDuplicateTitle(String title) {

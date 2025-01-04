@@ -33,7 +33,8 @@ public enum ResponseStatus {
     CREATE_PERFORMANCE_SUCCESS(HttpStatus.CREATED, "공연 생성에 성공했습니다."),
     GET_PERFORMANCE_SUCCESS(HttpStatus.OK, "공연 조회에 성공했습니다."),
     UPDATE_PERFORMANCE_STATUS_SUCCESS(HttpStatus.OK, "공연 상태 수정에 성공했습니다."),
-    UPDATE_PERFORMANCE(HttpStatus.OK, "공연 수정에 성공했습니다.");
+    UPDATE_PERFORMANCE(HttpStatus.OK, "공연 수정에 성공했습니다."),
+    DELETE_PERFORMANCE_SUCCESS(HttpStatus.OK, "공연 삭제에 성공했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

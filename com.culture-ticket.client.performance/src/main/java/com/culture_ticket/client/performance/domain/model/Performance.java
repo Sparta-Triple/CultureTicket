@@ -86,4 +86,8 @@ public class Performance extends BaseEntity {
         this.category = category;
         setUpdateBy(updatedBy);
     }
+
+    public void setDeletedBy(String deletedBy) {
+        softDeletedBy(deletedBy);
+    }
 }

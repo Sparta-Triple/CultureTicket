@@ -63,4 +63,9 @@ public class PerformanceController {
     }
 
     // 공연 삭제
+    @DeleteMapping("/{performanceId}")
+    public ResponseMessageDto deletePerformance(@PathVariable UUID performanceId){
+        performanceService.deletePerformance(performanceId);
+        return new ResponseMessageDto(ResponseStatus.DELETE_PERFORMANCE_SUCCESS);
+    }
 }
