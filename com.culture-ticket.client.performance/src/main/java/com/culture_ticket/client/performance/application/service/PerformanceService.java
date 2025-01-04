@@ -1,6 +1,7 @@
 package com.culture_ticket.client.performance.application.service;
 
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
+import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceStatusRequestDto;
 import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
 import com.culture_ticket.client.performance.common.CustomException;
@@ -60,9 +61,16 @@ public class PerformanceService {
         performance.updatePerformanceStatus(updatePerformanceStatusRequestDto.getPerformanceStatus(), "test@email.com");
     }
 
-    // 공연 내용 수정
+    // 공연 수정
+    @Transactional
+    public void updatePerformance(UUID performanceId, UpdatePerformanceRequestDto updatePerformanceRequestDto) {
+        Performance performance = findPerformanceById(performanceId);
+        Category category = findCategoryByName(updatePerformanceRequestDto.getCategory());
+        performance.updatePerformance(updatePerformanceRequestDto, category, "test@email.com");
+    }
 
     // 공연 삭제
+
 
 
     private void checkDuplicateTitle(String title) {
@@ -82,5 +90,9 @@ public class PerformanceService {
         return performance;
     }
 
+    private Category findCategoryByName(String categoryName) {
+        return categoryRepository.findByNameAndIsDeletedFalse(categoryName)
+                .orElseThrow(()-> new CustomException(ErrorType.CATEGORY_NOT_FOUND));
+    }
 
 }

@@ -2,6 +2,7 @@ package com.culture_ticket.client.performance.domain.model;
 
 
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
+import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -72,6 +73,17 @@ public class Performance extends BaseEntity {
 
     public void updatePerformanceStatus(PerformanceStatusEnum performanceStatus, String updatedBy) {
         this.performanceStatus = performanceStatus;
+        setUpdateBy(updatedBy);
+    }
+
+    public void updatePerformance(UpdatePerformanceRequestDto updatePerformanceRequestDto, Category category, String updatedBy) {
+        this.title = updatePerformanceRequestDto.getTitle();
+        this.content = updatePerformanceRequestDto.getContent();
+        this.venue = updatePerformanceRequestDto.getVenue();
+        this.casting = updatePerformanceRequestDto.getCasting();
+        this.startDate = updatePerformanceRequestDto.getStartDate();
+        this.endDate = updatePerformanceRequestDto.getEndDate();
+        this.category = category;
         setUpdateBy(updatedBy);
     }
 }

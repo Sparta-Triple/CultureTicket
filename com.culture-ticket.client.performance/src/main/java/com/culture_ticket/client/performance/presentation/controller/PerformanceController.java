@@ -2,6 +2,7 @@ package com.culture_ticket.client.performance.presentation.controller;
 
 
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
+import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceStatusRequestDto;
 import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
 import com.culture_ticket.client.performance.application.service.PerformanceService;
@@ -51,7 +52,15 @@ public class PerformanceController {
         return new ResponseMessageDto(ResponseStatus.UPDATE_PERFORMANCE_STATUS_SUCCESS);
     }
 
-    // 공연 내용 수정
+    // 공연 수정
+    @PutMapping("/{performanceId}")
+    public ResponseMessageDto updatePerformance(
+            @PathVariable UUID performanceId,
+            @RequestBody UpdatePerformanceRequestDto updatePerformanceRequestDto
+    ){
+        performanceService.updatePerformance(performanceId, updatePerformanceRequestDto);
+        return new ResponseMessageDto(ResponseStatus.UPDATE_PERFORMANCE);
+    }
 
     // 공연 삭제
 }
