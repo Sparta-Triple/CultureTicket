@@ -140,4 +140,23 @@ public class ReservationController {
         return ResponseEntity.ok(
             new ResponseDataDto<>(ResponseStatus.GET_RESERVATION_SUCCESS, responseDto));
     }
+
+    /**
+     * 예약 취소(삭제)
+     * @param userId
+     * @param role
+     * @param reservationId
+     * @return
+     */
+    @DeleteMapping("/{reservationId}")
+    public ResponseEntity<ResponseMessageDto> deleteReservation(
+        @RequestHeader(value = "X-User-Id") String userId,
+        @RequestHeader(value = "X-User-Name", required = true) String username,
+        @RequestHeader(value = "X-Role", required = true) String role,
+        @PathVariable UUID reservationId
+    ) {
+        reservationService.deleteReservation(userId, username, role, reservationId);
+
+        return ResponseEntity.ok(new ResponseMessageDto(ResponseStatus.DELETE_RESERVATION_SUCCESS));
+    }
 }

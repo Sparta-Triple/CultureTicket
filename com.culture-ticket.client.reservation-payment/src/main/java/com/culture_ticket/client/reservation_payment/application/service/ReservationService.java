@@ -13,6 +13,7 @@ import com.culture_ticket.client.reservation_payment.domain.model.TimeTable;
 import com.culture_ticket.client.reservation_payment.domain.model.User;
 import com.culture_ticket.client.reservation_payment.domain.repository.PaymentRepository;
 import com.culture_ticket.client.reservation_payment.domain.repository.ReservationRepository;
+import com.culture_ticket.client.reservation_payment.domain.repository.SeatPaymentRepository;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.PerformanceClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.UserClient;
 import com.querydsl.core.types.Predicate;
@@ -30,12 +31,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final SeatPaymentRepository seatPaymentRepository;
     private final PaymentRepository paymentRepository;
     private final UserClient userClient;
     private final PerformanceClient performanceClient;
 
     /**
      * 예약 내역 전체 조회
+     *
      * @param pageable
      * @return
      */
@@ -61,6 +64,7 @@ public class ReservationService {
 
     /**
      * 예약 내역 단일 조회
+     *
      * @param reservationId
      * @return
      */
@@ -74,6 +78,7 @@ public class ReservationService {
 
     /**
      * 내 예약 내역 조회
+     *
      * @param userId
      * @param pageable
      * @return
@@ -87,6 +92,7 @@ public class ReservationService {
 
     /**
      * 예약 내역 검색
+     *
      * @param pageable
      * @param predicate
      * @return
@@ -96,6 +102,42 @@ public class ReservationService {
         Page<Reservation> reservationPage = reservationRepository.findAll(predicate, pageable);
 
         return toReservationResponseDto(reservationPage);
+    }
+
+    /**
+     * 예약 취소(삭제)
+     *
+     * @param userId
+     * @param username
+     * @param role
+     * @param reservationId
+     */
+    @Transactional
+    public void deleteReservation(String userId, String username, String role, UUID reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
+            new CustomException(ErrorType.NOT_FOUND_RESERVATION));
+
+        // 권한 체크
+        if (!role.equals("ADMIN") || !userId.equals(reservation.getUserId().toString())) {
+            throw new CustomException(ErrorType.ACCESS_DENIED);
+        }
+
+        // TODO: 좌석 상태 예매가능으로 변경
+
+        // 좌석 결제 삭제
+        reservation.getPayment().getSeatPayments().stream().forEach(seatPayment -> {
+            SeatPayment seatPaymentEntity = seatPaymentRepository.findById(seatPayment.getId()) // TODO: 이거 서비스를 주입받아서 해야하는지 엔티티를 주입받아 해야하는지 의논
+                .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_SEATPAYMENT));
+
+            seatPaymentEntity.deleted(username);
+        });
+
+        // 결제 삭제
+        Payment payment = reservation.getPayment();
+        payment.deleted(username);
+
+        // 예약 삭제
+        reservation.deleted(username);
     }
 
     private Page<ReservationResponseDto> toReservationResponseDto(

@@ -35,4 +35,8 @@ public class SeatPayment extends BaseEntity {
         this.seatId = seatId;
         this.payment = payment;
     }
+
+    public void deleted(String username) {
+        this.softDeletedBy(username);
+    }
 }

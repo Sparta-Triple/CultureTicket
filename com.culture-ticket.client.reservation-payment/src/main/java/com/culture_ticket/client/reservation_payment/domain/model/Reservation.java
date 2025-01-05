@@ -44,4 +44,7 @@ public class Reservation extends BaseEntity {
         this.reservationStatus = ReservationStatus.CONFIRMED;
     }
 
+    public void deleted(String username) {
+        this.softDeletedBy(username);
+    }
 }
