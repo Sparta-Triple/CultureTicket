@@ -37,18 +37,10 @@ public class ReservationService {
     private final PerformanceClient performanceClient;
 
     /**
-     * 예약 내역 전체 조회
+     * 예약 생성
      *
-     * @param pageable
-     * @return
+     * @param request
      */
-    @Transactional(readOnly = true)
-    public Page<ReservationResponseDto> getReservations(Pageable pageable) {
-        Page<Reservation> reservationPage = reservationRepository.findAll(pageable);
-
-        return toReservationResponseDto(reservationPage);
-    }
-
     public void createReservation(ReservationRequestDto request) {
 
         Payment payment = paymentRepository.findById(request.getPaymentId())
@@ -63,15 +55,42 @@ public class ReservationService {
     }
 
     /**
+     * 예약 내역 전체 조회
+     *
+     * @param role
+     * @param pageable
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Page<ReservationResponseDto> getReservations(String role, Pageable pageable) {
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorType.ACCESS_DENIED);
+        }
+
+        Page<Reservation> reservationPage = reservationRepository.findAll(pageable);
+
+        isReservationInPage(reservationPage);
+
+        return toReservationResponseDto(reservationPage);
+    }
+
+    /**
      * 예약 내역 단일 조회
      *
+     * @param userId
+     * @param role
      * @param reservationId
      * @return
      */
     @Transactional(readOnly = true)
-    public ReservationResponseDto getReservation(UUID reservationId) {
+    public ReservationResponseDto getReservation(String userId, String role, UUID reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
             new CustomException(ErrorType.NOT_FOUND_RESERVATION));
+
+        if (!role.equals("ADMIN") && !role.equals("USER")
+            || !userId.equals(reservation.getUserId().toString())) {
+            throw new CustomException(ErrorType.ACCESS_DENIED);
+        }
 
         return getReservationResponseDto(reservation);
     }
@@ -80,12 +99,27 @@ public class ReservationService {
      * 내 예약 내역 조회
      *
      * @param userId
+     * @param role
      * @param pageable
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<ReservationResponseDto> getMeReservation(String userId, Pageable pageable) {
-        Page<Reservation> reservationPage = reservationRepository.findAllByUserId(userId, pageable);
+    public Page<ReservationResponseDto> getMeReservation(String userId, String role,
+        Pageable pageable) {
+        if (!role.equals("USER")) {
+            throw new CustomException(ErrorType.ACCESS_DENIED);
+        }
+
+        Page<Reservation> reservationPage = reservationRepository.findAllByUserId(userId,
+            pageable);
+
+        isReservationInPage(reservationPage);
+
+        // 조회하려는 데이터가 로그인유저가 생성한 건지 확인
+        Reservation reservation = reservationPage.getContent().get(0);
+        if (!userId.equals(reservation.getUserId().toString())) {
+            throw new CustomException(ErrorType.ACCESS_DENIED);
+        }
 
         return toReservationResponseDto(reservationPage);
     }
@@ -93,13 +127,26 @@ public class ReservationService {
     /**
      * 예약 내역 검색
      *
+     * @param userId
+     * @param role
      * @param pageable
      * @param predicate
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<ReservationResponseDto> searchReservation(Pageable pageable, Predicate predicate) {
-        Page<Reservation> reservationPage = reservationRepository.findAll(predicate, pageable);
+    public Page<ReservationResponseDto> searchReservation(String userId, String role, Pageable pageable, Predicate predicate) {
+        if (!role.equals("ADMIN") && !role.equals("USER")) {
+            throw new CustomException(ErrorType.ACCESS_DENIED);
+        }
+
+        Page<Reservation> reservationPage = null;
+        if(role.equals("USER")) {
+            reservationPage = reservationRepository.findAllByUserId(userId, predicate, pageable);
+        } else {
+            reservationPage = reservationRepository.findAll(predicate, pageable);
+        }
+
+        isReservationInPage(reservationPage);
 
         return toReservationResponseDto(reservationPage);
     }
@@ -117,8 +164,8 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
             new CustomException(ErrorType.NOT_FOUND_RESERVATION));
 
-        // 권한 체크
-        if (!role.equals("ADMIN") || !userId.equals(reservation.getUserId().toString())) {
+        if (!role.equals("ADMIN") && !role.equals("USER")
+            || !userId.equals(reservation.getUserId().toString())) {
             throw new CustomException(ErrorType.ACCESS_DENIED);
         }
 
@@ -126,7 +173,8 @@ public class ReservationService {
 
         // 좌석 결제 삭제
         reservation.getPayment().getSeatPayments().stream().forEach(seatPayment -> {
-            SeatPayment seatPaymentEntity = seatPaymentRepository.findById(seatPayment.getId()) // TODO: 이거 서비스를 주입받아서 해야하는지 엔티티를 주입받아 해야하는지 의논
+            SeatPayment seatPaymentEntity = seatPaymentRepository.findById(
+                    seatPayment.getId()) // TODO: 이거 서비스를 주입받아서 해야하는지 엔티티를 주입받아 해야하는지 의논
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_SEATPAYMENT));
 
             seatPaymentEntity.deleted(username);
@@ -138,6 +186,12 @@ public class ReservationService {
 
         // 예약 삭제
         reservation.deleted(username);
+    }
+
+    private static void isReservationInPage(Page<Reservation> reservationPage) {
+        if (!reservationPage.hasContent()) {
+            throw new CustomException(ErrorType.NOT_FOUND_RESERVATION);
+        }
     }
 
     private Page<ReservationResponseDto> toReservationResponseDto(

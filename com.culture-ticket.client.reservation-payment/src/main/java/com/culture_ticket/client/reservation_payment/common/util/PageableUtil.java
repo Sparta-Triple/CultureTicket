@@ -6,7 +6,9 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PageableUtil {
 
     private static final List<Integer> ALLOWED_PAGE_SIZES = Arrays.asList(10, 30, 50);
@@ -14,7 +16,7 @@ public class PageableUtil {
     private static final Sort.Direction DEFAULT_DIRECTION = Sort.Direction.DESC;
     private static final String DEFAULT_SORT = "createdAt";
 
-    public static Pageable createPageable(int page, int size, Sort.Direction direction, String sort) {
+    public Pageable createPageable(int page, int size, Sort.Direction direction, String sort) {
         if (!ALLOWED_PAGE_SIZES.contains(size)) {
             size = DEFAULT_PAGE_SIZE; // 허용되지 않는 사이즈는 기본값으로 설정
         }

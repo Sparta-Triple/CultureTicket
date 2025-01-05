@@ -15,5 +15,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID>,
 
     Page<Reservation> findAllByUserId(String userId, Pageable pageable);
 
+    Page<Reservation> findAllByUserId(String userId, Predicate predicate, Pageable pageable);
+
     Page<Reservation> findAll(Predicate predicate, Pageable pageable);
 }
