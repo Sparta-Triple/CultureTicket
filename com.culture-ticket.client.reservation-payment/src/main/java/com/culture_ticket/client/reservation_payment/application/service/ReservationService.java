@@ -15,6 +15,7 @@ import com.culture_ticket.client.reservation_payment.domain.repository.PaymentRe
 import com.culture_ticket.client.reservation_payment.domain.repository.ReservationRepository;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.PerformanceClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.UserClient;
+import com.querydsl.core.types.Predicate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -42,12 +43,7 @@ public class ReservationService {
     public Page<ReservationResponseDto> getReservations(Pageable pageable) {
         Page<Reservation> reservationPage = reservationRepository.findAll(pageable);
 
-        // reservationPage 하나 당 데이터 가져오기
-        Page<ReservationResponseDto> responseDtoPage = reservationPage.map(reservation -> {
-            return getReservationResponseDto(reservation);
-        });
-
-        return responseDtoPage;
+        return toReservationResponseDto(reservationPage);
     }
 
     public void createReservation(ReservationRequestDto request) {
@@ -86,10 +82,27 @@ public class ReservationService {
     public Page<ReservationResponseDto> getMeReservation(String userId, Pageable pageable) {
         Page<Reservation> reservationPage = reservationRepository.findAllByUserId(userId, pageable);
 
+        return toReservationResponseDto(reservationPage);
+    }
+
+    /**
+     * 예약 내역 검색
+     * @param pageable
+     * @param predicate
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Page<ReservationResponseDto> searchReservation(Pageable pageable, Predicate predicate) {
+        Page<Reservation> reservationPage = reservationRepository.findAll(predicate, pageable);
+
+        return toReservationResponseDto(reservationPage);
+    }
+
+    private Page<ReservationResponseDto> toReservationResponseDto(
+        Page<Reservation> reservationPage) {
         Page<ReservationResponseDto> responseDtoPage = reservationPage.map(reservation -> {
             return getReservationResponseDto(reservation);
         });
-
         return responseDtoPage;
     }
 
