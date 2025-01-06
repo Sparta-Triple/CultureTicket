@@ -31,15 +31,15 @@ public class PerformanceService {
 
     // 공연 생성
     @Transactional
-    public void createPerformance(PerformanceCreateRequestDto performanceCreateRequestDto) {
-
+    public void createPerformance(String role, String username, PerformanceCreateRequestDto performanceCreateRequestDto) {
+        validateRoleADMIN(role);
         checkDuplicateTitle(performanceCreateRequestDto.getTitle());
 
         Category category = categoryRepository.findByNameAndIsDeletedFalse(performanceCreateRequestDto.getCategory())
                 .orElseThrow(() -> new CustomException(ErrorType.CATEGORY_NOT_FOUND));
 
         Performance performance = Performance.createPerformance(performanceCreateRequestDto, category);
-        performance.setCreatedBy("test@email.com");
+        performance.setCreatedBy(username);
         performanceRepository.save(performance);
     }
 
@@ -54,29 +54,34 @@ public class PerformanceService {
     @Transactional(readOnly = true)
     public Page<PerformanceResponseDto> getPerformances(String condition, String keyword, Pageable pageable) {
         return performanceRepository.findPerformanceWithConditions(condition, keyword, pageable);
-
     }
 
     // 공연 상태 수정
     @Transactional
-    public void updatePerformanceStatus(UUID performanceId, UpdatePerformanceStatusRequestDto updatePerformanceStatusRequestDto) {
+    public void updatePerformanceStatus(
+            String role, String username, UUID performanceId,
+            UpdatePerformanceStatusRequestDto updatePerformanceStatusRequestDto
+    ) {
+        validateRoleADMIN(role);
         Performance performance = findPerformanceById(performanceId);
-        performance.updatePerformanceStatus(updatePerformanceStatusRequestDto.getPerformanceStatus(), "test@email.com");
+        performance.updatePerformanceStatus(updatePerformanceStatusRequestDto.getPerformanceStatus(), username);
     }
 
     // 공연 수정
     @Transactional
-    public void updatePerformance(UUID performanceId, UpdatePerformanceRequestDto updatePerformanceRequestDto) {
+    public void updatePerformance(String role, String username, UUID performanceId, UpdatePerformanceRequestDto updatePerformanceRequestDto) {
+        validateRoleADMIN(role);
         Performance performance = findPerformanceById(performanceId);
         Category category = findCategoryByName(updatePerformanceRequestDto.getCategory());
-        performance.updatePerformance(updatePerformanceRequestDto, category, "test@email.com");
+        performance.updatePerformance(updatePerformanceRequestDto, category, username);
     }
 
     // 공연 삭제
     @Transactional
-    public void deletePerformance(UUID performanceId) {
+    public void deletePerformance(String role, String username, UUID performanceId) {
+        validateRoleADMIN(role);
         Performance performance = findPerformanceById(performanceId);
-        performance.setDeletedBy("deleteTest@email.com");
+        performance.setDeletedBy(username);
     }
 
 
@@ -87,7 +92,6 @@ public class PerformanceService {
     }
 
     private Performance findPerformanceById(UUID performanceId) {
-
         Performance performance = performanceRepository.findPerformanceById(performanceId)
                 .orElseThrow(() -> new CustomException(ErrorType.PERFORMANCE_NOT_FOUND));
 
@@ -100,5 +104,11 @@ public class PerformanceService {
     private Category findCategoryByName(String categoryName) {
         return categoryRepository.findByNameAndIsDeletedFalse(categoryName)
                 .orElseThrow(() -> new CustomException(ErrorType.CATEGORY_NOT_FOUND));
+    }
+
+    private void validateRoleADMIN(String role) {
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorType.FORBIDDEN);
+        }
     }
 }
