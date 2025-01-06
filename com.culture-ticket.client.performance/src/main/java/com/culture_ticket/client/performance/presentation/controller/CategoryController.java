@@ -24,16 +24,20 @@ public class CategoryController {
     // 카테고리 생성
     @PostMapping
     public ResponseMessageDto createCategory(
-            @RequestBody CategoryRequestDto categoryRequestDto) {
-
-        categoryService.createCategory(categoryRequestDto);
+            @RequestBody CategoryRequestDto categoryRequestDto,
+            @RequestHeader(value = "X-User-Role") String role,
+            @RequestHeader(value = "X-User-Name") String username) {
+        categoryService.createCategory(role, username, categoryRequestDto);
         return new ResponseMessageDto(ResponseStatus.CREATE_CATEGORY_SUCCESS);
     }
 
     // 카테고리 단건 조회
     @GetMapping("/{categoryId}")
-    public ResponseDataDto<CategoryResponseDto> getCategory(@PathVariable UUID categoryId) {
-        CategoryResponseDto categoryResponseDto = categoryService.getCategory(categoryId);
+    public ResponseDataDto<CategoryResponseDto> getCategory(
+            @PathVariable UUID categoryId,
+            @RequestHeader(value = "X-User-Role") String role
+    ) {
+        CategoryResponseDto categoryResponseDto = categoryService.getCategory(role, categoryId);
         return new ResponseDataDto<>(ResponseStatus.GET_CATEGORY_SUCCESS, categoryResponseDto);
     }
 
@@ -41,23 +45,33 @@ public class CategoryController {
     @GetMapping
     public ResponseDataDto<Page<CategoryResponseDto>> getCategories(
             @RequestParam(value = "keyword", required = false) String keyword,
-            @PageableDefault Pageable pageable
+            @PageableDefault Pageable pageable,
+            @RequestHeader(value = "X-User-Role") String role
     ) {
-        Page<CategoryResponseDto> categoryResponses = categoryService.getCategories(keyword, pageable);
+        Page<CategoryResponseDto> categoryResponses = categoryService.getCategories(role, keyword, pageable);
         return new ResponseDataDto<>(ResponseStatus.GET_CATEGORY_SUCCESS, categoryResponses);
     }
 
     // 카테고리 수정
     @PatchMapping("/{categoryId}")
-    public ResponseMessageDto updateCategory(@PathVariable UUID categoryId, @RequestBody CategoryRequestDto categoryRequestDto) {
-        categoryService.updateCategory(categoryId, categoryRequestDto);
+    public ResponseMessageDto updateCategory(
+            @PathVariable UUID categoryId,
+            @RequestBody CategoryRequestDto categoryRequestDto,
+            @RequestHeader(value = "X-User-Role") String role,
+            @RequestHeader(value = "X-User-Name") String username
+    ) {
+        categoryService.updateCategory(role, username, categoryId, categoryRequestDto);
         return new ResponseMessageDto(ResponseStatus.UPDATE_CATEGORY_SUCCESS);
     }
 
     // 카테고리 삭제
     @DeleteMapping("/{categoryId}")
-    public ResponseMessageDto deleteCategory(@PathVariable UUID categoryId) {
-        categoryService.deleteCategory(categoryId);
+    public ResponseMessageDto deleteCategory(
+            @PathVariable UUID categoryId,
+            @RequestHeader(value = "X-User-Role") String role,
+            @RequestHeader(value = "X-User-Name") String username
+    ) {
+        categoryService.deleteCategory(role, username, categoryId);
         return new ResponseMessageDto(ResponseStatus.DELETE_CATEGORY_SUCCESS);
     }
 }
