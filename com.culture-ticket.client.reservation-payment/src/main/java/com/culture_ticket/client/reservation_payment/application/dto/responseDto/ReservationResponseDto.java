@@ -32,12 +32,13 @@ public class ReservationResponseDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private List<SeatInfo> seats;
+    private LocalDateTime createdAt;
 
     @Builder
     private ReservationResponseDto(UUID reservationId, LocalDateTime reservationDate,
         ReservationStatus reservationStatus, String username, String nickname, String phone,
         String title, String venue, String performanceStatus, LocalDateTime performanceDate,
-        LocalDateTime startTime, LocalDateTime endTime, List<SeatInfo> seats) {
+        LocalDateTime startTime, LocalDateTime endTime, List<SeatInfo> seats, LocalDateTime createdAt) {
         this.reservationId = reservationId;
         this.reservationDate = reservationDate;
         this.reservationStatus = reservationStatus;
@@ -51,6 +52,7 @@ public class ReservationResponseDto {
         this.startTime = startTime;
         this.endTime = endTime;
         this.seats = seats;
+        this.createdAt = createdAt;
     }
 
     public static ReservationResponseDto of(Reservation reservation, User user, List<Seat> seats,
@@ -72,6 +74,7 @@ public class ReservationResponseDto {
                 .stream()
                 .map(SeatInfo::from)
                 .toList())
+            .createdAt(reservation.getCreatedAt())
             .build();
     }
 

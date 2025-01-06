@@ -1,6 +1,7 @@
 package com.culture_ticket.client.reservation_payment.application.service;
 
 import com.culture_ticket.client.reservation_payment.application.dto.requestDto.ReservationRequestDto;
+import com.culture_ticket.client.reservation_payment.application.dto.responseDto.RefundPriceResponseDto;
 import com.culture_ticket.client.reservation_payment.application.dto.responseDto.ReservationResponseDto;
 import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
@@ -21,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.management.relation.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -105,8 +105,8 @@ public class ReservationService {
         Pageable pageable) {
         RoleValidator.validateIsUser(role);
 
-        Page<Reservation> reservationPage = reservationRepository.findAllByUserId(userId,
-            pageable);
+        Page<Reservation> reservationPage = reservationRepository.
+            findAllByUserIdAndIsDeletedFalse(userId, pageable);
 
         // 조회하려는 데이터가 로그인유저가 생성한 건지 확인
         if (!reservationPage.hasContent()) {
@@ -174,7 +174,7 @@ public class ReservationService {
      * @param reservationId
      */
     @Transactional
-    public void deleteReservation(String userId, String username, String role, UUID reservationId) {
+    public RefundPriceResponseDto deleteReservation(String userId, String username, String role, UUID reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
             new CustomException(ErrorType.NOT_FOUND_RESERVATION));
 
@@ -197,10 +197,16 @@ public class ReservationService {
 
         // 결제 삭제
         Payment payment = reservation.getPayment();
+
+        // 환불액
+        Long refundPrice = payment.getTotalPrice();
+
         payment.deleted(username);
 
         // 예약 삭제
         reservation.deleted(username);
+
+        return RefundPriceResponseDto.from(refundPrice);
     }
 
     // 로그인 유저가 데이터의 생성자인지 확인

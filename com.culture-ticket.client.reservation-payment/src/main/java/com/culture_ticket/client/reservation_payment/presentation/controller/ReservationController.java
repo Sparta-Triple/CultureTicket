@@ -1,9 +1,9 @@
 package com.culture_ticket.client.reservation_payment.presentation.controller;
 
+import com.culture_ticket.client.reservation_payment.application.dto.responseDto.RefundPriceResponseDto;
 import com.culture_ticket.client.reservation_payment.application.dto.responseDto.ReservationResponseDto;
 import com.culture_ticket.client.reservation_payment.application.service.ReservationService;
 import com.culture_ticket.client.reservation_payment.common.ResponseDataDto;
-import com.culture_ticket.client.reservation_payment.common.ResponseMessageDto;
 import com.culture_ticket.client.reservation_payment.common.ResponseStatus;
 import com.culture_ticket.client.reservation_payment.common.util.PageableUtil;
 import java.util.UUID;
@@ -146,18 +146,15 @@ public class ReservationController {
      * @return
      */
     @DeleteMapping("/{reservationId}")
-    public ResponseEntity<ResponseMessageDto> deleteReservation(
+    public ResponseEntity<ResponseDataDto<RefundPriceResponseDto>> deleteReservation(
         @RequestHeader(value = "X-User-Id") String userId,
         @RequestHeader(value = "X-User-Name", required = true) String username,
         @RequestHeader(value = "X-Role", required = true) String role,
         @PathVariable UUID reservationId
     ) {
-        reservationService.deleteReservation(userId, username, role, reservationId);
+        RefundPriceResponseDto responseDto = reservationService.
+            deleteReservation(userId, username, role, reservationId);
 
-        return ResponseEntity.ok(new ResponseMessageDto(ResponseStatus.DELETE_RESERVATION_SUCCESS));
-    }
-
-    public PageableUtil getPageableUtil() {
-        return pageableUtil;
+        return ResponseEntity.ok(new ResponseDataDto(ResponseStatus.DELETE_RESERVATION_SUCCESS, responseDto));
     }
 }
