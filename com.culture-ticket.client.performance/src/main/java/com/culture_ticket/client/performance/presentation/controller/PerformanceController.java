@@ -28,7 +28,7 @@ public class PerformanceController {
     @PostMapping
     public ResponseMessageDto createPerformance(
             @RequestBody PerformanceCreateRequestDto performanceCreateRequestDto,
-            @RequestHeader(value = "X-Role") String role,
+            @RequestHeader(value = "X-User-Role") String role,
             @RequestHeader(value = "X-User-Name") String username
     ) {
         performanceService.createPerformance(role, username, performanceCreateRequestDto);
@@ -58,7 +58,7 @@ public class PerformanceController {
     public ResponseMessageDto updatePerformanceStatus(
             @PathVariable UUID performanceId,
             @RequestBody UpdatePerformanceStatusRequestDto updatePerformanceStatusRequestDto,
-            @RequestHeader(value = "X-Role") String role,
+            @RequestHeader(value = "X-User-Role") String role,
             @RequestHeader(value = "X-User-Name") String username
     ) {
         performanceService.updatePerformanceStatus(role, username, performanceId, updatePerformanceStatusRequestDto);
@@ -70,7 +70,7 @@ public class PerformanceController {
     public ResponseMessageDto updatePerformance(
             @PathVariable UUID performanceId,
             @RequestBody UpdatePerformanceRequestDto updatePerformanceRequestDto,
-            @RequestHeader(value = "X-Role") String role,
+            @RequestHeader(value = "X-User-Role") String role,
             @RequestHeader(value = "X-User-Name") String username
     ) {
         performanceService.updatePerformance(role, username, performanceId, updatePerformanceRequestDto);
@@ -81,7 +81,7 @@ public class PerformanceController {
     @DeleteMapping("/{performanceId}")
     public ResponseMessageDto deletePerformance(
             @PathVariable UUID performanceId,
-            @RequestHeader(value = "X-Role") String role,
+            @RequestHeader(value = "X-User-Role") String role,
             @RequestHeader(value = "X-User-Name") String username
     ) {
         performanceService.deletePerformance(role, username, performanceId);
