@@ -34,7 +34,11 @@ public enum ResponseStatus {
     GET_PERFORMANCE_SUCCESS(HttpStatus.OK, "공연 조회에 성공했습니다."),
     UPDATE_PERFORMANCE_STATUS_SUCCESS(HttpStatus.OK, "공연 상태 수정에 성공했습니다."),
     UPDATE_PERFORMANCE(HttpStatus.OK, "공연 수정에 성공했습니다."),
-    DELETE_PERFORMANCE_SUCCESS(HttpStatus.OK, "공연 삭제에 성공했습니다.");
+    DELETE_PERFORMANCE_SUCCESS(HttpStatus.OK, "공연 삭제에 성공했습니다."),
+
+    // timetable
+    CREATE_TIME_TABLE_SUCCESS(HttpStatus.OK, "타임 테이블 생성에 성공하였습니다."),
+    SEARCH_TIME_TABLE_SUCCESS(HttpStatus.OK, "타임 테이블 검색에 성공했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
