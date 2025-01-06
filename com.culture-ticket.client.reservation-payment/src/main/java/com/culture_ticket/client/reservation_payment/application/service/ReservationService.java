@@ -16,7 +16,7 @@ import com.culture_ticket.client.reservation_payment.domain.repository.Reservati
 import com.culture_ticket.client.reservation_payment.domain.repository.SeatPaymentRepository;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.PerformanceClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.UserClient;
-import com.querydsl.core.types.Predicate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -127,23 +127,47 @@ public class ReservationService {
     /**
      * 예약 내역 검색
      *
+     * @param predicate
      * @param userId
      * @param role
      * @param pageable
-     * @param predicate
+     * @param dateRange
      * @return
      */
     @Transactional(readOnly = true)
-    public Page<ReservationResponseDto> searchReservation(String userId, String role, Pageable pageable, Predicate predicate) {
+    public Page<ReservationResponseDto> searchReservation(String userId, String role,
+        Pageable pageable, String dateRange) {
         if (!role.equals("ADMIN") && !role.equals("USER")) {
             throw new CustomException(ErrorType.ACCESS_DENIED);
         }
 
+        LocalDateTime startDate = null;
+        LocalDateTime endDate = LocalDateTime.now();
+
+        switch (dateRange) {
+            case "1달전":
+                startDate = endDate.minusMonths(1);
+                break;
+            case "3달전":
+                startDate = endDate.minusMonths(3);
+                break;
+            case "6달전":
+                startDate = endDate.minusMonths(6);
+                break;
+            case "1년전":
+                startDate = endDate.minusYears(1);
+                break;
+            default:
+                throw new CustomException(ErrorType.BAD_REQUEST_SEARCH);
+        }
+
         Page<Reservation> reservationPage = null;
-        if(role.equals("USER")) {
-            reservationPage = reservationRepository.findAllByUserId(userId, predicate, pageable);
+        if (role.equals("USER")) {
+            reservationPage = reservationRepository.
+                findAllByUserIdAndDateRange(userId, pageable, startDate, endDate);
         } else {
-            reservationPage = reservationRepository.findAll(predicate, pageable);
+            reservationPage = reservationRepository.
+                findAllByDateRange(pageable, startDate, endDate);
         }
 
         isReservationInPage(reservationPage);

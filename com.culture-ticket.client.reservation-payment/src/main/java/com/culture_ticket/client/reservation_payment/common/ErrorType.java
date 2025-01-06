@@ -14,7 +14,8 @@ public enum ErrorType {
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "해당 결에 대한 권한이 없습니다."),
     NOT_FOUND_RESERVATION(HttpStatus.NOT_FOUND, "예약 내역이 존재하지 않습니다."),
     NOT_FOUND_SEATPAYMENT(HttpStatus.NOT_FOUND, "좌석결제 내역이 존재하지 않습니다."),
-    ACCESS_DENIED(HttpStatus.FORBIDDEN, "권한이 없습니다.");
+    ACCESS_DENIED(HttpStatus.FORBIDDEN, "권한이 없습니다."),
+    BAD_REQUEST_SEARCH(HttpStatus.BAD_REQUEST, "올바른 검색 조건이 아닙니다.");
 
 
     private final HttpStatus httpStatus;

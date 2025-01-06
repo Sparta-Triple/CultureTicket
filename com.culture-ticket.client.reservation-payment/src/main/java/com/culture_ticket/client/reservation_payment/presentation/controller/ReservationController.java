@@ -6,14 +6,11 @@ import com.culture_ticket.client.reservation_payment.common.ResponseDataDto;
 import com.culture_ticket.client.reservation_payment.common.ResponseMessageDto;
 import com.culture_ticket.client.reservation_payment.common.ResponseStatus;
 import com.culture_ticket.client.reservation_payment.common.util.PageableUtil;
-import com.culture_ticket.client.reservation_payment.domain.model.Reservation;
-import com.querydsl.core.types.Predicate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -73,7 +70,7 @@ public class ReservationController {
         @PathVariable UUID reservationId
     ) {
         ReservationResponseDto responseDto = reservationService.
-            getReservation(userId, role,reservationId);
+            getReservation(userId, role, reservationId);
 
         return ResponseEntity.ok(
             new ResponseDataDto<>(ResponseStatus.GET_RESERVATION_SUCCESS, responseDto));
@@ -118,7 +115,7 @@ public class ReservationController {
      * @param size
      * @param direction
      * @param sort
-     * @param predicate
+     * @param dateRange
      * @return
      */
     @GetMapping("/search")
@@ -129,12 +126,12 @@ public class ReservationController {
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) Sort.Direction direction,
         @RequestParam(required = false) String sort,
-        @QuerydslPredicate(root = Reservation.class) Predicate predicate
+        @RequestParam(required = false) String dateRange
     ) {
         Pageable pageable = pageableUtil.createPageable(page, size, direction, sort);
 
         Page<ReservationResponseDto> responseDto = reservationService.
-            searchReservation(userId, role, pageable, predicate);
+            searchReservation(userId, role, pageable, dateRange);
 
         return ResponseEntity.ok(
             new ResponseDataDto<>(ResponseStatus.GET_RESERVATION_SUCCESS, responseDto));
