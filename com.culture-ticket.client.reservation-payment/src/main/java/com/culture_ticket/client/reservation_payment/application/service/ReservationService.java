@@ -69,8 +69,6 @@ public class ReservationService {
 
         Page<Reservation> reservationPage = reservationRepository.findAll(pageable);
 
-        isReservationInPage(reservationPage);
-
         return toReservationResponseDto(reservationPage);
     }
 
@@ -113,12 +111,12 @@ public class ReservationService {
         Page<Reservation> reservationPage = reservationRepository.findAllByUserId(userId,
             pageable);
 
-        isReservationInPage(reservationPage);
-
         // 조회하려는 데이터가 로그인유저가 생성한 건지 확인
-        Reservation reservation = reservationPage.getContent().get(0);
-        if (!userId.equals(reservation.getUserId().toString())) {
-            throw new CustomException(ErrorType.ACCESS_DENIED);
+        if (!reservationPage.hasContent()) {
+            Reservation reservation = reservationPage.getContent().get(0);
+            if (!userId.equals(reservation.getUserId().toString())) {
+                throw new CustomException(ErrorType.ACCESS_DENIED);
+            }
         }
 
         return toReservationResponseDto(reservationPage);
@@ -170,8 +168,6 @@ public class ReservationService {
                 findAllByDateRange(pageable, startDate, endDate);
         }
 
-        isReservationInPage(reservationPage);
-
         return toReservationResponseDto(reservationPage);
     }
 
@@ -210,12 +206,6 @@ public class ReservationService {
 
         // 예약 삭제
         reservation.deleted(username);
-    }
-
-    private static void isReservationInPage(Page<Reservation> reservationPage) {
-        if (!reservationPage.hasContent()) {
-            throw new CustomException(ErrorType.NOT_FOUND_RESERVATION);
-        }
     }
 
     private Page<ReservationResponseDto> toReservationResponseDto(
