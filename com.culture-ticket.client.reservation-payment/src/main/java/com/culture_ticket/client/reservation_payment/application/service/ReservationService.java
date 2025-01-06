@@ -4,6 +4,7 @@ import com.culture_ticket.client.reservation_payment.application.dto.requestDto.
 import com.culture_ticket.client.reservation_payment.application.dto.responseDto.ReservationResponseDto;
 import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
+import com.culture_ticket.client.reservation_payment.common.util.RoleValidator;
 import com.culture_ticket.client.reservation_payment.domain.model.Payment;
 import com.culture_ticket.client.reservation_payment.domain.model.Performance;
 import com.culture_ticket.client.reservation_payment.domain.model.Reservation;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import javax.management.relation.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -63,9 +65,7 @@ public class ReservationService {
      */
     @Transactional(readOnly = true)
     public Page<ReservationResponseDto> getReservations(String role, Pageable pageable) {
-        if (!role.equals("ADMIN")) {
-            throw new CustomException(ErrorType.ACCESS_DENIED);
-        }
+        RoleValidator.validateIsAdmin(role);
 
         Page<Reservation> reservationPage = reservationRepository.findAll(pageable);
 
@@ -85,10 +85,9 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
             new CustomException(ErrorType.NOT_FOUND_RESERVATION));
 
-        if (!role.equals("ADMIN") && !role.equals("USER")
-            || !userId.equals(reservation.getUserId().toString())) {
-            throw new CustomException(ErrorType.ACCESS_DENIED);
-        }
+        RoleValidator.validateIsAdminOrUser(role);
+
+        assertUserIsOwner(userId, reservation);
 
         return getReservationResponseDto(reservation);
     }
@@ -104,9 +103,7 @@ public class ReservationService {
     @Transactional(readOnly = true)
     public Page<ReservationResponseDto> getMeReservation(String userId, String role,
         Pageable pageable) {
-        if (!role.equals("USER")) {
-            throw new CustomException(ErrorType.ACCESS_DENIED);
-        }
+        RoleValidator.validateIsUser(role);
 
         Page<Reservation> reservationPage = reservationRepository.findAllByUserId(userId,
             pageable);
@@ -114,9 +111,7 @@ public class ReservationService {
         // 조회하려는 데이터가 로그인유저가 생성한 건지 확인
         if (!reservationPage.hasContent()) {
             Reservation reservation = reservationPage.getContent().get(0);
-            if (!userId.equals(reservation.getUserId().toString())) {
-                throw new CustomException(ErrorType.ACCESS_DENIED);
-            }
+            assertUserIsOwner(userId, reservation);
         }
 
         return toReservationResponseDto(reservationPage);
@@ -125,7 +120,6 @@ public class ReservationService {
     /**
      * 예약 내역 검색
      *
-     * @param predicate
      * @param userId
      * @param role
      * @param pageable
@@ -143,16 +137,16 @@ public class ReservationService {
         LocalDateTime endDate = LocalDateTime.now();
 
         switch (dateRange) {
-            case "1달전":
+            case "1month":
                 startDate = endDate.minusMonths(1);
                 break;
-            case "3달전":
+            case "3month":
                 startDate = endDate.minusMonths(3);
                 break;
-            case "6달전":
+            case "6month":
                 startDate = endDate.minusMonths(6);
                 break;
-            case "1년전":
+            case "1year":
                 startDate = endDate.minusYears(1);
                 break;
             default:
@@ -184,17 +178,18 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() ->
             new CustomException(ErrorType.NOT_FOUND_RESERVATION));
 
-        if (!role.equals("ADMIN") && !role.equals("USER")
-            || !userId.equals(reservation.getUserId().toString())) {
-            throw new CustomException(ErrorType.ACCESS_DENIED);
+        RoleValidator.validateIsAdminOrUser(role);
+
+        if (role.equals("USER")) {
+            assertUserIsOwner(userId, reservation);
         }
 
-        // TODO: 좌석 상태 예매가능으로 변경
+        // TODO: 좌석 상태 예매가능으로 변경(feign client 사용 -> kafka 사용)
 
         // 좌석 결제 삭제
         reservation.getPayment().getSeatPayments().stream().forEach(seatPayment -> {
             SeatPayment seatPaymentEntity = seatPaymentRepository.findById(
-                    seatPayment.getId()) // TODO: 이거 서비스를 주입받아서 해야하는지 엔티티를 주입받아 해야하는지 의논
+                    seatPayment.getId())
                 .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_SEATPAYMENT));
 
             seatPaymentEntity.deleted(username);
@@ -208,14 +203,22 @@ public class ReservationService {
         reservation.deleted(username);
     }
 
+    // 로그인 유저가 데이터의 생성자인지 확인
+    private static void assertUserIsOwner(String userId, Reservation reservation) {
+        if (!userId.equals(reservation.getUserId().toString())) {
+            throw new CustomException(ErrorType.UNAUTHORIZED_ACCESS);
+        }
+    }
+
+    // Page<Entity> -> Page<ResponseDto>
     private Page<ReservationResponseDto> toReservationResponseDto(
         Page<Reservation> reservationPage) {
-        Page<ReservationResponseDto> responseDtoPage = reservationPage.map(reservation -> {
-            return getReservationResponseDto(reservation);
-        });
+        Page<ReservationResponseDto> responseDtoPage = reservationPage.map(
+            this::getReservationResponseDto);
         return responseDtoPage;
     }
 
+    // feign client로 ResponseDto에 필요한 데이터 가져옴
     private ReservationResponseDto getReservationResponseDto(Reservation reservation) {
         Long userId = reservation.getUserId();
         User user = userClient.getUser(userId).getData();
