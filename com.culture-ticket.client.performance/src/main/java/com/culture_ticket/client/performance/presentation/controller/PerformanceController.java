@@ -27,9 +27,11 @@ public class PerformanceController {
     // 공연 생성
     @PostMapping
     public ResponseMessageDto createPerformance(
-            @RequestBody PerformanceCreateRequestDto performanceCreateRequestDto
+            @RequestBody PerformanceCreateRequestDto performanceCreateRequestDto,
+            @RequestHeader(value = "X-User-Role") String role,
+            @RequestHeader(value = "X-User-Name") String username
     ) {
-        performanceService.createPerformance(performanceCreateRequestDto);
+        performanceService.createPerformance(role, username, performanceCreateRequestDto);
         return new ResponseMessageDto(ResponseStatus.CREATE_PERFORMANCE_SUCCESS);
     }
 
@@ -39,7 +41,6 @@ public class PerformanceController {
         PerformanceResponseDto performanceResponseDto = performanceService.getPerformance(performanceId);
         return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performanceResponseDto);
     }
-
 
     // 공연 목록 조회 & 검색 (title)
     @GetMapping
@@ -56,9 +57,11 @@ public class PerformanceController {
     @PatchMapping("/{performanceId}")
     public ResponseMessageDto updatePerformanceStatus(
             @PathVariable UUID performanceId,
-            @RequestBody UpdatePerformanceStatusRequestDto updatePerformanceStatusRequestDto
+            @RequestBody UpdatePerformanceStatusRequestDto updatePerformanceStatusRequestDto,
+            @RequestHeader(value = "X-User-Role") String role,
+            @RequestHeader(value = "X-User-Name") String username
     ) {
-        performanceService.updatePerformanceStatus(performanceId, updatePerformanceStatusRequestDto);
+        performanceService.updatePerformanceStatus(role, username, performanceId, updatePerformanceStatusRequestDto);
         return new ResponseMessageDto(ResponseStatus.UPDATE_PERFORMANCE_STATUS_SUCCESS);
     }
 
@@ -66,16 +69,22 @@ public class PerformanceController {
     @PutMapping("/{performanceId}")
     public ResponseMessageDto updatePerformance(
             @PathVariable UUID performanceId,
-            @RequestBody UpdatePerformanceRequestDto updatePerformanceRequestDto
+            @RequestBody UpdatePerformanceRequestDto updatePerformanceRequestDto,
+            @RequestHeader(value = "X-User-Role") String role,
+            @RequestHeader(value = "X-User-Name") String username
     ) {
-        performanceService.updatePerformance(performanceId, updatePerformanceRequestDto);
+        performanceService.updatePerformance(role, username, performanceId, updatePerformanceRequestDto);
         return new ResponseMessageDto(ResponseStatus.UPDATE_PERFORMANCE);
     }
 
     // 공연 삭제
     @DeleteMapping("/{performanceId}")
-    public ResponseMessageDto deletePerformance(@PathVariable UUID performanceId) {
-        performanceService.deletePerformance(performanceId);
+    public ResponseMessageDto deletePerformance(
+            @PathVariable UUID performanceId,
+            @RequestHeader(value = "X-User-Role") String role,
+            @RequestHeader(value = "X-User-Name") String username
+    ) {
+        performanceService.deletePerformance(role, username, performanceId);
         return new ResponseMessageDto(ResponseStatus.DELETE_PERFORMANCE_SUCCESS);
     }
 }
