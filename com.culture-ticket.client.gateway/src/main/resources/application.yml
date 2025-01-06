@@ -17,18 +17,21 @@ spring:
         - id: performance-service
           uri: lb://performance-service
           predicates:
-            - Path=/api/v1/performance/**
+            - Path=/api/v1/categories/**
+            - Path=/api/v1/performances/**
+            - Path=/api/v1/timetables/**
+            - Path=/api/v1/seats/**
 
         - id: reservation-payment-service
           uri: lb://reservation-payment-service
           predicates:
             - Path=/api/v1/reservations/**
-            - Path=/api/v1/payment/**
+            - Path=/api/v1/payments/**
 
         - id: ticket-service
           uri: lb://ticket-service
           predicates:
-            - Path=/api/v1/ticket/**
+            - Path=/api/v1/tickets/**
 
       discovery:
         locator:
