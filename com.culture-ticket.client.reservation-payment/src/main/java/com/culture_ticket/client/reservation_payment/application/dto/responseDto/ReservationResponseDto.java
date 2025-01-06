@@ -1,11 +1,11 @@
 package com.culture_ticket.client.reservation_payment.application.dto.responseDto;
 
-import com.culture_ticket.client.reservation_payment.domain.model.Performance;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.PerformanceResponseDto;
 import com.culture_ticket.client.reservation_payment.domain.model.Reservation;
 import com.culture_ticket.client.reservation_payment.domain.model.ReservationStatus;
-import com.culture_ticket.client.reservation_payment.domain.model.Seat;
-import com.culture_ticket.client.reservation_payment.domain.model.TimeTable;
-import com.culture_ticket.client.reservation_payment.domain.model.User;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.TimeTableResponseDto;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.UserResponseDto;
 import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -55,8 +55,8 @@ public class ReservationResponseDto {
         this.createdAt = createdAt;
     }
 
-    public static ReservationResponseDto of(Reservation reservation, User user, List<Seat> seats,
-        Performance performance, TimeTable timeTable) {
+    public static ReservationResponseDto of(Reservation reservation, UserResponseDto user, List<SeatResponseDto> seats,
+        PerformanceResponseDto performance, TimeTableResponseDto timeTable) {
         return builder()
             .reservationId(reservation.getId())
             .reservationDate(reservation.getCreatedAt())
@@ -94,7 +94,7 @@ public class ReservationResponseDto {
             this.ticketPrice = ticketPrice;
         }
 
-        public static SeatInfo from(Seat seat) {
+        public static SeatInfo from(SeatResponseDto seat) {
             return new SeatInfo(seat.getSeatNumber(), seat.getSeatClass(), seat.getPrice());
         }
     }

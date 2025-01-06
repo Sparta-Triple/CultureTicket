@@ -1,11 +1,11 @@
-package com.culture_ticket.client.reservation_payment.domain.model;
+package com.culture_ticket.client.reservation_payment.infrastructure.dto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
 
 @Getter
-public class TimeTable {
+public class TimeTableResponseDto {
     UUID perfomanceId;
     LocalDateTime date;
     LocalDateTime startTime;

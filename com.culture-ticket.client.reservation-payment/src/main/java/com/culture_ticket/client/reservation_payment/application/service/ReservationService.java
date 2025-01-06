@@ -7,12 +7,12 @@ import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
 import com.culture_ticket.client.reservation_payment.common.util.RoleValidator;
 import com.culture_ticket.client.reservation_payment.domain.model.Payment;
-import com.culture_ticket.client.reservation_payment.domain.model.Performance;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.PerformanceResponseDto;
 import com.culture_ticket.client.reservation_payment.domain.model.Reservation;
-import com.culture_ticket.client.reservation_payment.domain.model.Seat;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
 import com.culture_ticket.client.reservation_payment.domain.model.SeatPayment;
-import com.culture_ticket.client.reservation_payment.domain.model.TimeTable;
-import com.culture_ticket.client.reservation_payment.domain.model.User;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.TimeTableResponseDto;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.UserResponseDto;
 import com.culture_ticket.client.reservation_payment.domain.repository.PaymentRepository;
 import com.culture_ticket.client.reservation_payment.domain.repository.ReservationRepository;
 import com.culture_ticket.client.reservation_payment.domain.repository.SeatPaymentRepository;
@@ -227,23 +227,23 @@ public class ReservationService {
     // feign client로 ResponseDto에 필요한 데이터 가져옴
     private ReservationResponseDto getReservationResponseDto(Reservation reservation) {
         Long userId = reservation.getUserId();
-        User user = userClient.getUser(userId).getData();
+        UserResponseDto user = userClient.getUser(userId).getData();
 
         // seatPayment 정보 가져오기
         Payment payment = reservation.getPayment();
         List<SeatPayment> seatPayments = payment.getSeatPayments();
 
         // 좌석 정보 가져오기
-        List<Seat> seats = seatPayments.stream()
+        List<SeatResponseDto> seats = seatPayments.stream()
             .map(seatPayment -> {
-                Seat seat = performanceClient.getSeat(seatPayment.getSeatId()).getData();
-                return Seat.from(seat);
+                SeatResponseDto seat = performanceClient.getSeat(seatPayment.getSeatId()).getData();
+                return SeatResponseDto.from(seat);
             })
             .collect(Collectors.toList());
 
         // 공연과 타임테이블 정보 가져오기
-        Performance performance = null;
-        TimeTable timeTable = null;
+        PerformanceResponseDto performance = null;
+        TimeTableResponseDto timeTable = null;
         if (!seats.isEmpty()) {
             UUID timeTableId = seats.get(0).getTimeTableId();
             timeTable = performanceClient.getTimeTable(timeTableId).getData();
