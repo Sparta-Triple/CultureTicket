@@ -26,7 +26,8 @@ public class CategoryService {
 
     // 카테고리 생성
     @Transactional
-    public void createCategory(CategoryRequestDto categoryRequestDto) {
+    public void createCategory(String role, String username, CategoryRequestDto categoryRequestDto) {
+        validateRoleADMIN(role);
 
         Optional<Category> existCategoryOpt = categoryRepository.findByNameAndIsDeletedFalse(categoryRequestDto.getName());
         Category category;
@@ -34,7 +35,6 @@ public class CategoryService {
         if (existCategoryOpt.isPresent()) {
             Category existCategory = existCategoryOpt.get();
 
-            // isDeleted=true, 생성 가능
             if (existCategory.getIsDeleted()) {
                 category = Category.createCategory(categoryRequestDto);
             } else {
@@ -43,20 +43,22 @@ public class CategoryService {
         } else {
             category = Category.createCategory(categoryRequestDto);
         }
-        category.setCreatedBy("test@email.com");
+        category.setCreatedBy(username);
         categoryRepository.save(category);
     }
 
     // 카테고리 단일 조회
     @Transactional(readOnly = true)
-    public CategoryResponseDto getCategory(UUID categoryId) {
+    public CategoryResponseDto getCategory(String role, UUID categoryId) {
+        validateRoleADMIN(role);
         Category category = findCategoryById(categoryId);
         return new CategoryResponseDto(category);
     }
 
     // 카테고리 목록 조회 & 검색
     @Transactional(readOnly = true)
-    public Page<CategoryResponseDto> getCategories(String keyword, Pageable pageable) {
+    public Page<CategoryResponseDto> getCategories(String role, String keyword, Pageable pageable) {
+        validateRoleADMIN(role);
         Page<Category> categories;
 
         if (keyword == null || keyword.trim().isEmpty()) {
@@ -69,28 +71,33 @@ public class CategoryService {
 
     // 카테고리 수정
     @Transactional
-    public void updateCategory(UUID categoryId, CategoryRequestDto categoryRequestDto) {
+    public void updateCategory(String role, String username, UUID categoryId, CategoryRequestDto categoryRequestDto) {
+        validateRoleADMIN(role);
         Category category = findCategoryById(categoryId);
-        category.setUpdateBy(categoryRequestDto.getName(), "test@eamil.com");
+        category.setUpdateBy(categoryRequestDto.getName(), username);
     }
 
     // 카테고리 삭제
     @Transactional
-    public void deleteCategory(UUID categoryId) {
+    public void deleteCategory(String role, String username, UUID categoryId) {
+        validateRoleADMIN(role);
         Category category = findCategoryById(categoryId);
-        category.setDeletedBy("test@eamil.com");
+        category.setDeletedBy(username);
     }
 
 
     private Category findCategoryById(UUID categoryId) {
-
-        // 카테고리 조회
         Category category = categoryRepository.findCategoryById(categoryId).orElseThrow(() -> new CustomException(ErrorType.CATEGORY_NOT_FOUND));
 
-        // 삭제된 상태인지 확인
         if (category.getIsDeleted()) {
             throw new CustomException(ErrorType.CATEGORY_NOT_FOUND);
         }
         return category;
+    }
+
+    private void validateRoleADMIN(String role) {
+        if (!role.equals("ADMIN")) {
+            throw new CustomException(ErrorType.FORBIDDEN);
+        }
     }
 }
