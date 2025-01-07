@@ -1,4 +1,4 @@
-package com.culture_ticket.client.reservation_payment.domain.repository;
+package com.culture_ticket.client.reservation_payment.infrastructure.repository;
 
 import com.culture_ticket.client.reservation_payment.domain.model.QReservation;
 import com.culture_ticket.client.reservation_payment.domain.model.Reservation;
