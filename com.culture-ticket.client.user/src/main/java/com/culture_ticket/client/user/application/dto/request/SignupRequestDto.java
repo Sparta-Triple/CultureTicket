@@ -31,9 +31,6 @@ public class SignupRequestDto {
   @DateTimeFormat
   private LocalDate birth;
 
-  @Pattern(
-      regexp = "ADMIN|USER"
-  )
   private Role role;
 
   private String adminCode;

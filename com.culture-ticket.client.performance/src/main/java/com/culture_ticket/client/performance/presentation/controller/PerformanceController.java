@@ -6,6 +6,7 @@ import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePe
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceStatusRequestDto;
 import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
 import com.culture_ticket.client.performance.application.service.PerformanceService;
+import com.culture_ticket.client.performance.application.service.TimeTableService;
 import com.culture_ticket.client.performance.common.ResponseDataDto;
 import com.culture_ticket.client.performance.common.ResponseMessageDto;
 import com.culture_ticket.client.performance.common.ResponseStatus;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class PerformanceController {
 
     private final PerformanceService performanceService;
+    private final TimeTableService timeTableService;
 
     // 공연 생성
     @PostMapping
