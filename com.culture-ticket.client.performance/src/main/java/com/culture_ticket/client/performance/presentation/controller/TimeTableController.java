@@ -43,10 +43,9 @@ public class TimeTableController {
   // 검색
   @GetMapping
   public ResponseDataDto<List<TimeTableSearchResponseDto>> searchTimeTables(
-      TimeTableSearchRequestDto requestDto,
-      @RequestHeader(value = "X-User-Role") String role
+      TimeTableSearchRequestDto requestDto
   ) {
-    List<TimeTableSearchResponseDto> responseDtos = timeTableService.searchTimeTables(requestDto, role);
+    List<TimeTableSearchResponseDto> responseDtos = timeTableService.searchTimeTables(requestDto);
     return new ResponseDataDto<>(ResponseStatus.SEARCH_TIME_TABLE_SUCCESS,responseDtos);
   }
 

@@ -32,7 +32,7 @@ public class TimeTableService {
     timeTableRepository.save(TimeTable.of(requestDto, username));
   }
 
-  public List<TimeTableSearchResponseDto> searchTimeTables(TimeTableSearchRequestDto requestDto, String role) {
+  public List<TimeTableSearchResponseDto> searchTimeTables(TimeTableSearchRequestDto requestDto) {
     return timeTableRepository.searchTimeTable(requestDto);
   }
 
