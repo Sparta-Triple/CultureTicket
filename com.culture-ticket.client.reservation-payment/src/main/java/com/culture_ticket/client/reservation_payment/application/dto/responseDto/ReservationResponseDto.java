@@ -6,6 +6,7 @@ import com.culture_ticket.client.reservation_payment.domain.model.ReservationSta
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.TimeTableResponseDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.UserResponseDto;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -28,7 +29,7 @@ public class ReservationResponseDto {
     private String title;
     private String venue;
     private String performanceStatus;
-    private LocalDateTime performanceDate;
+    private LocalDate performanceDate;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private List<SeatInfo> seats;
@@ -37,7 +38,7 @@ public class ReservationResponseDto {
     @Builder
     private ReservationResponseDto(UUID reservationId, LocalDateTime reservationDate,
         ReservationStatus reservationStatus, String username, String nickname, String phone,
-        String title, String venue, String performanceStatus, LocalDateTime performanceDate,
+        String title, String venue, String performanceStatus, LocalDate performanceDate,
         LocalDateTime startTime, LocalDateTime endTime, List<SeatInfo> seats, LocalDateTime createdAt) {
         this.reservationId = reservationId;
         this.reservationDate = reservationDate;
