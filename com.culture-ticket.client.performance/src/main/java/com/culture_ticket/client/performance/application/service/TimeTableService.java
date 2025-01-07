@@ -8,6 +8,7 @@ import com.culture_ticket.client.performance.common.ErrorType;
 import com.culture_ticket.client.performance.common.util.RoleValidator;
 import com.culture_ticket.client.performance.domain.model.TimeTable;
 import com.culture_ticket.client.performance.domain.model.TimeTableStatus;
+import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
 import com.culture_ticket.client.performance.domain.repository.TimeTableRepository;
 import java.util.List;
 import java.util.UUID;
@@ -21,9 +22,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class TimeTableService {
 
   private final TimeTableRepository timeTableRepository;
+  private final PerformanceRepository performanceRepository;
 
   public void createTimeTable(TimeTableCreateRequestDto requestDto, String username, String role) {
     RoleValidator.validateIsAdmin(role);
+    performanceRepository.findById(requestDto.getPerformanceId()).orElseThrow(
+        () -> new CustomException(ErrorType.PERFORMANCE_NOT_FOUND)
+    );
     timeTableRepository.save(TimeTable.of(requestDto, username));
   }
 
