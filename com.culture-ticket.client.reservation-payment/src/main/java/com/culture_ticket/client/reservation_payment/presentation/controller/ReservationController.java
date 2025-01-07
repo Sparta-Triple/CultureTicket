@@ -40,7 +40,7 @@ public class ReservationController {
      */
     @GetMapping
     public ResponseEntity<ResponseDataDto<Page<ReservationResponseDto>>> getReservations(
-        @RequestHeader(value = "X-Role", required = true) String role,
+        @RequestHeader(value = "X-User-Role", required = true) String role,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) Sort.Direction direction,
@@ -66,7 +66,7 @@ public class ReservationController {
     @GetMapping("/{reservationId}")
     public ResponseEntity<ResponseDataDto<ReservationResponseDto>> getReservation(
         @RequestHeader(value = "X-User-Id") String userId,
-        @RequestHeader(value = "X-Role", required = true) String role,
+        @RequestHeader(value = "X-User-Role", required = true) String role,
         @PathVariable UUID reservationId
     ) {
         ReservationResponseDto responseDto = reservationService.
@@ -90,7 +90,7 @@ public class ReservationController {
     @GetMapping("/me")
     public ResponseEntity<ResponseDataDto<Page<ReservationResponseDto>>> getMeReservation(
         @RequestHeader(value = "X-User-Id", required = true) String userId,
-        @RequestHeader(value = "X-Role", required = true) String role,
+        @RequestHeader(value = "X-User-Role", required = true) String role,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) Sort.Direction direction,
@@ -121,7 +121,7 @@ public class ReservationController {
     @GetMapping("/search")
     public ResponseEntity<ResponseDataDto<Page<ReservationResponseDto>>> searchReservation(
         @RequestHeader(value = "X-User-Id", required = true) String userId,
-        @RequestHeader(value = "X-Role", required = true) String role,
+        @RequestHeader(value = "X-User-Role", required = true) String role,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) Sort.Direction direction,
@@ -149,7 +149,7 @@ public class ReservationController {
     public ResponseEntity<ResponseDataDto<RefundPriceResponseDto>> deleteReservation(
         @RequestHeader(value = "X-User-Id") String userId,
         @RequestHeader(value = "X-User-Name", required = true) String username,
-        @RequestHeader(value = "X-Role", required = true) String role,
+        @RequestHeader(value = "X-User-Role", required = true) String role,
         @PathVariable UUID reservationId
     ) {
         RefundPriceResponseDto responseDto = reservationService.

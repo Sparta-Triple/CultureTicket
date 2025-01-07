@@ -230,8 +230,7 @@ public class ReservationService {
         UserResponseDto user = userClient.getUser(userId).getData();
 
         // seatPayment 정보 가져오기
-        Payment payment = reservation.getPayment();
-        List<SeatPayment> seatPayments = payment.getSeatPayments();
+        List<SeatPayment> seatPayments = reservation.getPayment().getSeatPayments();
 
         // 좌석 정보 가져오기
         List<SeatResponseDto> seats = seatPayments.stream()
