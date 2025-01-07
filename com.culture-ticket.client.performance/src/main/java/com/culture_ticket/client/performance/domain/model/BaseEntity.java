@@ -46,11 +46,13 @@ public abstract class BaseEntity {
         this.isDeleted = true;
         this.deletedBy = username;
         this.deletedAt = LocalDateTime.now();
+        this.updatedBy = username;
     }
 
     protected void restoreBy(String username){
         this.isDeleted = false;
         this.deletedBy = null;
         this.deletedAt = null;
+        this.updatedBy = username;
     }
 }

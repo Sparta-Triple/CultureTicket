@@ -20,7 +20,8 @@ public enum ErrorType {
     // TimeTable
 
     // Role
-    ROLE_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한이 없습니다.");
+    ROLE_UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "권한이 없습니다."),
+    TIMETABLE_NOT_FOUND(HttpStatus.NOT_FOUND, "타임테이블을 찾을 수 없습니다.");
 
 
 

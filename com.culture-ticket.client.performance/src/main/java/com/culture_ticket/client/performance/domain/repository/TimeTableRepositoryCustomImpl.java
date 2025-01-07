@@ -36,7 +36,9 @@ public class TimeTableRepositoryCustomImpl implements TimeTableRepositoryCustom{
             // 종료 시간 (좌석 관련 정보 연동 시 필요. 아직은 필요 x)
             requestDto.getEndTime() != null ? timeTable.endTime.eq(requestDto.getEndTime()) : null,
             // 타임 테이블 상태
-            requestDto.getTimeTableStatus() != null ? timeTable.timeTableStatus.eq(requestDto.getTimeTableStatus()) : null
+            requestDto.getTimeTableStatus() != null ? timeTable.timeTableStatus.eq(requestDto.getTimeTableStatus()) : null,
+            // 삭제되지 않은 테이블만
+            timeTable.isDeleted.eq(false)
         )
         .orderBy(
             timeTable.date.asc(),
