@@ -10,6 +10,7 @@ import com.culture_ticket.client.performance.domain.model.Category;
 import com.culture_ticket.client.performance.domain.model.Performance;
 import com.culture_ticket.client.performance.domain.repository.CategoryRepository;
 import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,6 @@ public class PerformanceService {
         this.categoryRepository = categoryRepository;
     }
 
-
     // 공연 생성
     @Transactional
     public void createPerformance(String role, String username, PerformanceCreateRequestDto performanceCreateRequestDto) {
@@ -43,7 +43,8 @@ public class PerformanceService {
         performanceRepository.save(performance);
     }
 
-    // 공연 단일 조회
+    // 공연 단건 조회
+    @Cacheable(cacheNames = "performanceCache", key = "#performanceId")
     @Transactional(readOnly = true)
     public PerformanceResponseDto getPerformance(UUID performanceId) {
         Performance performance = findPerformanceById(performanceId);
@@ -51,6 +52,7 @@ public class PerformanceService {
     }
 
     // 공연 전체 조회 & 검색 (title)
+    @Cacheable(cacheNames = "performanceAllCache", key = "methodName")
     @Transactional(readOnly = true)
     public Page<PerformanceResponseDto> getPerformances(String condition, String keyword, Pageable pageable) {
         return performanceRepository.findPerformanceWithConditions(condition, keyword, pageable);
