@@ -38,14 +38,14 @@ public class PerformanceController {
     }
 
     // 공연 단일 조회 (performanceId)
-    @GetMapping("/{performanceId}")
+    @GetMapping("/info/{performanceId}")
     public ResponseDataDto<PerformanceResponseDto> getPerformance(@PathVariable UUID performanceId) {
         PerformanceResponseDto performanceResponseDto = performanceService.getPerformance(performanceId);
         return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performanceResponseDto);
     }
 
     // 공연 목록 조회 & 검색 (title)
-    @GetMapping
+    @GetMapping("/info")
     public ResponseDataDto<Page<PerformanceResponseDto>> getPerformances(
             @RequestParam(value = "condition", required = false) String condition,
             @RequestParam(value = "keyword", required = false) String keyword,
