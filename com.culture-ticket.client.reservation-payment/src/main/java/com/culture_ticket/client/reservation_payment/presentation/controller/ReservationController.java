@@ -96,8 +96,6 @@ public class ReservationController {
         @RequestParam(required = false) Sort.Direction direction,
         @RequestParam(required = false) String sort
     ) {
-        // TODO: role 검사 (user)
-
         Pageable pageable = pageableUtil.createPageable(page, size, direction, sort);
 
         Page<ReservationResponseDto> responseDto = reservationService.getMeReservation(userId, role,
@@ -126,7 +124,7 @@ public class ReservationController {
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(required = false) Sort.Direction direction,
         @RequestParam(required = false) String sort,
-        @RequestParam(required = false) String dateRange
+        @RequestParam(required = false, defaultValue = "1month") String dateRange
     ) {
         Pageable pageable = pageableUtil.createPageable(page, size, direction, sort);
 

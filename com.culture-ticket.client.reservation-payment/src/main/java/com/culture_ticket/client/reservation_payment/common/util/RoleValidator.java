@@ -17,7 +17,7 @@ public class RoleValidator {
     }
 
     public static void validateIsAdminOrUser(String role) {
-        if (!role.equals("ADMIN") || !role.equals("USER")) {
+        if (!(role.equals("ADMIN") || role.equals("USER"))) {
             throw new CustomException(ErrorType.ACCESS_DENIED);
         }
     }

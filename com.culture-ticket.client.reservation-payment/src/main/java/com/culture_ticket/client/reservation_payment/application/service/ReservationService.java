@@ -87,7 +87,9 @@ public class ReservationService {
 
         RoleValidator.validateIsAdminOrUser(role);
 
-        assertUserIsOwner(userId, reservation);
+        if (role.equals("USER")) {
+            assertUserIsOwner(userId, reservation);
+        }
 
         return getReservationResponseDto(reservation);
     }
