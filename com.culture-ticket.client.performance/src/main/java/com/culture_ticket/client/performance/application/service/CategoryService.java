@@ -49,16 +49,14 @@ public class CategoryService {
 
     // 카테고리 단일 조회
     @Transactional(readOnly = true)
-    public CategoryResponseDto getCategory(String role, UUID categoryId) {
-        validateRoleADMIN(role);
+    public CategoryResponseDto getCategory(UUID categoryId) {
         Category category = findCategoryById(categoryId);
         return new CategoryResponseDto(category);
     }
 
     // 카테고리 목록 조회 & 검색
     @Transactional(readOnly = true)
-    public Page<CategoryResponseDto> getCategories(String role, String keyword, Pageable pageable) {
-        validateRoleADMIN(role);
+    public Page<CategoryResponseDto> getCategories(String keyword, Pageable pageable) {
         Page<Category> categories;
 
         if (keyword == null || keyword.trim().isEmpty()) {

@@ -32,23 +32,21 @@ public class CategoryController {
     }
 
     // 카테고리 단건 조회
-    @GetMapping("/{categoryId}")
+    @GetMapping("/info/{categoryId}")
     public ResponseDataDto<CategoryResponseDto> getCategory(
-            @PathVariable UUID categoryId,
-            @RequestHeader(value = "X-User-Role") String role
+            @PathVariable UUID categoryId
     ) {
-        CategoryResponseDto categoryResponseDto = categoryService.getCategory(role, categoryId);
+        CategoryResponseDto categoryResponseDto = categoryService.getCategory(categoryId);
         return new ResponseDataDto<>(ResponseStatus.GET_CATEGORY_SUCCESS, categoryResponseDto);
     }
 
     // 카테고리 목록 조회 & 검색
-    @GetMapping
+    @GetMapping("/info")
     public ResponseDataDto<Page<CategoryResponseDto>> getCategories(
             @RequestParam(value = "keyword", required = false) String keyword,
-            @PageableDefault Pageable pageable,
-            @RequestHeader(value = "X-User-Role") String role
+            @PageableDefault Pageable pageable
     ) {
-        Page<CategoryResponseDto> categoryResponses = categoryService.getCategories(role, keyword, pageable);
+        Page<CategoryResponseDto> categoryResponses = categoryService.getCategories(keyword, pageable);
         return new ResponseDataDto<>(ResponseStatus.GET_CATEGORY_SUCCESS, categoryResponses);
     }
 
