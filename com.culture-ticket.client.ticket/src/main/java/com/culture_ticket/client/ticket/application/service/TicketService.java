@@ -4,6 +4,7 @@ import com.culture_ticket.client.ticket.application.dto.request.TicketRequestDto
 import com.culture_ticket.client.ticket.application.dto.response.TicketResponseDto;
 import com.culture_ticket.client.ticket.common.CustomException;
 import com.culture_ticket.client.ticket.common.ErrorType;
+import com.culture_ticket.client.ticket.common.util.RoleValidator;
 import com.culture_ticket.client.ticket.domain.model.Ticket;
 import com.culture_ticket.client.ticket.domain.repository.TicketRepository;
 import java.util.UUID;
@@ -28,9 +29,7 @@ public class TicketService {
      */
     @Transactional
     public void createTicket(String username, String role, TicketRequestDto request) {
-        if (!role.equals("USER")) { // TODO: 나중에 권한 검증 util로 빼기
-            throw new CustomException(ErrorType.ACCESS_DENIED);
-        }
+        RoleValidator.validateIsUser(role);
 
         Ticket ticket = Ticket.from(request);
         ticket.setCreatedBy(username);
@@ -46,9 +45,7 @@ public class TicketService {
      */
     @Transactional(readOnly = true)
     public Page<TicketResponseDto> getTickets(String role, Pageable pageable) {
-        if (!(role.equals("ADMIN") || role.equals("USER"))) {
-            throw new CustomException(ErrorType.ACCESS_DENIED);
-        }
+        RoleValidator.validateIsAdminOrUser(role);
 
         Page<Ticket> ticketPage = ticketRepository.findAll(pageable);
 
@@ -64,9 +61,7 @@ public class TicketService {
      */
     @Transactional(readOnly = true)
     public TicketResponseDto getTicket(String role, UUID ticketId) {
-        if (!(role.equals("ADMIN") || role.equals("USER"))) {
-            throw new CustomException(ErrorType.ACCESS_DENIED);
-        }
+        RoleValidator.validateIsAdminOrUser(role);
 
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
             new CustomException(ErrorType.NOT_FOUND_TICKET));
@@ -83,13 +78,11 @@ public class TicketService {
      */
     @Transactional
     public void deleteTicket(String username, String role, UUID ticketId) {
-        if (!(role.equals("ADMIN") || role.equals("USER"))) {
-            throw new CustomException(ErrorType.ACCESS_DENIED);
-        }
+        RoleValidator.validateIsAdminOrUser(role);
 
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
             new CustomException(ErrorType.NOT_FOUND_TICKET));
 
-        ticket.softDeletedBy(username);
+        ticket.deleted(username);
     }
 }

@@ -1,6 +1,5 @@
 package com.culture_ticket.client.ticket.application.dto.response;
 
-import com.culture_ticket.client.ticket.application.dto.request.TicketRequestDto;
 import com.culture_ticket.client.ticket.domain.model.Ticket;
 import java.util.UUID;
 import lombok.Builder;

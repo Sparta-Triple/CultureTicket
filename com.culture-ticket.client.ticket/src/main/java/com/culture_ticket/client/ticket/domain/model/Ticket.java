@@ -51,4 +51,8 @@ public class Ticket extends BaseEntity{
             .ticketPrice(requestDto.getTicketPrice())
             .build();
     }
+
+    public void deleted(String username) {
+        softDeletedBy(username);
+    }
 }
