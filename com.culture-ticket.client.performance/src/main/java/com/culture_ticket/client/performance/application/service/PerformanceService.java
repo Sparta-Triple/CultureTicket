@@ -52,7 +52,7 @@ public class PerformanceService {
     }
 
     // 공연 전체 조회 & 검색 (title)
-    @Cacheable(cacheNames = "performanceAllCache", key = "methodName")
+    @Cacheable(cacheNames = "performanceAllCache", key = "#condition + '-' + #keyword + '-' + #pageable.pageNumber + '-' + #pageable.pageSize")
     @Transactional(readOnly = true)
     public Page<PerformanceResponseDto> getPerformances(String condition, String keyword, Pageable pageable) {
         return performanceRepository.findPerformanceWithConditions(condition, keyword, pageable);
