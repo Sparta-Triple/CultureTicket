@@ -54,7 +54,9 @@ public class PerformanceService {
 
     // 공연 전체 조회 & 검색
     @Cacheable(cacheNames = "performanceAllCache",
-            key = "#condition != null ? #condition : 'defaultCondition' + '-' + (#keyword != null && #keyword != '' ? #keyword : 'defaultKeyword') + '-' + (#pageable.pageNumber) + '-' + (#pageable.pageSize)"
+            key = "(#condition != null ? #condition : 'defaultCondition') + '-' + " +
+                    "(#keyword != null && #keyword != '' ? #keyword : 'defaultKeyword') + '-' + " +
+                    "(#pageable.pageNumber + '-' + #pageable.pageSize)"
     )
     @Transactional(readOnly = true)
     public RestPage<PerformanceResponseDto> getPerformances(String condition, String keyword, Pageable pageable) {
