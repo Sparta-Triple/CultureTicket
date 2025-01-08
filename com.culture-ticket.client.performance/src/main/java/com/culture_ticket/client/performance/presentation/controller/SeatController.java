@@ -1,6 +1,6 @@
 package com.culture_ticket.client.performance.presentation.controller;
 
-import com.culture_ticket.client.performance.application.dto.requestDto.CreateSeatRequestDto;
+import com.culture_ticket.client.performance.application.dto.requestDto.SeatCreateRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdateSeatPriceRequestDto;
 import com.culture_ticket.client.performance.application.dto.responseDto.SeatInfoResponseDto;
 import com.culture_ticket.client.performance.application.service.SeatService;
@@ -35,9 +35,9 @@ public class SeatController {
       @RequestHeader(value = "X-User-Role") String role,
       @RequestHeader(value = "X-User-Name") String username,
       @RequestParam(name = "timeTableId") UUID timeTableId,
-      @RequestBody List<CreateSeatRequestDto> requestDtos
+      @RequestBody List<SeatCreateRequestDto> requestDtos
   ) {
-    seatService.createSeats(timeTableId, requestDtos, username, role);
+    seatService.createSeats(username, role, timeTableId, requestDtos);
     return new ResponseMessageDto(ResponseStatus.CREATE_SEAT_SUCCESS);
   }
 

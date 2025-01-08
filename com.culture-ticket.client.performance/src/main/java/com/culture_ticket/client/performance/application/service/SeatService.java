@@ -1,6 +1,6 @@
 package com.culture_ticket.client.performance.application.service;
 
-import com.culture_ticket.client.performance.application.dto.requestDto.CreateSeatRequestDto;
+import com.culture_ticket.client.performance.application.dto.requestDto.SeatCreateRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdateSeatPriceRequestDto;
 import com.culture_ticket.client.performance.application.dto.responseDto.SeatInfoResponseDto;
 import com.culture_ticket.client.performance.common.CustomException;
@@ -27,12 +27,12 @@ public class SeatService {
   private final TimeTableRepository timeTableRepository;
   private final SeatRepository seatRepository;
 
-  public void createSeats(UUID timeTableId, List<CreateSeatRequestDto> requestDtos, String username, String role) {
+  public void createSeats(String username, String role, UUID timeTableId, List<SeatCreateRequestDto> requestDtos) {
     RoleValidator.validateIsAdmin(role);
     TimeTable timeTable = timeTableRepository.findById(timeTableId).orElseThrow(
         () -> new CustomException(ErrorType.TIMETABLE_NOT_FOUND)
     );
-    for (CreateSeatRequestDto seatCreateRequestDto : requestDtos) {
+    for (SeatCreateRequestDto seatCreateRequestDto : requestDtos) {
       List<Seat> seats = Seat.of(timeTable, seatCreateRequestDto, username);
       seatRepository.saveAll(seats);
     }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -34,9 +35,10 @@ public class TimeTableController {
   public ResponseMessageDto createTimeTable(
       @RequestHeader(value = "X-User-Role") String role,
       @RequestHeader(value = "X-User-Name") String username,
+      @RequestParam(value = "performanceId") UUID performanceId,
       @RequestBody TimeTableCreateRequestDto requestDto
   ) {
-    timeTableService.createTimeTable(requestDto, username, role);
+    timeTableService.createTimeTable(username, role, performanceId, requestDto);
     return new ResponseMessageDto(ResponseStatus.CREATE_TIME_TABLE_SUCCESS);
   }
 

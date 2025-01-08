@@ -1,6 +1,6 @@
 package com.culture_ticket.client.performance.domain.model;
 
-import com.culture_ticket.client.performance.application.dto.requestDto.CreateSeatRequestDto;
+import com.culture_ticket.client.performance.application.dto.requestDto.SeatCreateRequestDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -39,7 +39,7 @@ public class Seat extends BaseEntity{
   @ManyToOne(fetch = FetchType.LAZY)
   private TimeTable timeTable;
 
-  public static List<Seat> of(TimeTable timeTable, CreateSeatRequestDto requestDto, String username){
+  public static List<Seat> of(TimeTable timeTable, SeatCreateRequestDto requestDto, String username){
     List<Seat> seats = new ArrayList<>();
     for (int seatNumber = 1; seatNumber <= requestDto.getCount(); seatNumber++) {
       Seat seat = builder()
