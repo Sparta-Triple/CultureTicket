@@ -32,7 +32,7 @@ public class PerformanceService {
 
     // 공연 생성
     @Transactional
-    public void createPerformance(String role, String username, PerformanceCreateRequestDto performanceCreateRequestDto) {
+    public UUID createPerformance(String username, String role, PerformanceCreateRequestDto performanceCreateRequestDto) {
         validateRoleADMIN(role);
         checkDuplicateTitle(performanceCreateRequestDto.getTitle());
 
@@ -42,6 +42,7 @@ public class PerformanceService {
         Performance performance = Performance.createPerformance(performanceCreateRequestDto, category);
         performance.setCreatedBy(username);
         performanceRepository.save(performance);
+        return performance.getId();
     }
 
     // 공연 단건 조회

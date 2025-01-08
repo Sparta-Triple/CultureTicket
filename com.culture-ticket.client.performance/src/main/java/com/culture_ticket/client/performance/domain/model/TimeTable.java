@@ -5,9 +5,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,23 +32,23 @@ public class TimeTable extends BaseEntity{
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  private UUID performanceId;
   private LocalDate date;
   @Column(columnDefinition = "TIME(0)")
   private LocalTime startTime;
   @Column(columnDefinition = "TIME(0)")
   private LocalTime endTime;
-
   @Enumerated(EnumType.STRING)
   private TimeTableStatus timeTableStatus;
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Performance performance;
 
-  public static TimeTable of(TimeTableCreateRequestDto requestDto, String username){
+  public static TimeTable of(String username, Performance performance, TimeTableCreateRequestDto requestDto){
     TimeTable timeTable = builder()
-        .performanceId(requestDto.getPerformanceId())
         .date(requestDto.getDate())
         .startTime(requestDto.getStartTime())
         .endTime(requestDto.getEndTime())
         .timeTableStatus(TimeTableStatus.AVAILABLE)
+        .performance(performance)
         .build();
     timeTable.createdBy(username);
     return timeTable;
