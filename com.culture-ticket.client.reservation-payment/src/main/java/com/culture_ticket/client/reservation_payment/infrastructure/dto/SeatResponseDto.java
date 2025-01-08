@@ -6,25 +6,31 @@ import lombok.Getter;
 
 @Getter
 public class SeatResponseDto {
+    UUID seatId;
     UUID timeTableId;
     String seatClass;
     Integer seatNumber;
     long price;
+    String seatStatus;
 
     @Builder
-    private SeatResponseDto(UUID timeTableId, String seatClass, Integer seatNumber, long price) {
+    public SeatResponseDto(UUID seatId, UUID timeTableId, String seatClass, Integer seatNumber, long price, String seatStatus) {
+        this.seatId = seatId;
         this.timeTableId = timeTableId;
-        this.seatNumber = seatNumber;
         this.seatClass = seatClass;
+        this.seatNumber = seatNumber;
         this.price = price;
+        this.seatStatus = seatStatus;
     }
 
     public static SeatResponseDto from(SeatResponseDto seat) {
         return builder()
+            .seatId(seat.getSeatId())
             .timeTableId(seat.getTimeTableId())
             .seatClass(seat.getSeatClass())
             .seatNumber(seat.getSeatNumber())
             .price(seat.getPrice())
+            .seatStatus(seat.getSeatStatus())
             .build();
     }
 }
