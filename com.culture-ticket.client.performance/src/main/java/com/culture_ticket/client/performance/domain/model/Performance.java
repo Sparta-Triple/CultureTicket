@@ -28,7 +28,7 @@ public class Performance extends BaseEntity {
     private String title;
 
     @Column(nullable = false)
-    private String content;
+    private String description;
 
     @Column(nullable = false)
     private String venue;
@@ -53,7 +53,7 @@ public class Performance extends BaseEntity {
     public static Performance createPerformance(PerformanceCreateRequestDto performanceCreateRequestDto, Category category) {
         return Performance.builder()
                 .title(performanceCreateRequestDto.getTitle())
-                .content(performanceCreateRequestDto.getContent())
+                .description(performanceCreateRequestDto.getDescription())
                 .venue(performanceCreateRequestDto.getVenue())
                 .casting(performanceCreateRequestDto.getCasting())
                 .startDate(performanceCreateRequestDto.getStartDate())
@@ -78,7 +78,7 @@ public class Performance extends BaseEntity {
 
     public void updatePerformance(UpdatePerformanceRequestDto updatePerformanceRequestDto, Category category, String updatedBy) {
         this.title = updatePerformanceRequestDto.getTitle();
-        this.content = updatePerformanceRequestDto.getContent();
+        this.description = updatePerformanceRequestDto.getDescription();
         this.venue = updatePerformanceRequestDto.getVenue();
         this.casting = updatePerformanceRequestDto.getCasting();
         this.startDate = updatePerformanceRequestDto.getStartDate();

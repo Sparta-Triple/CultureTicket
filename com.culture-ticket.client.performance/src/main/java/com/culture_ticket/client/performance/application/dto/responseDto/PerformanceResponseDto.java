@@ -19,7 +19,7 @@ import java.util.UUID;
 public class PerformanceResponseDto {
     private UUID id;
     private String title;
-    private String content;
+    private String description;
     private String venue;
     private String casting;
 
@@ -37,7 +37,7 @@ public class PerformanceResponseDto {
     public PerformanceResponseDto(Performance performance) {
         this.id = performance.getId();
         this.title = performance.getTitle();
-        this.content = performance.getContent();
+        this.description = performance.getDescription();
         this.venue = performance.getVenue();
         this.casting = performance.getCasting();
         this.startDate = performance.getStartDate();

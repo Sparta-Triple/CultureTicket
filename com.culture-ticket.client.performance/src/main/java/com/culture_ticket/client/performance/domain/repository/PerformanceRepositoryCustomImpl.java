@@ -26,7 +26,7 @@ public class PerformanceRepositoryCustomImpl implements PerformanceRepositoryCus
                 .select(Projections.constructor(PerformanceResponseDto.class,
                         qPerformance.id,
                         qPerformance.title,
-                        qPerformance.content,
+                        qPerformance.description,
                         qPerformance.venue,
                         qPerformance.casting,
                         qPerformance.startDate,
@@ -51,8 +51,8 @@ public class PerformanceRepositoryCustomImpl implements PerformanceRepositoryCus
     private BooleanExpression buildSearchCondition(String condition, String keyword) {
         if ("title".equalsIgnoreCase(condition)) {
             return QPerformance.performance.title.containsIgnoreCase(keyword);
-        } else if ("content".equalsIgnoreCase(condition)) {
-            return QPerformance.performance.content.containsIgnoreCase(keyword);
+        } else if ("casting".equalsIgnoreCase(condition)) {
+            return QPerformance.performance.casting.containsIgnoreCase(keyword);
         } else if ("category".equalsIgnoreCase(condition)) {
             return QPerformance.performance.category.name.containsIgnoreCase(keyword);
         }
