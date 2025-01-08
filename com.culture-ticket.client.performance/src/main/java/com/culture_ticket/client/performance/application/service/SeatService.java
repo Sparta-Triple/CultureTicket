@@ -27,14 +27,16 @@ public class SeatService {
   private final TimeTableRepository timeTableRepository;
   private final SeatRepository seatRepository;
 
-  public void createSeats(String username, String role, UUID timeTableId, List<SeatCreateRequestDto> requestDtos) {
+  public void createSeats(String username, String role, List<UUID> timeTableIds, List<SeatCreateRequestDto> requestDtos) {
     RoleValidator.validateIsAdmin(role);
-    TimeTable timeTable = timeTableRepository.findById(timeTableId).orElseThrow(
-        () -> new CustomException(ErrorType.TIMETABLE_NOT_FOUND)
-    );
-    for (SeatCreateRequestDto seatCreateRequestDto : requestDtos) {
-      List<Seat> seats = Seat.of(timeTable, seatCreateRequestDto, username);
-      seatRepository.saveAll(seats);
+    for (UUID timeTableId : timeTableIds) {
+      TimeTable timeTable = timeTableRepository.findById(timeTableId).orElseThrow(
+          () -> new CustomException(ErrorType.TIMETABLE_NOT_FOUND)
+      );
+      for (SeatCreateRequestDto seatCreateRequestDto : requestDtos) {
+        List<Seat> seats = Seat.of(timeTable, seatCreateRequestDto, username);
+        seatRepository.saveAll(seats);
+      }
     }
   }
 

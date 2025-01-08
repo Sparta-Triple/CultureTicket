@@ -7,7 +7,7 @@ import lombok.Getter;
 public class PerformanceDomainCreateRequestDto {
 
   private PerformanceCreateRequestDto performanceCreateRequestDto;
-  private TimeTableCreateRequestDto timeTableCreateRequestDto;
+  private List<TimeTableCreateRequestDto> timeTableCreateRequestDtos;
   private List<SeatCreateRequestDto> seatCreateRequestDtos;
 
 }

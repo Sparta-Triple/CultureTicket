@@ -36,9 +36,9 @@ public class TimeTableController {
       @RequestHeader(value = "X-User-Role") String role,
       @RequestHeader(value = "X-User-Name") String username,
       @RequestParam(value = "performanceId") UUID performanceId,
-      @RequestBody TimeTableCreateRequestDto requestDto
+      @RequestBody List<TimeTableCreateRequestDto> requestDtos
   ) {
-    timeTableService.createTimeTable(username, role, performanceId, requestDto);
+    timeTableService.createTimeTable(username, role, performanceId, requestDtos);
     return new ResponseMessageDto(ResponseStatus.CREATE_TIME_TABLE_SUCCESS);
   }
 

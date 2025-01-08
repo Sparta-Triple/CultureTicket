@@ -13,6 +13,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -52,6 +54,23 @@ public class TimeTable extends BaseEntity{
         .build();
     timeTable.createdBy(username);
     return timeTable;
+  }
+
+  //
+  public static List<TimeTable> of(String username, Performance performance, List<TimeTableCreateRequestDto> requestDtos){
+    List<TimeTable> timeTables = new ArrayList<>();
+    for (TimeTableCreateRequestDto requestDto : requestDtos) {
+      TimeTable timeTable = builder()
+          .date(requestDto.getDate())
+          .startTime(requestDto.getStartTime())
+          .endTime(requestDto.getEndTime())
+          .timeTableStatus(TimeTableStatus.AVAILABLE)
+          .performance(performance)
+          .build();
+      timeTable.createdBy(username);
+      timeTables.add(timeTable);
+    }
+    return timeTables;
   }
 
   public void updateStatus(TimeTableStatus status, String username){

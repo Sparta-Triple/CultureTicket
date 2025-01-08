@@ -25,13 +25,14 @@ public class TimeTableService {
   private final TimeTableRepository timeTableRepository;
   private final PerformanceRepository performanceRepository;
 
-  public UUID createTimeTable(String username, String role, UUID performanceId, TimeTableCreateRequestDto requestDto) {
+  public List<UUID> createTimeTable(String username, String role, UUID performanceId, List<TimeTableCreateRequestDto> requestDtos) {
     RoleValidator.validateIsAdmin(role);
     Performance performance = performanceRepository.findById(performanceId).orElseThrow(
         () -> new CustomException(ErrorType.PERFORMANCE_NOT_FOUND)
     );
-    TimeTable timeTable = timeTableRepository.save(TimeTable.of(username, performance, requestDto));
-    return timeTable.getId();
+    List<TimeTable> timeTables = TimeTable.of(username, performance, requestDtos);
+    timeTableRepository.saveAll(timeTables);
+    return timeTables.stream().map(TimeTable::getId).toList();
   }
 
   public List<TimeTableSearchResponseDto> searchTimeTables(TimeTableSearchRequestDto requestDto) {
