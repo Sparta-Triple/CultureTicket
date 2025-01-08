@@ -1,5 +1,6 @@
 package com.culture_ticket.client.performance.domain.repository;
 
+import com.culture_ticket.client.performance.application.dto.pagination.RestPage;
 import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
 import com.culture_ticket.client.performance.domain.model.QPerformance;
 import com.querydsl.core.types.Projections;
@@ -7,8 +8,6 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +18,7 @@ public class PerformanceRepositoryCustomImpl implements PerformanceRepositoryCus
     private EntityManager entityManager;
 
     @Override
-    public Page<PerformanceResponseDto> findPerformanceWithConditions(String condition, String keyword, Pageable pageable) {
+    public RestPage<PerformanceResponseDto> findPerformanceWithConditions(String condition, String keyword, Pageable pageable) {
 
         QPerformance qPerformance = QPerformance.performance;
         JPAQuery<PerformanceResponseDto> query = new JPAQuery<>(entityManager)
@@ -44,7 +43,7 @@ public class PerformanceRepositoryCustomImpl implements PerformanceRepositoryCus
                 .limit(pageable.getPageSize());
 
         long total = query.fetchCount();
-        return new PageImpl<>(query.fetch(), pageable, total);
+        return new RestPage<>(query.fetch(), pageable, total);
     }
 
     // 제목, 캐스팅, 카테고리 검색

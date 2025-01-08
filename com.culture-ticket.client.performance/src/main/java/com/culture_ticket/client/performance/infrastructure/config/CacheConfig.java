@@ -1,8 +1,5 @@
 package com.culture_ticket.client.performance.infrastructure.config;
 
-import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -14,7 +11,7 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
@@ -37,8 +34,8 @@ public class CacheConfig {
     private String redisPassword;
 
     @Bean
-    public Jackson2JsonRedisSerializer<PerformanceResponseDto> jackson2JsonRedisSerializer() {
-        return new Jackson2JsonRedisSerializer<>(PerformanceResponseDto.class);
+    public GenericJackson2JsonRedisSerializer genericJackson2JsonRedisSerializer() {
+        return new GenericJackson2JsonRedisSerializer();
     }
 
     // RedisTemplate을 사용하여 직렬화/역직렬화 설정
@@ -51,11 +48,11 @@ public class CacheConfig {
         template.setKeySerializer(new StringRedisSerializer());
 
         // 값 직렬화: PerformanceResponseDto를 JSON으로 직렬화
-        template.setValueSerializer(jackson2JsonRedisSerializer());
+        template.setValueSerializer(genericJackson2JsonRedisSerializer());
 
         // 해시 키/값 직렬화
         template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(jackson2JsonRedisSerializer());
+        template.setHashValueSerializer(genericJackson2JsonRedisSerializer());
 
         template.afterPropertiesSet();
         return template;
@@ -68,7 +65,7 @@ public class CacheConfig {
         RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(5))  // 캐시 TTL 설정 (5분)
                 .disableCachingNullValues()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(jackson2JsonRedisSerializer()));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(genericJackson2JsonRedisSerializer()));
 
         return RedisCacheManager.builder(redisConnectionFactory())
                 .cacheDefaults(cacheConfig)

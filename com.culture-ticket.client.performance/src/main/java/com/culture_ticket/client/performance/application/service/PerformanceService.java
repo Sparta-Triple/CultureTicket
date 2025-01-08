@@ -1,5 +1,7 @@
 package com.culture_ticket.client.performance.application.service;
 
+
+import com.culture_ticket.client.performance.application.dto.pagination.RestPage;
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceStatusRequestDto;
@@ -11,7 +13,6 @@ import com.culture_ticket.client.performance.domain.model.Performance;
 import com.culture_ticket.client.performance.domain.repository.CategoryRepository;
 import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,10 +52,12 @@ public class PerformanceService {
         return new PerformanceResponseDto(performance);
     }
 
-    // 공연 전체 조회 & 검색 (title)
-    @Cacheable(cacheNames = "performanceAllCache", key = "#condition + '-' + #keyword + '-' + #pageable.pageNumber + '-' + #pageable.pageSize")
+    // 공연 전체 조회 & 검색
+    @Cacheable(cacheNames = "performanceAllCache",
+            key = "#condition != null ? #condition : 'defaultCondition' + '-' + (#keyword != null && #keyword != '' ? #keyword : 'defaultKeyword') + '-' + (#pageable.pageNumber) + '-' + (#pageable.pageSize)"
+    )
     @Transactional(readOnly = true)
-    public Page<PerformanceResponseDto> getPerformances(String condition, String keyword, Pageable pageable) {
+    public RestPage<PerformanceResponseDto> getPerformances(String condition, String keyword, Pageable pageable) {
         return performanceRepository.findPerformanceWithConditions(condition, keyword, pageable);
     }
 
