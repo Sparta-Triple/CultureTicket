@@ -21,17 +21,22 @@ ext {
 	set('springCloudVersion', "2024.0.0")
 }
 
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
 dependencies {
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    // PostgreSQL
+    runtimeOnly 'org.postgresql:postgresql'
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-dependencyManagement {
-	imports {
-		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-	}
 }
 
 tasks.named('test') {
