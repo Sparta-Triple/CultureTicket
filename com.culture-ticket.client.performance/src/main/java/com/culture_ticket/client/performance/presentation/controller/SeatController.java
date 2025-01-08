@@ -34,10 +34,10 @@ public class SeatController {
   public ResponseMessageDto createSeats(
       @RequestHeader(value = "X-User-Role") String role,
       @RequestHeader(value = "X-User-Name") String username,
-      @RequestParam(name = "timeTableId") UUID timeTableId,
+      @RequestParam(name = "timeTableId") List<UUID> timeTableIds,
       @RequestBody List<SeatCreateRequestDto> requestDtos
   ) {
-    seatService.createSeats(username, role, timeTableId, requestDtos);
+    seatService.createSeats(username, role, timeTableIds, requestDtos);
     return new ResponseMessageDto(ResponseStatus.CREATE_SEAT_SUCCESS);
   }
 
