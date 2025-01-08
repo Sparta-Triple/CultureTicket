@@ -1,4 +1,4 @@
-package com.culture_ticket.client.ticket.application.dto;
+package com.culture_ticket.client.ticket.application.dto.request;
 
 import java.util.UUID;
 import lombok.Getter;

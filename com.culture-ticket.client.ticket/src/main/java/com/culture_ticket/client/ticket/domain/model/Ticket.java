@@ -1,6 +1,6 @@
 package com.culture_ticket.client.ticket.domain.model;
 
-import com.culture_ticket.client.ticket.application.dto.TicketRequestDto;
+import com.culture_ticket.client.ticket.application.dto.request.TicketRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
