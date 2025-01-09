@@ -28,7 +28,8 @@ public interface PerformanceClient {
     FeignClientResponseDataDto<TimeTableResponseDto> getTimeTable(@PathVariable UUID timeTableId);
 
     @PatchMapping("/api/v1/seats/status/{seatStatus}")
-    FeignClientResponseMessageDto updateSeatsStatusAvailable(@RequestHeader(value = "X-User-Name") String username,
-        @PathVariable String SeatStatus,
+    FeignClientResponseMessageDto updateSeatsStatusAvailable(
+        @RequestHeader(value = "X-User-Name") String username,
+        @PathVariable String seatStatus,
         @RequestBody List<UUID> seatIds);
 }
