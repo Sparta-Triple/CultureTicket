@@ -13,8 +13,10 @@ import com.culture_ticket.client.reservation_payment.domain.repository.PaymentRe
 import com.culture_ticket.client.reservation_payment.domain.repository.SeatPaymentRepository;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.PerformanceClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.TicketClient;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.KafkaTicketRequestDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.TicketRequestDto;
+import com.culture_ticket.client.reservation_payment.infrastructure.messaging.KafkaTicketMessageProducer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +37,7 @@ public class PaymentService {
     private final PerformanceClient performanceClient;
     private final TicketClient ticketClient;
     private final ReservationService reservationService;
+    private final KafkaTicketMessageProducer kafkaTicketMessageProducer;
 
     @Transactional
     public CreatePaymentResponseDto createPayment(String userId, String username, String role, SeatSelectionRequestDto request) {
@@ -73,7 +76,7 @@ public class PaymentService {
             .collect(Collectors.toList());// 리스트로 수집
         seatPaymentRepository.saveAll(seatPayments);
 
-        // 좌석 예매 불가로 변경
+        // 좌석 예매 불가로 변경 -> kafka 처리 가능
         performanceClient.
             updateSeatsStatusAvailable(username, "UNAVAILABLE", request.getSeatIds());
 
@@ -81,7 +84,7 @@ public class PaymentService {
         UUID reservationId = reservationService.createReservation(
             new ReservationRequestDto(savedPayment.getId(), Long.valueOf(userId)));
 
-        // 티켓 생성
+        // 티켓 생성을 위한 데이터 준비
         UUID performanceId = performanceClient.getTimeTable(
             seats.get(0).getTimeTableId()).getData().getPerfomanceId();
 
@@ -90,14 +93,20 @@ public class PaymentService {
             seatPriceMap.put(seat.getSeatId(), seat.getSeatPrice());
         }
 
+        // 티켓 생성 -> kafka 처리 가능
         for (UUID seatId : seatIds) {
             Long seatPrice = seatPriceMap.get(seatId);
             if (seatPrice == null) {
                 throw new CustomException(ErrorType.NOT_FOUND_SEAT_PRICE);
             }
-            TicketRequestDto ticketRequestDto = TicketRequestDto.
-                of(performanceId, seatId, seatPrice, reservationId);
-            ticketClient.createTicket(userId, username, role, ticketRequestDto);
+            // feign client 활용
+//            TicketRequestDto ticketRequestDto = TicketRequestDto.
+//                of(performanceId, seatId, seatPrice, reservationId);
+//            ticketClient.createTicket(userId, username, role, ticketRequestDto);
+            // kafka 활용
+            KafkaTicketRequestDto kafkaTicketRequestDto = KafkaTicketRequestDto.
+                of(performanceId, seatId, seatPrice, reservationId, userId, username, role);
+            kafkaTicketMessageProducer.ticketSend("ticket-topic", kafkaTicketRequestDto);
         }
 
         return new CreatePaymentResponseDto(totalPrice);

@@ -26,7 +26,7 @@ public class Category extends BaseEntity {
     @Column(name = "category_name", nullable = false)
     private String name;
 
-
+    @Builder.Default
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Performance> performances = new ArrayList<>();
 

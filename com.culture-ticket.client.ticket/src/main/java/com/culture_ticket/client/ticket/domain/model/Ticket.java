@@ -58,6 +58,16 @@ public class Ticket extends BaseEntity {
             .build();
     }
 
+    public static Ticket of(String userId, UUID performanceId, UUID seatId, Long ticketPrice, UUID reservationId) {
+        return builder()
+            .userId(Long.parseLong(userId))
+            .performanceId(performanceId)
+            .seatId(seatId)
+            .ticketPrice(ticketPrice)
+            .reservationId(reservationId)
+            .build();
+    }
+
     public void deleted(String username) {
         softDeletedBy(username);
     }

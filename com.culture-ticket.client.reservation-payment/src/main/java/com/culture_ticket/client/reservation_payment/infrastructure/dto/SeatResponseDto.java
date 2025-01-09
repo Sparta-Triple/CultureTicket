@@ -13,15 +13,15 @@ public class SeatResponseDto {
     Long seatPrice;
     String seatStatus;
 
-    @Builder
-    private SeatResponseDto(UUID seatId, UUID timeTableId, String seatClass, Integer seatNumber, long price, String seatStatus) {
-        this.seatId = seatId;
-        this.timeTableId = timeTableId;
-        this.seatClass = seatClass;
-        this.seatNumber = seatNumber;
-        this.seatPrice = price;
-        this.seatStatus = seatStatus;
-    }
+//    @Builder
+//    private SeatResponseDto(UUID seatId, UUID timeTableId, String seatClass, Integer seatNumber, long price, String seatStatus) {
+//        this.seatId = seatId;
+//        this.timeTableId = timeTableId;
+//        this.seatClass = seatClass;
+//        this.seatNumber = seatNumber;
+//        this.seatPrice = price;
+//        this.seatStatus = seatStatus;
+//    }
 //
 //    public static SeatResponseDto from(SeatResponseDto seat) {
 //        return builder()
