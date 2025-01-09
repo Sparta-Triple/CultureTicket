@@ -13,9 +13,11 @@ import jakarta.persistence.Table;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
 @Table(name = "p_reservation")
 public class Reservation extends BaseEntity {
@@ -42,4 +44,7 @@ public class Reservation extends BaseEntity {
         this.reservationStatus = ReservationStatus.CONFIRMED;
     }
 
+    public void deleted(String username) {
+        this.softDeletedBy(username);
+    }
 }

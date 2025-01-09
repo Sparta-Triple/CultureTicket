@@ -39,6 +39,7 @@ public enum ResponseStatus {
 
     // timetable
     CREATE_TIME_TABLE_SUCCESS(HttpStatus.OK, "타임테이블 생성에 성공하였습니다."),
+    GET_TIME_TABLE_SUCCESS(HttpStatus.OK, "타임 테이블 조회에 성공했습니다."),
     SEARCH_TIME_TABLE_SUCCESS(HttpStatus.OK, "타임테이블 검색에 성공했습니다."),
     UPDATE_TIMETABLE_STATUS_SUCCESS(HttpStatus.OK, "타임테이블 상태 변경에 성공했습니다."),
     DELETE_TIMETABLE_SUCCESS(HttpStatus.OK, "타임테이블 삭제에 성공했습니다."),

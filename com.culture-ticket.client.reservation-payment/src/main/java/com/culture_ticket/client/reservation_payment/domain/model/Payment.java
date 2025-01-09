@@ -43,4 +43,8 @@ public class Payment extends BaseEntity {
         this.userId = userId;
         this.totalPrice = totalPrice;
     }
+
+    public void deleted(String username) {
+        this.softDeletedBy(username);
+    }
 }

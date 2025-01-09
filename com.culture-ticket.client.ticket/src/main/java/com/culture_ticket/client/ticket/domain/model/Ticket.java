@@ -61,4 +61,8 @@ public class Ticket extends BaseEntity {
     public void deleted(String username) {
         softDeletedBy(username);
     }
+
+    public void created(String username) {
+        createdBy(username);
+    }
 }

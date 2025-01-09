@@ -14,22 +14,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/payment")
+@RequestMapping("/api/v1/payments")
 public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseDataDto<CreatePaymentResponseDto> createPayment(
-        @Valid @RequestBody SeatSelectionRequestDto request) { //TODO 헤더 데이터 추가
+        @RequestHeader(value = "X-User-Id") String userId,
+        @RequestHeader(value = "X-User-Name", required = true) String username,
+        @RequestHeader(value = "X-User-Role", required = true) String role,
+        @Valid @RequestBody SeatSelectionRequestDto request) {
         return new ResponseDataDto<>(ResponseStatus.PAYMENT_SUCCESS,
-            paymentService.createPayment(1L, request));
+            paymentService.createPayment(userId, username, role, request));
     }
 
     @GetMapping("")

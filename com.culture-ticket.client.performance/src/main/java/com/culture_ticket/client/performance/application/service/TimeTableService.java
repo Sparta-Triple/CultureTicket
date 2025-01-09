@@ -11,6 +11,7 @@ import com.culture_ticket.client.performance.domain.model.TimeTable;
 import com.culture_ticket.client.performance.domain.model.TimeTableStatus;
 import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
 import com.culture_ticket.client.performance.domain.repository.TimeTableRepository;
+import com.culture_ticket.client.performance.presentation.controller.TimeTableInfoResponseDto;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,13 @@ public class TimeTableService {
     timeTableRepository.saveAll(timeTables);
     return timeTables.stream().map(TimeTable::getId).toList();
   }
+
+    public TimeTableInfoResponseDto getTimeTable(UUID timeTableId) {
+      TimeTable timeTable = timeTableRepository.findById(timeTableId).orElseThrow(() ->
+          new CustomException(ErrorType.TIMETABLE_NOT_FOUND));
+
+        return new TimeTableInfoResponseDto(timeTable);
+    }
 
   public List<TimeTableSearchResponseDto> searchTimeTables(TimeTableSearchRequestDto requestDto) {
     return timeTableRepository.searchTimeTable(requestDto);
