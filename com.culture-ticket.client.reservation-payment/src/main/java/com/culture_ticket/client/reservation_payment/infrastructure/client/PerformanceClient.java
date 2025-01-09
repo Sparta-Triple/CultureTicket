@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface PerformanceClient {
 
     @GetMapping("/api/v1/performances/info/{performanceId}")
-    FeignClientResponseDataDto<PerformanceResponseDto> getPerfomance(@PathVariable UUID performanceId);
+    FeignClientResponseDataDto<PerformanceResponseDto> getPerformance(@PathVariable UUID performanceId);
 
     @GetMapping("/api/v1/seats/{seatId}")
     FeignClientResponseDataDto<SeatResponseDto> getSeat(@PathVariable UUID seatId);
