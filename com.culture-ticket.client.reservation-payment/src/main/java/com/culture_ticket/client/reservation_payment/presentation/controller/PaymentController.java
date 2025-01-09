@@ -33,7 +33,7 @@ public class PaymentController {
         @RequestHeader(value = "X-User-Role", required = true) String role,
         @Valid @RequestBody SeatSelectionRequestDto request) {
         return new ResponseDataDto<>(ResponseStatus.PAYMENT_SUCCESS,
-            paymentService.createPayment(userId, request));
+            paymentService.createPayment(userId, username, role, request));
     }
 
     @GetMapping("")

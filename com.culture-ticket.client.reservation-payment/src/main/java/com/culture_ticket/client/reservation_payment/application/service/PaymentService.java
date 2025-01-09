@@ -6,12 +6,15 @@ import com.culture_ticket.client.reservation_payment.application.dto.responseDto
 import com.culture_ticket.client.reservation_payment.application.dto.responseDto.PaymentResponseDto;
 import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
+import com.culture_ticket.client.reservation_payment.common.util.RoleValidator;
 import com.culture_ticket.client.reservation_payment.domain.model.Payment;
 import com.culture_ticket.client.reservation_payment.domain.model.SeatPayment;
 import com.culture_ticket.client.reservation_payment.domain.repository.PaymentRepository;
 import com.culture_ticket.client.reservation_payment.domain.repository.SeatPaymentRepository;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.PerformanceClient;
+import com.culture_ticket.client.reservation_payment.infrastructure.client.TicketClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.TicketRequestDto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -28,10 +31,12 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final SeatPaymentRepository seatPaymentRepository;
     private final PerformanceClient performanceClient;
+    private final TicketClient ticketClient;
     private final ReservationService reservationService;
 
     @Transactional
-    public CreatePaymentResponseDto createPayment(String userId, SeatSelectionRequestDto request) {
+    public CreatePaymentResponseDto createPayment(String userId, String username, String role, SeatSelectionRequestDto request) {
+        RoleValidator.validateIsUser(role);
         // 좌석 유효성 검사
         // 타임 테이블을 통해서 좌석 데이터를 아예 가져와서 좌석 상태랑 존재 여부 확인 ?
 
@@ -65,10 +70,21 @@ public class PaymentService {
             .collect(Collectors.toList());// 리스트로 수집
         seatPaymentRepository.saveAll(seatPayments);
 
-        // TODO: feign client로 좌석 예매 불가로 변경
+        // 좌석 예매 불가로 변경
+        performanceClient.
+            updateSeatsStatusAvailable(username, "UNAVAILABLE", request.getSeatIds());
 
         // 예매 생성
-        reservationService.createReservation(new ReservationRequestDto(savedPayment.getId(), Long.valueOf(userId)));
+        reservationService.createReservation(
+            new ReservationRequestDto(savedPayment.getId(), Long.valueOf(userId)));
+
+        // 티켓 생성
+        UUID performanceId = performanceClient.getTimeTable(
+            seats.get(0).getTimeTableId()).getData().getPerfomanceId();
+        TicketRequestDto ticketRequestDto = TicketRequestDto.
+            of(Long.parseLong(userId), performanceId, seatIds, totalPrice);
+        ticketClient.createTicket(username, role, ticketRequestDto);
+
         return new CreatePaymentResponseDto(totalPrice);
     }
 

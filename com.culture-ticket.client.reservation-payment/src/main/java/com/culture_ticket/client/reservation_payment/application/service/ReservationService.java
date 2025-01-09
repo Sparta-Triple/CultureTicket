@@ -53,7 +53,6 @@ public class ReservationService {
             .payment(payment)
             .build();
         reservationRepository.save(reservation);
-        //TODO 예매를 생성한 뒤 좌석 상태 비활성화 처리
     }
 
     /**
