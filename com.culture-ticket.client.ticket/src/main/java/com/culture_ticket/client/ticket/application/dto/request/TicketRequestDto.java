@@ -8,6 +8,7 @@ import lombok.Getter;
 public class TicketRequestDto {
 
     private UUID performanceId;
-    private List<UUID> seatIds;
+    private UUID seatId;
     private Long ticketPrice;
+    private UUID reservationId;
 }

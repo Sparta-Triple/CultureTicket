@@ -7,6 +7,7 @@ import com.culture_ticket.client.ticket.common.ErrorType;
 import com.culture_ticket.client.ticket.common.util.RoleValidator;
 import com.culture_ticket.client.ticket.domain.model.Ticket;
 import com.culture_ticket.client.ticket.domain.repository.TicketRepository;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -74,15 +75,20 @@ public class TicketService {
      *
      * @param username
      * @param role
-     * @param ticketId
+     * @param reservationId
      */
     @Transactional
-    public void deleteTicket(String username, String role, UUID ticketId) {
+    public void deleteTicket(String username, String role, UUID reservationId) {
         RoleValidator.validateIsAdminOrUser(role);
 
-        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow(() ->
-            new CustomException(ErrorType.NOT_FOUND_TICKET));
+        List<Ticket> tickets = ticketRepository.findAllByReservationId(reservationId);
 
-        ticket.deleted(username);
+        if(tickets.isEmpty()) {
+            throw new CustomException(ErrorType.NOT_FOUND_TICKET);
+        }
+
+        for (Ticket ticket : tickets) {
+            ticket.deleted(username);
+        }
     }
 }
