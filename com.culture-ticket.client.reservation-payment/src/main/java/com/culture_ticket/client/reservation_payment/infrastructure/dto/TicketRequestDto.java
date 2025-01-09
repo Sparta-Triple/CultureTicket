@@ -10,26 +10,28 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TicketRequestDto {
-    private Long userId;
+
     private UUID performanceId;
-    private List<UUID> seatId;
+    private UUID seatId;
     private Long ticketPrice;
+    private UUID reservationId;
 
     @Builder
-    private TicketRequestDto(Long userId, UUID performanceId, List<UUID> seatId, Long ticketPrice) {
-        this.userId = userId;
+    private TicketRequestDto(UUID performanceId, UUID seatId, Long ticketPrice,
+        UUID reservationId) {
         this.performanceId = performanceId;
         this.seatId = seatId;
         this.ticketPrice = ticketPrice;
+        this.reservationId = reservationId;
     }
 
-    public static TicketRequestDto of(Long userId, UUID performanceId, List<UUID> seatId,
-        Long ticketPrice) {
+    public static TicketRequestDto of(UUID performanceId, UUID seatId, Long ticketPrice,
+        UUID reservationId) {
         return builder()
-            .userId(userId)
             .performanceId(performanceId)
             .seatId(seatId)
             .ticketPrice(ticketPrice)
+            .reservationId(reservationId)
             .build();
     }
 }

@@ -16,7 +16,9 @@ import com.culture_ticket.client.reservation_payment.infrastructure.client.Ticke
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.TicketRequestDto;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -75,15 +77,27 @@ public class PaymentService {
             updateSeatsStatusAvailable(username, "UNAVAILABLE", request.getSeatIds());
 
         // 예매 생성
-        reservationService.createReservation(
+        UUID reservationId = reservationService.createReservation(
             new ReservationRequestDto(savedPayment.getId(), Long.valueOf(userId)));
 
         // 티켓 생성
         UUID performanceId = performanceClient.getTimeTable(
             seats.get(0).getTimeTableId()).getData().getPerfomanceId();
-        TicketRequestDto ticketRequestDto = TicketRequestDto.
-            of(Long.parseLong(userId), performanceId, seatIds, totalPrice);
-        ticketClient.createTicket(username, role, ticketRequestDto);
+
+        Map<UUID, Long> seatPriceMap = new HashMap<>();
+        for (SeatResponseDto seat : seats) {
+            seatPriceMap.put(seat.getSeatId(), seat.getPrice());
+        }
+
+        for (UUID seatId : seatIds) {
+            Long seatPrice = seatPriceMap.get(seatId);
+            if (seatPrice == null) {
+                throw new CustomException(ErrorType.NOT_FOUND_SEAT_PRICE);
+            }
+            TicketRequestDto ticketRequestDto = TicketRequestDto.
+                of(performanceId, seatId, seatPrice, reservationId);
+            ticketClient.createTicket(userId, username, role, ticketRequestDto);
+        }
 
         return new CreatePaymentResponseDto(totalPrice);
     }

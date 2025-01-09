@@ -43,7 +43,7 @@ public class ReservationService {
      *
      * @param request
      */
-    public void createReservation(ReservationRequestDto request) {
+    public UUID createReservation(ReservationRequestDto request) {
 
         Payment payment = paymentRepository.findById(request.getPaymentId())
             .orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_PAYMENT));
@@ -52,7 +52,9 @@ public class ReservationService {
             .userId(request.getUserId())
             .payment(payment)
             .build();
-        reservationRepository.save(reservation);
+        Reservation saveReservation = reservationRepository.save(reservation);
+
+        return saveReservation.getId();
     }
 
     /**

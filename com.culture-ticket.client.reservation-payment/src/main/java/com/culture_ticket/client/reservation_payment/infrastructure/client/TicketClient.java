@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface TicketClient {
 
     @PostMapping("/api/v1/tickets")
-    FeignClientResponseMessageDto createTicket(@RequestHeader("X-User-Name") String username,
+    FeignClientResponseMessageDto createTicket(
+        @RequestHeader("X-User-Id") String userId,
+        @RequestHeader("X-User-Name") String username,
         @RequestHeader("X-User-Role") String role,
         @RequestBody TicketRequestDto request);
 
