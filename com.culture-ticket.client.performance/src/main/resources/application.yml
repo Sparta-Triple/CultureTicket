@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/performance}
-    username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:1234}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   data:
     redis:
@@ -27,6 +27,19 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:19090/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    #      include: "health", "metrics"  # health와 metrics 엔드포인트 노출
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    enable:
+      all: true  # 모든 메트릭 수집 허용
 
 server:
   port: 19093
