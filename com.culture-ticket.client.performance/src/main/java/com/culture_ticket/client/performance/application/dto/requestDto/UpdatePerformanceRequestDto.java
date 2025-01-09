@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class UpdatePerformanceRequestDto {
     private String category;
     private String title;
-    private String content;
+    private String description;
     private String venue;
     private String casting;
     private PerformanceStatusEnum PerformanceStatus;
