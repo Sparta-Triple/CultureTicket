@@ -10,27 +10,27 @@ public class SeatResponseDto {
     UUID timeTableId;
     String seatClass;
     Integer seatNumber;
-    long price;
+    Long seatPrice;
     String seatStatus;
 
     @Builder
-    public SeatResponseDto(UUID seatId, UUID timeTableId, String seatClass, Integer seatNumber, long price, String seatStatus) {
+    private SeatResponseDto(UUID seatId, UUID timeTableId, String seatClass, Integer seatNumber, long price, String seatStatus) {
         this.seatId = seatId;
         this.timeTableId = timeTableId;
         this.seatClass = seatClass;
         this.seatNumber = seatNumber;
-        this.price = price;
+        this.seatPrice = price;
         this.seatStatus = seatStatus;
     }
-
-    public static SeatResponseDto from(SeatResponseDto seat) {
-        return builder()
-            .seatId(seat.getSeatId())
-            .timeTableId(seat.getTimeTableId())
-            .seatClass(seat.getSeatClass())
-            .seatNumber(seat.getSeatNumber())
-            .price(seat.getPrice())
-            .seatStatus(seat.getSeatStatus())
-            .build();
-    }
+//
+//    public static SeatResponseDto from(SeatResponseDto seat) {
+//        return builder()
+//            .seatId(seat.getSeatId())
+//            .timeTableId(seat.getTimeTable())
+//            .seatClass(seat.getSeatClass())
+//            .seatNumber(seat.getSeatNumber())
+//            .price(seat.getSeatPrice())
+//            .seatStatus(seat.getSeatStatus())
+//            .build();
+//    }
 }

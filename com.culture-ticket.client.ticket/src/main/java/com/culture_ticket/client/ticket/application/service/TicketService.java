@@ -33,7 +33,7 @@ public class TicketService {
         RoleValidator.validateIsUser(role);
 
         Ticket ticket = Ticket.of(userId, request);
-        ticket.setCreatedBy(username);
+        ticket.created(username);
         ticketRepository.save(ticket);
     }
 

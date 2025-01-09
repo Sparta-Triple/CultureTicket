@@ -7,6 +7,7 @@ import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResp
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.TimeTableResponseDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.UserResponseDto;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -30,8 +31,8 @@ public class ReservationResponseDto {
     private String venue;
     private String performanceStatus;
     private LocalDate performanceDate;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private List<SeatInfo> seats;
     private LocalDateTime createdAt;
 
@@ -39,7 +40,7 @@ public class ReservationResponseDto {
     private ReservationResponseDto(UUID reservationId, LocalDateTime reservationDate,
         ReservationStatus reservationStatus, String username, String nickname, String phone,
         String title, String venue, String performanceStatus, LocalDate performanceDate,
-        LocalDateTime startTime, LocalDateTime endTime, List<SeatInfo> seats, LocalDateTime createdAt) {
+        LocalTime startTime, LocalTime endTime, List<SeatInfo> seats, LocalDateTime createdAt) {
         this.reservationId = reservationId;
         this.reservationDate = reservationDate;
         this.reservationStatus = reservationStatus;
@@ -96,7 +97,7 @@ public class ReservationResponseDto {
         }
 
         public static SeatInfo from(SeatResponseDto seat) {
-            return new SeatInfo(seat.getSeatNumber(), seat.getSeatClass(), seat.getPrice());
+            return new SeatInfo(seat.getSeatNumber(), seat.getSeatClass(), seat.getSeatPrice());
         }
     }
 }

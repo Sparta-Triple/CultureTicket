@@ -190,6 +190,12 @@ public class ReservationService {
         }
 
         // TODO: 좌석 상태 예매가능으로 변경(feign client 사용 -> kafka 사용)
+        // 좌석 예매 가능으로 변경
+        List<UUID> seatIds = reservation.getPayment().getSeatPayments().stream().map(seatPayment ->
+            seatPayment.getSeatId()).toList();
+        performanceClient.
+            updateSeatsStatusAvailable(username, "AVAILABLE", seatIds);
+
 
         // 좌석 결제 삭제
         reservation.getPayment().getSeatPayments().stream().forEach(seatPayment -> {
@@ -243,8 +249,8 @@ public class ReservationService {
         // 좌석 정보 가져오기
         List<SeatResponseDto> seats = seatPayments.stream()
             .map(seatPayment -> {
-                SeatResponseDto seat = performanceClient.getSeat(seatPayment.getSeatId()).getData();
-                return SeatResponseDto.from(seat);
+                return performanceClient.getSeat(seatPayment.getSeatId()).getData();
+                // SeatResponseDto.from(seat);
             })
             .collect(Collectors.toList());
 

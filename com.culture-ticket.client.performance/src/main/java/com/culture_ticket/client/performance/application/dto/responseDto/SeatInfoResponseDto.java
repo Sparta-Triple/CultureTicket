@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class SeatInfoResponseDto {
 
   private UUID seatId;
+  private UUID timeTableId;
   private String seatClass;
   private Integer seatNumber;
   private Long seatPrice;
@@ -18,6 +19,7 @@ public class SeatInfoResponseDto {
 
   public SeatInfoResponseDto(Seat seat){
     this.seatId = seat.getId();
+    this.timeTableId = seat.getTimeTable().getId();
     this.seatClass = seat.getSeatClass();
     this.seatNumber = seat.getSeatNumber();
     this.seatPrice = seat.getSeatPrice();

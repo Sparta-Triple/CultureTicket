@@ -45,6 +45,7 @@ public class PaymentService {
         List<UUID> seatIds = request.getSeatIds();
         List<SeatResponseDto> seats = new ArrayList<>();
 
+        // TODO: 좌석 상태 확인 후 예매 불가 시 에러 추가
         for (UUID seatId : seatIds) {
             SeatResponseDto seat = performanceClient.getSeat(seatId).getData();
             if (seat == null) {
@@ -55,7 +56,7 @@ public class PaymentService {
 
         // 좌석 금액 가져오기
         Long totalPrice = seats.stream()
-            .mapToLong(SeatResponseDto::getPrice)
+            .mapToLong(SeatResponseDto::getSeatPrice)
             .sum();
 
         // 결제 생성
@@ -86,7 +87,7 @@ public class PaymentService {
 
         Map<UUID, Long> seatPriceMap = new HashMap<>();
         for (SeatResponseDto seat : seats) {
-            seatPriceMap.put(seat.getSeatId(), seat.getPrice());
+            seatPriceMap.put(seat.getSeatId(), seat.getSeatPrice());
         }
 
         for (UUID seatId : seatIds) {

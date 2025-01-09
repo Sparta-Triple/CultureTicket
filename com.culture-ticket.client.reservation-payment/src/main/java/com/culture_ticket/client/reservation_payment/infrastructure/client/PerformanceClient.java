@@ -12,13 +12,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(name = "performance-service")
 public interface PerformanceClient {
 
-    @GetMapping("/api/v1/performances/{performanceId}")
+    @GetMapping("/api/v1/performances/info/{performanceId}")
     FeignClientResponseDataDto<PerformanceResponseDto> getPerfomance(@PathVariable UUID performanceId);
 
     @GetMapping("/api/v1/seats/{seatId}")
@@ -27,7 +28,7 @@ public interface PerformanceClient {
     @GetMapping("/api/v1/timetables/{timeTableId}")
     FeignClientResponseDataDto<TimeTableResponseDto> getTimeTable(@PathVariable UUID timeTableId);
 
-    @PatchMapping("/api/v1/seats/status/{seatStatus}")
+    @PutMapping("/api/v1/seats/status/{seatStatus}")
     FeignClientResponseMessageDto updateSeatsStatusAvailable(
         @RequestHeader(value = "X-User-Name") String username,
         @PathVariable String seatStatus,

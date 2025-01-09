@@ -2,6 +2,7 @@ package com.culture_ticket.client.reservation_payment.infrastructure.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.UUID;
 import lombok.Getter;
 
@@ -9,6 +10,6 @@ import lombok.Getter;
 public class TimeTableResponseDto {
     UUID perfomanceId;
     LocalDate date;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
+    LocalTime startTime;
+    LocalTime endTime;
 }
