@@ -7,6 +7,7 @@ import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
 import com.culture_ticket.client.reservation_payment.common.util.RoleValidator;
 import com.culture_ticket.client.reservation_payment.domain.model.Payment;
+import com.culture_ticket.client.reservation_payment.infrastructure.client.TicketClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.PerformanceResponseDto;
 import com.culture_ticket.client.reservation_payment.domain.model.Reservation;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
@@ -37,6 +38,7 @@ public class ReservationService {
     private final PaymentRepository paymentRepository;
     private final UserClient userClient;
     private final PerformanceClient performanceClient;
+    private final TicketClient ticketClient;
 
     /**
      * 예약 생성
@@ -205,6 +207,9 @@ public class ReservationService {
         Long refundPrice = payment.getTotalPrice();
 
         payment.deleted(username);
+
+        // 티켓 삭제
+        ticketClient.deleteTicket(username, role, reservationId);
 
         // 예약 삭제
         reservation.deleted(username);
