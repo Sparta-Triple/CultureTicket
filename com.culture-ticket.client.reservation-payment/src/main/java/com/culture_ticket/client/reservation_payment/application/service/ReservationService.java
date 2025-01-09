@@ -241,7 +241,7 @@ public class ReservationService {
     // feign client로 ResponseDto에 필요한 데이터 가져옴
     private ReservationResponseDto getReservationResponseDto(Reservation reservation) {
         Long userId = reservation.getUserId();
-        UserResponseDto user = userClient.getUser(userId).getData();
+        UserResponseDto user = userClient.getUserInfo(userId).getData();
 
         // seatPayment 정보 가져오기
         List<SeatPayment> seatPayments = reservation.getPayment().getSeatPayments();
@@ -260,7 +260,7 @@ public class ReservationService {
         if (!seats.isEmpty()) {
             UUID timeTableId = seats.get(0).getTimeTableId();
             timeTable = performanceClient.getTimeTable(timeTableId).getData();
-            performance = performanceClient.getPerfomance(timeTable.getPerfomanceId()).getData();
+            performance = performanceClient.getPerformance(timeTable.getPerfomanceId()).getData();
         }
 
         return ReservationResponseDto.of(reservation, user, seats, performance, timeTable);

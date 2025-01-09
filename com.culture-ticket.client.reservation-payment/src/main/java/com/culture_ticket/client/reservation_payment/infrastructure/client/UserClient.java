@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.RequestHeader;
 public interface UserClient {
 
     @GetMapping("/api/v1/users/info/{userId}")
-    FeignClientResponseDataDto<UserResponseDto> getUser(@PathVariable Long userId);
+    FeignClientResponseDataDto<UserResponseDto> getUserInfo(@PathVariable Long userId);
 }
