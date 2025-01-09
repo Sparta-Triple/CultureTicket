@@ -37,11 +37,12 @@ public class TicketController {
      */
     @PostMapping
     public ResponseEntity<ResponseMessageDto> createTicket(
+        @RequestHeader("X-User-Id") String userId,
         @RequestHeader("X-User-Name") String username,
         @RequestHeader("X-User-Role") String role,
         @RequestBody TicketRequestDto request) {
 
-        ticketService.createTicket(username, role, request);
+        ticketService.createTicket(userId, username, role, request);
 
         return ResponseEntity.ok(new ResponseMessageDto(ResponseStatus.CREATE_TICKET_SUCCESS));
     }

@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,25 +30,25 @@ public class Ticket extends BaseEntity{
     @Column(name = "performance_id", nullable = false)
     private UUID performanceId;
 
-    @Column(name = "seat_id", nullable = false)
-    private UUID seatId;
+    @Column(name = "seat_ids", nullable = false)
+    private List<UUID> seatIds;
 
     @Column(name = "ticket_price", nullable = false)
     private Long ticketPrice;
 
     @Builder
-    private Ticket(Long userId, UUID performanceId, UUID seatId, Long ticketPrice) {
+    private Ticket(Long userId, UUID performanceId, List<UUID> seatIds, Long ticketPrice) {
         this.userId = userId;
         this.performanceId = performanceId;
-        this.seatId = seatId;
+        this.seatIds = seatIds;
         this.ticketPrice = ticketPrice;
     }
 
-    public static Ticket from(TicketRequestDto requestDto) {
+    public static Ticket of(String userId, TicketRequestDto requestDto) {
         return builder()
-            .userId(requestDto.getUserId())
+            .userId(Long.parseLong(userId))
             .performanceId(requestDto.getPerformanceId())
-            .seatId(requestDto.getSeatId())
+            .seatIds(requestDto.getSeatIds())
             .ticketPrice(requestDto.getTicketPrice())
             .build();
     }

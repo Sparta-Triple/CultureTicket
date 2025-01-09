@@ -28,10 +28,10 @@ public class TicketService {
      * @param request
      */
     @Transactional
-    public void createTicket(String username, String role, TicketRequestDto request) {
+    public void createTicket(String userId, String username, String role, TicketRequestDto request) {
         RoleValidator.validateIsUser(role);
 
-        Ticket ticket = Ticket.from(request);
+        Ticket ticket = Ticket.of(userId, request);
         ticket.setCreatedBy(username);
         ticketRepository.save(ticket);
     }
