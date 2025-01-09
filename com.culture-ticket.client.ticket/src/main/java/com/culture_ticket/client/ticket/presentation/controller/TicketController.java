@@ -88,16 +88,16 @@ public class TicketController {
      *
      * @param username
      * @param role
-     * @param ticketId
+     * @param reservationId
      * @return
      */
-    @DeleteMapping("/{ticketId}")
+    @DeleteMapping("/reservation/{reservationId}")
     public ResponseEntity<ResponseMessageDto> deleteTicket(
         @RequestHeader("X-User-Name") String username,
         @RequestHeader("X-User-Role") String role,
-        @PathVariable UUID ticketId
+        @PathVariable UUID reservationId
     ) {
-        ticketService.deleteTicket(username, role, ticketId);
+        ticketService.deleteTicket(username, role, reservationId);
 
         return ResponseEntity.ok(new ResponseMessageDto(ResponseStatus.DELETE_TICKET_SUCCESS));
     }
