@@ -30,26 +30,31 @@ public class Ticket extends BaseEntity{
     @Column(name = "performance_id", nullable = false)
     private UUID performanceId;
 
-    @Column(name = "seat_ids", nullable = false)
-    private List<UUID> seatIds;
+    @Column(name = "seat_id", nullable = false)
+    private UUID seatId;
 
     @Column(name = "ticket_price", nullable = false)
     private Long ticketPrice;
 
+    @Column(name = "reservation_id", nullable = false)
+    private UUID reservationId;
+
     @Builder
-    private Ticket(Long userId, UUID performanceId, List<UUID> seatIds, Long ticketPrice) {
+    private Ticket(Long userId, UUID performanceId, UUID seatId, Long ticketPrice, UUID reservationId) {
         this.userId = userId;
         this.performanceId = performanceId;
-        this.seatIds = seatIds;
+        this.seatId = seatId;
         this.ticketPrice = ticketPrice;
+        this.reservationId = reservationId;
     }
 
     public static Ticket of(String userId, TicketRequestDto requestDto) {
         return builder()
             .userId(Long.parseLong(userId))
             .performanceId(requestDto.getPerformanceId())
-            .seatIds(requestDto.getSeatIds())
+            .seatId(requestDto.getSeatId())
             .ticketPrice(requestDto.getTicketPrice())
+            .reservationId(requestDto.getReservationId())
             .build();
     }
 
