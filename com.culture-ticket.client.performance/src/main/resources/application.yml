@@ -7,12 +7,12 @@ spring:
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:1234}
     driver-class-name: org.postgresql.Driver
-#  data:
-#    redis:
-#      host: ${REDIS_HOST}
-#      port: ${REDIS_PORT}
-#      username: ${REDIS_USERNAME}
-#      password: ${REDIS_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect

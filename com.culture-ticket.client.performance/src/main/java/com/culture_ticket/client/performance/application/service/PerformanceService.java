@@ -1,5 +1,7 @@
 package com.culture_ticket.client.performance.application.service;
 
+
+import com.culture_ticket.client.performance.application.dto.pagination.RestPage;
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceStatusRequestDto;
@@ -10,7 +12,7 @@ import com.culture_ticket.client.performance.domain.model.Category;
 import com.culture_ticket.client.performance.domain.model.Performance;
 import com.culture_ticket.client.performance.domain.repository.CategoryRepository;
 import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
-import org.springframework.data.domain.Page;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,10 +30,9 @@ public class PerformanceService {
         this.categoryRepository = categoryRepository;
     }
 
-
     // 공연 생성
     @Transactional
-    public void createPerformance(String role, String username, PerformanceCreateRequestDto performanceCreateRequestDto) {
+    public UUID createPerformance(String username, String role, PerformanceCreateRequestDto performanceCreateRequestDto) {
         validateRoleADMIN(role);
         checkDuplicateTitle(performanceCreateRequestDto.getTitle());
 
@@ -41,18 +42,25 @@ public class PerformanceService {
         Performance performance = Performance.createPerformance(performanceCreateRequestDto, category);
         performance.setCreatedBy(username);
         performanceRepository.save(performance);
+        return performance.getId();
     }
 
-    // 공연 단일 조회
+    // 공연 단건 조회
+    @Cacheable(cacheNames = "performanceCache", key = "#performanceId")
     @Transactional(readOnly = true)
     public PerformanceResponseDto getPerformance(UUID performanceId) {
         Performance performance = findPerformanceById(performanceId);
         return new PerformanceResponseDto(performance);
     }
 
-    // 공연 전체 조회 & 검색 (title)
+    // 공연 전체 조회 & 검색
+    @Cacheable(cacheNames = "performanceAllCache",
+            key = "(#condition != null ? #condition : 'defaultCondition') + '-' + " +
+                    "(#keyword != null && #keyword != '' ? #keyword : 'defaultKeyword') + '-' + " +
+                    "(#pageable.pageNumber + '-' + #pageable.pageSize)"
+    )
     @Transactional(readOnly = true)
-    public Page<PerformanceResponseDto> getPerformances(String condition, String keyword, Pageable pageable) {
+    public RestPage<PerformanceResponseDto> getPerformances(String condition, String keyword, Pageable pageable) {
         return performanceRepository.findPerformanceWithConditions(condition, keyword, pageable);
     }
 

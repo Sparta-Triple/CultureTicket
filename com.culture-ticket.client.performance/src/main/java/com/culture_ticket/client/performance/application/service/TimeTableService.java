@@ -6,6 +6,7 @@ import com.culture_ticket.client.performance.application.dto.responseDto.TimeTab
 import com.culture_ticket.client.performance.common.CustomException;
 import com.culture_ticket.client.performance.common.ErrorType;
 import com.culture_ticket.client.performance.common.util.RoleValidator;
+import com.culture_ticket.client.performance.domain.model.Performance;
 import com.culture_ticket.client.performance.domain.model.TimeTable;
 import com.culture_ticket.client.performance.domain.model.TimeTableStatus;
 import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
@@ -24,12 +25,14 @@ public class TimeTableService {
   private final TimeTableRepository timeTableRepository;
   private final PerformanceRepository performanceRepository;
 
-  public void createTimeTable(TimeTableCreateRequestDto requestDto, String username, String role) {
+  public List<UUID> createTimeTable(String username, String role, UUID performanceId, List<TimeTableCreateRequestDto> requestDtos) {
     RoleValidator.validateIsAdmin(role);
-    performanceRepository.findById(requestDto.getPerformanceId()).orElseThrow(
+    Performance performance = performanceRepository.findById(performanceId).orElseThrow(
         () -> new CustomException(ErrorType.PERFORMANCE_NOT_FOUND)
     );
-    timeTableRepository.save(TimeTable.of(requestDto, username));
+    List<TimeTable> timeTables = TimeTable.of(username, performance, requestDtos);
+    timeTableRepository.saveAll(timeTables);
+    return timeTables.stream().map(TimeTable::getId).toList();
   }
 
   public List<TimeTableSearchResponseDto> searchTimeTables(TimeTableSearchRequestDto requestDto) {

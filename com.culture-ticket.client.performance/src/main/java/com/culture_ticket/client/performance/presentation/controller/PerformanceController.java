@@ -1,57 +1,68 @@
 package com.culture_ticket.client.performance.presentation.controller;
 
 
+import com.culture_ticket.client.performance.application.dto.pagination.RestPage;
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
+import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceDomainCreateRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceStatusRequestDto;
 import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
 import com.culture_ticket.client.performance.application.service.PerformanceService;
-import com.culture_ticket.client.performance.application.service.TimeTableService;
 import com.culture_ticket.client.performance.common.ResponseDataDto;
 import com.culture_ticket.client.performance.common.ResponseMessageDto;
 import com.culture_ticket.client.performance.common.ResponseStatus;
+import com.culture_ticket.client.performance.domain.service.PerformanceDomainService;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/performances")
 public class PerformanceController {
 
-    private final PerformanceService performanceService;
-    private final TimeTableService timeTableService;
+  private final PerformanceService performanceService;
+  private final PerformanceDomainService performanceDomainService;
 
-    // 공연 생성
-    @PostMapping
-    public ResponseMessageDto createPerformance(
-            @RequestBody PerformanceCreateRequestDto performanceCreateRequestDto,
-            @RequestHeader(value = "X-User-Role") String role,
-            @RequestHeader(value = "X-User-Name") String username
-    ) {
-        performanceService.createPerformance(role, username, performanceCreateRequestDto);
-        return new ResponseMessageDto(ResponseStatus.CREATE_PERFORMANCE_SUCCESS);
-    }
+  // 공연 도메인 생성
+  @PostMapping("/domain")
+  public ResponseMessageDto createPerformanceDomain(
+      @RequestHeader(value = "X-User-Name") String username,
+      @RequestHeader(value = "X-User-Role") String role,
+      @RequestBody PerformanceDomainCreateRequestDto performanceDomainCreateRequestDto
+  ) {
+    performanceDomainService.createPerformanceDomain(username, role, performanceDomainCreateRequestDto);
+    return new ResponseMessageDto(ResponseStatus.CREATE_PERFORMANCE_DOMAIN_SUCCESS);
+  }
 
-    // 공연 단일 조회 (performanceId)
+  // 공연 생성
+  @PostMapping
+  public ResponseMessageDto createPerformance(
+      @RequestBody PerformanceCreateRequestDto performanceCreateRequestDto,
+      @RequestHeader(value = "X-User-Name") String username,
+      @RequestHeader(value = "X-User-Role") String role
+  ) {
+    performanceService.createPerformance(username, role, performanceCreateRequestDto);
+    return new ResponseMessageDto(ResponseStatus.CREATE_PERFORMANCE_SUCCESS);
+  }
+
+    // 공연 단일 조회
     @GetMapping("/info/{performanceId}")
     public ResponseDataDto<PerformanceResponseDto> getPerformance(@PathVariable UUID performanceId) {
         PerformanceResponseDto performanceResponseDto = performanceService.getPerformance(performanceId);
         return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performanceResponseDto);
     }
 
-    // 공연 목록 조회 & 검색 (title)
+    // 공연 목록 조회 & 검색
     @GetMapping("/info")
-    public ResponseDataDto<Page<PerformanceResponseDto>> getPerformances(
+    public ResponseDataDto<RestPage<PerformanceResponseDto>> getPerformances(
             @RequestParam(value = "condition", required = false) String condition,
             @RequestParam(value = "keyword", required = false) String keyword,
             @PageableDefault Pageable pageable
     ) {
-        Page<PerformanceResponseDto> performances = performanceService.getPerformances(condition, keyword, pageable);
+        RestPage<PerformanceResponseDto> performances = performanceService.getPerformances(condition, keyword, pageable);
         return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performances);
     }
 
