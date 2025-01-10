@@ -1,5 +1,6 @@
 package com.culture_ticket.client.ticket.application.service;
 
+import com.culture_ticket.client.ticket.application.dto.request.KafkaTicketRequestDto;
 import com.culture_ticket.client.ticket.application.dto.request.TicketRequestDto;
 import com.culture_ticket.client.ticket.application.dto.response.TicketResponseDto;
 import com.culture_ticket.client.ticket.common.CustomException;
@@ -10,12 +11,14 @@ import com.culture_ticket.client.ticket.domain.repository.TicketRepository;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TicketService {
 
@@ -23,17 +26,34 @@ public class TicketService {
 
     /**
      * 티켓 생성
+     * Feign Client 사용
      *
      * @param username
      * @param role
      * @param request
      */
     @Transactional
-    public void createTicket(String userId, String username, String role, TicketRequestDto request) {
+    public void createTicket(String userId, String username, String role,
+        TicketRequestDto request) {
         RoleValidator.validateIsUser(role);
 
         Ticket ticket = Ticket.of(userId, request);
         ticket.created(username);
+        ticketRepository.save(ticket);
+    }
+
+    /**
+     * 티켓 생성
+     * Kafka 사용
+     *
+     * @param request
+     */
+    @Transactional
+    public void createTicket(KafkaTicketRequestDto request) {
+        RoleValidator.validateIsUser(request.getRole());
+        Ticket ticket = Ticket.of(request.getUserId(), request.getPerformanceId(),
+            request.getSeatId(), request.getTicketPrice(), request.getReservationId());
+        ticket.created(request.getUsername());
         ticketRepository.save(ticket);
     }
 
@@ -83,7 +103,7 @@ public class TicketService {
 
         List<Ticket> tickets = ticketRepository.findAllByReservationId(reservationId);
 
-        if(tickets.isEmpty()) {
+        if (tickets.isEmpty()) {
             throw new CustomException(ErrorType.NOT_FOUND_TICKET);
         }
 

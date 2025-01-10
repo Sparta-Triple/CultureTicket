@@ -1,6 +1,7 @@
 package com.culture_ticket.client.ticket.infrastructure.messaging;
 
 import com.culture_ticket.client.ticket.application.dto.request.KafkaTicketRequestDto;
+import com.culture_ticket.client.ticket.application.service.TicketService;
 import com.culture_ticket.client.ticket.common.util.RoleValidator;
 import com.culture_ticket.client.ticket.domain.model.Ticket;
 import com.culture_ticket.client.ticket.domain.repository.TicketRepository;
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class KafkaTicketMessageConsumer {
 
-    private final TicketRepository ticketRepository;
+    private final TicketService ticketService;
 
     @KafkaListener(topics = "ticket-topic", groupId = "ticket-creator")
     public void createTicekt(String message) {
@@ -43,9 +44,9 @@ public class KafkaTicketMessageConsumer {
         Long ticketPrice = ((Number) requestMap.get("ticketPrice")).longValue();
         UUID reservationId = UUID.fromString((String) requestMap.get("reservationId"));
 
-        RoleValidator.validateIsUser(role);
-        Ticket ticket = Ticket.of(userId, performanceId, seatId, ticketPrice, reservationId);
-        ticket.created(username);
-        ticketRepository.save(ticket);
+        KafkaTicketRequestDto requestDto = KafkaTicketRequestDto.
+            of(performanceId, seatId, ticketPrice, reservationId, userId, username, role);
+
+        ticketService.createTicket(requestDto);
     }
 }
