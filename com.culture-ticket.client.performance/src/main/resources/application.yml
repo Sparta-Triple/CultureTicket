@@ -28,5 +28,18 @@ eureka:
     service-url:
       defaultZone: http://localhost:19090/eureka/
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    #      include: "health", "metrics"  # health와 metrics 엔드포인트 노출
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    enable:
+      all: true  # 모든 메트릭 수집 허용
+
 server:
   port: 19093
