@@ -51,6 +51,13 @@ public class SeatService {
     return seats.stream().map(SeatInfoResponseDto::new).toList();
   }
 
+  public SeatInfoResponseDto getSeat(UUID seatId) {
+    Seat seat = seatRepository.findById(seatId).orElseThrow(() ->
+        new CustomException(ErrorType.SEAT_NOT_FOUND));
+
+    return new SeatInfoResponseDto(seat);
+  }
+
   public void updateSeatsStatus(String username, SeatStatus seatStatus, List<UUID> seatIds) {
     List<Seat> seats = seatRepository.findAllById(seatIds);
     for (Seat seat : seats) {

@@ -1,5 +1,6 @@
 package com.culture_ticket.client.reservation_payment.domain.model;
 
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,12 +13,13 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import lombok.Getter;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Entity
 @Table(name = "p_seat_payment")
 public class SeatPayment extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -33,5 +35,16 @@ public class SeatPayment extends BaseEntity {
     private SeatPayment(UUID seatId, Payment payment) {
         this.seatId = seatId;
         this.payment = payment;
+    }
+
+    public static SeatPayment of(SeatResponseDto seat, Payment payment) {
+        return builder()
+            .seatId(seat.getSeatId())
+            .payment(payment)
+            .build();
+    }
+
+    public void deleted(String username) {
+        this.softDeletedBy(username);
     }
 }

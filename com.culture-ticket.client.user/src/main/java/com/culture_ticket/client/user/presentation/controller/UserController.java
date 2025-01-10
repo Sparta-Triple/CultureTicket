@@ -48,7 +48,7 @@ public class UserController {
   }
 
   // 사용자 정보 단일 조회
-  @Secured("ROLE_ADMIN")
+//  @Secured("ROLE_ADMIN")
   @GetMapping("/info/{userId}")
   public ResponseDataDto<UserInfoResponseDto> getUserInfo(@PathVariable Long userId) {
     UserInfoResponseDto userInfo = userService.getUserInfo(userId);

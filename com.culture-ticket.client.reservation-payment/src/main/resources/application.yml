@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: reservation-payment
+    name: reservation-payment-service
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -13,7 +13,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true

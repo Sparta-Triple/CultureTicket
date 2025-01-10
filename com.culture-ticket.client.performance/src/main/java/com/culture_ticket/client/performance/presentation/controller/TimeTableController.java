@@ -42,6 +42,15 @@ public class TimeTableController {
     return new ResponseMessageDto(ResponseStatus.CREATE_TIME_TABLE_SUCCESS);
   }
 
+    // 타임테이블 단일 조회
+    @GetMapping("/{timeTableId}")
+    public ResponseDataDto<TimeTableInfoResponseDto> getTimTable(
+        @PathVariable UUID timeTableId
+    ) {
+        TimeTableInfoResponseDto responseDto = timeTableService.getTimeTable(timeTableId);
+        return new ResponseDataDto<>(ResponseStatus.GET_TIME_TABLE_SUCCESS, responseDto);
+    }
+
   // 검색
   @GetMapping
   public ResponseDataDto<List<TimeTableSearchResponseDto>> searchTimeTables(
