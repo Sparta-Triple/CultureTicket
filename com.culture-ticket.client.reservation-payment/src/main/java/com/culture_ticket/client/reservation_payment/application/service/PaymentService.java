@@ -9,14 +9,14 @@ import com.culture_ticket.client.reservation_payment.common.ErrorType;
 import com.culture_ticket.client.reservation_payment.common.util.RoleValidator;
 import com.culture_ticket.client.reservation_payment.domain.model.Payment;
 import com.culture_ticket.client.reservation_payment.domain.model.SeatPayment;
+import com.culture_ticket.client.reservation_payment.domain.model.SeatStatus;
 import com.culture_ticket.client.reservation_payment.domain.repository.PaymentRepository;
 import com.culture_ticket.client.reservation_payment.domain.repository.SeatPaymentRepository;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.PerformanceClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.TicketClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.KafkaTicketRequestDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.TicketRequestDto;
-import com.culture_ticket.client.reservation_payment.infrastructure.messaging.KafkaTicketMessageProducer;
+import com.culture_ticket.client.reservation_payment.infrastructure.messaging.TicketCreateProducer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,8 +37,21 @@ public class PaymentService {
     private final PerformanceClient performanceClient;
     private final TicketClient ticketClient;
     private final ReservationService reservationService;
-    private final KafkaTicketMessageProducer kafkaTicketMessageProducer;
+    private final TicketCreateProducer ticketCreateProducer;
 
+    /**
+     * 결제 생성
+     * 좌석 결제 생성
+     * 좌석 상태 변경
+     * 예매 생성
+     * 티켓 생성
+     *
+     * @param userId
+     * @param username
+     * @param role
+     * @param request
+     * @return
+     */
     @Transactional
     public CreatePaymentResponseDto createPayment(String userId, String username, String role, SeatSelectionRequestDto request) {
         RoleValidator.validateIsUser(role);
@@ -78,7 +91,7 @@ public class PaymentService {
 
         // 좌석 예매 불가로 변경 -> kafka 처리 가능
         performanceClient.
-            updateSeatsStatusAvailable(username, "UNAVAILABLE", request.getSeatIds());
+            updateSeatsStatusAvailable(username, SeatStatus.UNAVAILABLE, request.getSeatIds());
 
         // 예매 생성
         UUID reservationId = reservationService.createReservation(
@@ -93,23 +106,60 @@ public class PaymentService {
             seatPriceMap.put(seat.getSeatId(), seat.getSeatPrice());
         }
 
+        List<Long> seatPrices = new ArrayList<>();
         // 티켓 생성 -> kafka 처리 가능
         for (UUID seatId : seatIds) {
             Long seatPrice = seatPriceMap.get(seatId);
             if (seatPrice == null) {
                 throw new CustomException(ErrorType.NOT_FOUND_SEAT_PRICE);
             }
+
+            seatPrices.add(seatPrice);
+
             // feign client 활용
 //            TicketRequestDto ticketRequestDto = TicketRequestDto.
 //                of(performanceId, seatId, seatPrice, reservationId);
 //            ticketClient.createTicket(userId, username, role, ticketRequestDto);
-            // kafka 활용
-            KafkaTicketRequestDto kafkaTicketRequestDto = KafkaTicketRequestDto.
-                of(performanceId, seatId, seatPrice, reservationId, userId, username, role);
-            kafkaTicketMessageProducer.ticketSend("ticket-topic", kafkaTicketRequestDto);
         }
 
+        // kafka 활용
+        KafkaTicketRequestDto kafkaTicketRequestDto = KafkaTicketRequestDto.
+            of(performanceId, seatIds, seatPrices, reservationId, userId, username, role);
+        ticketCreateProducer.ticketSend("ticket-topic", kafkaTicketRequestDto);
+
         return new CreatePaymentResponseDto(totalPrice);
+    }
+
+    /**
+     * 좌석 결제 취소
+     * 예매 취소
+     * 결제 취소
+     * 좌석 상태 변경 -> kafka
+     * @param requestDto
+     */
+    @Transactional
+    public void revertPayment(KafkaTicketRequestDto requestDto) {
+
+        // 좌석 결제 삭제
+        List<SeatPayment> seatPayments = new ArrayList<>();
+        for (int i = 0; i < requestDto.getSeatIds().size(); i++) {
+            SeatPayment seatPayment = seatPaymentRepository.findBySeatId(requestDto.getSeatIds().get(i)).
+                orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_SEATPAYMENT));
+            seatPayment.deleted(requestDto.getUsername());
+            seatPayments.add(seatPayment);
+        }
+
+        // 예매 삭제
+        reservationService.revertReservation(requestDto);
+
+        // 결제 취소
+        Payment payment = paymentRepository.findById(seatPayments.get(0).getPayment().getId()).
+            orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_PAYMENT));
+        payment.deleted(requestDto.getUsername());
+
+        // 좌석 상태 변경
+        performanceClient.updateSeatsStatusAvailable(
+            requestDto.getUsername(), SeatStatus.AVAILABLE, requestDto.getSeatIds());
     }
 
     public List<PaymentResponseDto> getPaymentList(Long userId) {

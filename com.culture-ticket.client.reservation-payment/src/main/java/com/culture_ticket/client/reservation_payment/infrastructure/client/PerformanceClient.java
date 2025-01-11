@@ -1,5 +1,6 @@
 package com.culture_ticket.client.reservation_payment.infrastructure.client;
 
+import com.culture_ticket.client.reservation_payment.domain.model.SeatStatus;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.FeignClientResponseDataDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.FeignClientResponseMessageDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.PerformanceResponseDto;
@@ -31,6 +32,6 @@ public interface PerformanceClient {
     @PutMapping("/api/v1/seats/status/{seatStatus}")
     FeignClientResponseMessageDto updateSeatsStatusAvailable(
         @RequestHeader(value = "X-User-Name") String username,
-        @PathVariable String seatStatus,
+        @PathVariable SeatStatus seatStatus,
         @RequestBody List<UUID> seatIds);
 }

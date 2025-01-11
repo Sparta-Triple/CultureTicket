@@ -7,7 +7,9 @@ import com.culture_ticket.client.reservation_payment.common.CustomException;
 import com.culture_ticket.client.reservation_payment.common.ErrorType;
 import com.culture_ticket.client.reservation_payment.common.util.RoleValidator;
 import com.culture_ticket.client.reservation_payment.domain.model.Payment;
+import com.culture_ticket.client.reservation_payment.domain.model.SeatStatus;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.TicketClient;
+import com.culture_ticket.client.reservation_payment.infrastructure.dto.KafkaTicketRequestDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.PerformanceResponseDto;
 import com.culture_ticket.client.reservation_payment.domain.model.Reservation;
 import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
@@ -189,13 +191,7 @@ public class ReservationService {
             assertUserIsOwner(userId, reservation);
         }
 
-        // TODO: 좌석 상태 예매가능으로 변경(feign client 사용 -> kafka 사용)
-        // 좌석 예매 가능으로 변경
-        List<UUID> seatIds = reservation.getPayment().getSeatPayments().stream().map(seatPayment ->
-            seatPayment.getSeatId()).toList();
-        performanceClient.
-            updateSeatsStatusAvailable(username, "AVAILABLE", seatIds);
-
+        changeSeatStatus(username, reservation);
 
         // 좌석 결제 삭제
         reservation.getPayment().getSeatPayments().stream().forEach(seatPayment -> {
@@ -221,6 +217,27 @@ public class ReservationService {
         reservation.deleted(username);
 
         return RefundPriceResponseDto.from(refundPrice);
+    }
+
+    private void changeSeatStatus(String username, Reservation reservation) {
+        // TODO: 좌석 상태 예매가능으로 변경(feign client 사용 -> kafka 사용)
+        // 좌석 예매 가능으로 변경
+        List<UUID> seatIds = reservation.getPayment().getSeatPayments().stream().map(seatPayment ->
+            seatPayment.getSeatId()).toList();
+        performanceClient.
+            updateSeatsStatusAvailable(username, SeatStatus.AVAILABLE, seatIds);
+    }
+
+    /**
+     * 예매 취소
+     *
+     * @param requestDto
+     */
+    public void revertReservation(KafkaTicketRequestDto requestDto) {
+        Reservation reservation = reservationRepository.findById(requestDto.getReservationId()).orElseThrow(() ->
+            new CustomException(ErrorType.NOT_FOUND_RESERVATION));
+
+        reservation.deleted(requestDto.getUsername());
     }
 
     // 로그인 유저가 데이터의 생성자인지 확인

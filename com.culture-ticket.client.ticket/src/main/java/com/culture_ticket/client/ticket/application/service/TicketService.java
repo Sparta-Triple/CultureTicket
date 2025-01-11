@@ -8,7 +8,9 @@ import com.culture_ticket.client.ticket.common.ErrorType;
 import com.culture_ticket.client.ticket.common.util.RoleValidator;
 import com.culture_ticket.client.ticket.domain.model.Ticket;
 import com.culture_ticket.client.ticket.domain.repository.TicketRepository;
+import com.culture_ticket.client.ticket.infrastructure.messaging.PaymentRollbackProducer;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class TicketService {
 
     private final TicketRepository ticketRepository;
+    private final PaymentRollbackProducer paymentRollbackProducer;
+
+    private static final int BETWEEN_ZERO_AND_ONE = 1;
 
     /**
      * 티켓 생성
@@ -50,11 +55,20 @@ public class TicketService {
      */
     @Transactional
     public void createTicket(KafkaTicketRequestDto request) {
-        RoleValidator.validateIsUser(request.getRole());
-        Ticket ticket = Ticket.of(request.getUserId(), request.getPerformanceId(),
-            request.getSeatId(), request.getTicketPrice(), request.getReservationId());
-        ticket.created(request.getUsername());
-        ticketRepository.save(ticket);
+        try {
+            RoleValidator.validateIsUser(request.getRole());
+            Ticket ticket = null;
+            for (int i = 0; i < request.getSeatIds().size(); i++) {
+                ticket = Ticket.of(request.getUserId(), request.getPerformanceId(),
+                    request.getSeatIds().get(i), request.getTicketPrices().get(i), request.getReservationId());
+            }
+            ticket.created(request.getUsername());
+            errorPerHalf();
+            ticketRepository.save(ticket);
+        } catch (CustomException e) {
+            log.error("===== [티켓 생성 오류] -> payment-rollback, 결제 금액 :{} / {} =====", request.getTicketPrices(), e.getMessage());
+            paymentRollbackProducer.rollbackPayment("payment-rollback", request);
+        }
     }
 
     /**
@@ -109,6 +123,15 @@ public class TicketService {
 
         for (Ticket ticket : tickets) {
             ticket.deleted(username);
+        }
+    }
+
+    // 50% 확률로 에러 발생
+    private void errorPerHalf() {
+        int zeroOrOne = new Random().nextInt(BETWEEN_ZERO_AND_ONE);
+
+        if (zeroOrOne == 0) {
+            throw new CustomException(ErrorType.TICKET_CREATE_PROCESSING_ERROR);
         }
     }
 }
