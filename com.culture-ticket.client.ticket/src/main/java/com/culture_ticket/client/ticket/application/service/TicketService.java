@@ -63,7 +63,7 @@ public class TicketService {
                     request.getSeatIds().get(i), request.getTicketPrices().get(i), request.getReservationId());
             }
             ticket.created(request.getUsername());
-            errorPerHalf();
+//            errorPerHalf();
             ticketRepository.save(ticket);
         } catch (CustomException e) {
             log.error("===== [티켓 생성 오류] -> payment-rollback, 결제 금액 :{} / {} =====", request.getTicketPrices(), e.getMessage());

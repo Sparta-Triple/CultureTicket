@@ -1,5 +1,6 @@
 package com.culture_ticket.client.reservation_payment.application.service;
 
+import com.culture_ticket.client.reservation_payment.application.dto.kafka.KafkaSeatStatusRequestDto;
 import com.culture_ticket.client.reservation_payment.application.dto.requestDto.ReservationRequestDto;
 import com.culture_ticket.client.reservation_payment.application.dto.requestDto.SeatSelectionRequestDto;
 import com.culture_ticket.client.reservation_payment.application.dto.responseDto.CreatePaymentResponseDto;
@@ -16,6 +17,7 @@ import com.culture_ticket.client.reservation_payment.infrastructure.client.Perfo
 import com.culture_ticket.client.reservation_payment.infrastructure.client.TicketClient;
 import com.culture_ticket.client.reservation_payment.application.dto.kafka.KafkaTicketRequestDto;
 import com.culture_ticket.client.reservation_payment.application.dto.feignclient.SeatResponseDto;
+import com.culture_ticket.client.reservation_payment.infrastructure.messaging.SeatStatusProducer;
 import com.culture_ticket.client.reservation_payment.infrastructure.messaging.TicketCreateProducer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +40,7 @@ public class PaymentService {
     private final TicketClient ticketClient;
     private final ReservationService reservationService;
     private final TicketCreateProducer ticketCreateProducer;
+    private final SeatStatusProducer seatStatusProducer;
 
     /**
      * 결제 생성
@@ -89,9 +92,12 @@ public class PaymentService {
             .collect(Collectors.toList());// 리스트로 수집
         seatPaymentRepository.saveAll(seatPayments);
 
-        // 좌석 예매 불가로 변경 -> kafka 처리 가능
-        performanceClient.
-            updateSeatsStatusAvailable(username, SeatStatus.UNAVAILABLE, request.getSeatIds());
+        // 좌석 예매 불가로 변경(feign client)
+//        performanceClient.
+//            updateSeatsStatusAvailable(username, SeatStatus.UNAVAILABLE, request.getSeatIds());
+        // 좌석 예매 불가로 변경(kafka)
+        KafkaSeatStatusRequestDto requestDto = KafkaSeatStatusRequestDto.of(username, SeatStatus.UNAVAILABLE, request.getSeatIds());
+        seatStatusProducer.seatStatusSend("seat-topic", requestDto);
 
         // 예매 생성
         UUID reservationId = reservationService.createReservation(
@@ -157,9 +163,12 @@ public class PaymentService {
             orElseThrow(() -> new CustomException(ErrorType.NOT_FOUND_PAYMENT));
         payment.deleted(requestDto.getUsername());
 
-        // 좌석 상태 변경
-        performanceClient.updateSeatsStatusAvailable(
-            requestDto.getUsername(), SeatStatus.AVAILABLE, requestDto.getSeatIds());
+        // 좌석 상태 변경(feign client)
+//        performanceClient.updateSeatsStatusAvailable(
+//            requestDto.getUsername(), SeatStatus.AVAILABLE, requestDto.getSeatIds());
+        // 좌석 상태 변경(kafka)
+        KafkaSeatStatusRequestDto kafkaSeatStatusRequestDto = KafkaSeatStatusRequestDto.of(requestDto.getUsername(), SeatStatus.UNAVAILABLE, requestDto.getSeatIds());
+        seatStatusProducer.seatStatusSend("seat-topic", kafkaSeatStatusRequestDto);
     }
 
     public List<PaymentResponseDto> getPaymentList(Long userId) {
