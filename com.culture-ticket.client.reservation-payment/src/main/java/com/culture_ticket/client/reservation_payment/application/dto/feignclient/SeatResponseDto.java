@@ -1,7 +1,6 @@
-package com.culture_ticket.client.reservation_payment.infrastructure.dto;
+package com.culture_ticket.client.reservation_payment.application.dto.feignclient;
 
 import java.util.UUID;
-import lombok.Builder;
 import lombok.Getter;
 
 @Getter

@@ -1,11 +1,11 @@
 package com.culture_ticket.client.reservation_payment.application.dto.responseDto;
 
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.PerformanceResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.feignclient.PerformanceResponseDto;
 import com.culture_ticket.client.reservation_payment.domain.model.Reservation;
 import com.culture_ticket.client.reservation_payment.domain.model.ReservationStatus;
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.TimeTableResponseDto;
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.UserResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.feignclient.SeatResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.feignclient.TimeTableResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.feignclient.UserResponseDto;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

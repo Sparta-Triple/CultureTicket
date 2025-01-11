@@ -1,4 +1,4 @@
-package com.culture_ticket.client.reservation_payment.infrastructure.dto;
+package com.culture_ticket.client.reservation_payment.application.dto.kafka;
 
 import java.util.List;
 import java.util.UUID;

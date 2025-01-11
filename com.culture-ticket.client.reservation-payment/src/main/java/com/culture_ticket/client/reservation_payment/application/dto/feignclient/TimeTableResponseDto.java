@@ -1,7 +1,6 @@
-package com.culture_ticket.client.reservation_payment.infrastructure.dto;
+package com.culture_ticket.client.reservation_payment.application.dto.feignclient;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 import lombok.Getter;

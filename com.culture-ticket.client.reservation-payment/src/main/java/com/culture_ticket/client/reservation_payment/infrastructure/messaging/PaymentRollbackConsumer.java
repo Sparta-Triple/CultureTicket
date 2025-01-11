@@ -1,11 +1,9 @@
 package com.culture_ticket.client.reservation_payment.infrastructure.messaging;
 
 import com.culture_ticket.client.reservation_payment.application.service.PaymentService;
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.KafkaTicketRequestDto;
+import com.culture_ticket.client.reservation_payment.application.dto.kafka.KafkaTicketRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;

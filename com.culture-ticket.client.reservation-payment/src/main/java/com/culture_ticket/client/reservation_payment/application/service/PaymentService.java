@@ -14,8 +14,8 @@ import com.culture_ticket.client.reservation_payment.domain.repository.PaymentRe
 import com.culture_ticket.client.reservation_payment.domain.repository.SeatPaymentRepository;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.PerformanceClient;
 import com.culture_ticket.client.reservation_payment.infrastructure.client.TicketClient;
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.KafkaTicketRequestDto;
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.kafka.KafkaTicketRequestDto;
+import com.culture_ticket.client.reservation_payment.application.dto.feignclient.SeatResponseDto;
 import com.culture_ticket.client.reservation_payment.infrastructure.messaging.TicketCreateProducer;
 import java.util.ArrayList;
 import java.util.HashMap;

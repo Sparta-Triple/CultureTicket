@@ -1,6 +1,6 @@
 package com.culture_ticket.client.reservation_payment.infrastructure.messaging;
 
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.KafkaTicketRequestDto;
+import com.culture_ticket.client.reservation_payment.application.dto.kafka.KafkaTicketRequestDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
