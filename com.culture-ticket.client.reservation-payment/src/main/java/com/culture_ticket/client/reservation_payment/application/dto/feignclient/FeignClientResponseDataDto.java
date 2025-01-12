@@ -1,4 +1,4 @@
-package com.culture_ticket.client.reservation_payment.infrastructure.dto;
+package com.culture_ticket.client.reservation_payment.application.dto.feignclient;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

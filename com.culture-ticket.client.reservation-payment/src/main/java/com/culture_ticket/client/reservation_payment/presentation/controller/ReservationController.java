@@ -153,6 +153,7 @@ public class ReservationController {
         RefundPriceResponseDto responseDto = reservationService.
             deleteReservation(userId, username, role, reservationId);
 
-        return ResponseEntity.ok(new ResponseDataDto(ResponseStatus.DELETE_RESERVATION_SUCCESS, responseDto));
+        return ResponseEntity.ok(
+            new ResponseDataDto<>(ResponseStatus.DELETE_RESERVATION_SUCCESS, responseDto));
     }
 }

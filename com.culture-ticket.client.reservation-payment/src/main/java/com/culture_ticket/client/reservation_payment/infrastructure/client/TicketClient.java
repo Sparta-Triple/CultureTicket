@@ -1,7 +1,7 @@
 package com.culture_ticket.client.reservation_payment.infrastructure.client;
 
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.FeignClientResponseMessageDto;
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.TicketRequestDto;
+import com.culture_ticket.client.reservation_payment.application.dto.feignclient.FeignClientResponseMessageDto;
+import com.culture_ticket.client.reservation_payment.application.dto.feignclient.TicketRequestDto;
 import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;

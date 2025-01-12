@@ -1,6 +1,6 @@
 package com.culture_ticket.client.reservation_payment.domain.model;
 
-import com.culture_ticket.client.reservation_payment.infrastructure.dto.SeatResponseDto;
+import com.culture_ticket.client.reservation_payment.application.dto.feignclient.SeatResponseDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
