@@ -29,3 +29,15 @@ service:
 
 admin:
   code: "1234"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    enable:
+      all: true
