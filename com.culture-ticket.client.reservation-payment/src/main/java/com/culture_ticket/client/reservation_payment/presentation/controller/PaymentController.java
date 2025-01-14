@@ -36,16 +36,16 @@ public class PaymentController {
             paymentService.createPayment(userId, username, role, request));
     }
 
-    @GetMapping("")
-    public ResponseDataDto<List<PaymentResponseDto>> getPaymentList() {
-        return new ResponseDataDto<>(ResponseStatus.GET_PAYMENT_SUCCESS,
-            paymentService.getPaymentList(1L));
-    }
-
-    @GetMapping("/{paymentId}")
-    public ResponseDataDto<PaymentResponseDto> getPayment(
-        @PathVariable UUID paymentId) {
-        return new ResponseDataDto<>(ResponseStatus.GET_PAYMENT_SUCCESS,
-            paymentService.getPayment(1L, paymentId));
-    }
+//    @GetMapping
+//    public ResponseDataDto<List<PaymentResponseDto>> getPaymentList() {
+//        return new ResponseDataDto<>(ResponseStatus.GET_PAYMENT_SUCCESS,
+//            paymentService.getPaymentList(1L));
+//    }
+//
+//    @GetMapping("/{paymentId}")
+//    public ResponseDataDto<PaymentResponseDto> getPayment(
+//        @PathVariable UUID paymentId) {
+//        return new ResponseDataDto<>(ResponseStatus.GET_PAYMENT_SUCCESS,
+//            paymentService.getPayment(1L, paymentId));
+//    }
 }

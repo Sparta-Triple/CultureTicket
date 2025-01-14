@@ -62,7 +62,7 @@ public class TicketService {
             for (int i = 0; i < request.getSeatIds().size(); i++) {
                 ticket = Ticket.of(request.getUserId(), request.getPerformanceId(),
                     request.getSeatIds().get(i), request.getTicketPrices().get(i), request.getReservationId());
-                errorPerHalf();
+//                errorPerHalf();
                 ticketRepository.save(ticket);
                 ticket.created(request.getUsername());
             }
