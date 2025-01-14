@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface ReservationRepository extends JpaRepository<Reservation, UUID>,
     ReservationRepositoryCustom {
 
-    Page<Reservation> findAllByUserIdAndIsDeletedFalse(String userId, Pageable pageable);
+    Page<Reservation> findAllByUserIdAndIsDeletedFalse(Long userId, Pageable pageable);
 
     Page<Reservation> findAllByUserIdAndDateRange(String userId, Pageable pageable, LocalDateTime startDate, LocalDateTime endDate);
 

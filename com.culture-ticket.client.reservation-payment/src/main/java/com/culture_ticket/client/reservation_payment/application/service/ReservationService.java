@@ -113,7 +113,7 @@ public class ReservationService {
         RoleValidator.validateIsUser(role);
 
         Page<Reservation> reservationPage = reservationRepository.
-            findAllByUserIdAndIsDeletedFalse(userId, pageable);
+            findAllByUserIdAndIsDeletedFalse(Long.parseLong(userId), pageable);
 
         // 조회하려는 데이터가 로그인유저가 생성한 건지 확인
         if (!reservationPage.hasContent()) {
