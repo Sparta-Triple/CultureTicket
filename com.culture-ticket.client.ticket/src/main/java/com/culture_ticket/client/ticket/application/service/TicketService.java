@@ -55,19 +55,20 @@ public class TicketService {
      */
     @Transactional
     public void createTicket(KafkaTicketRequestDto request) {
+        KafkaTicketRequestDto response = request;
         try {
             RoleValidator.validateIsUser(request.getRole());
             Ticket ticket = null;
             for (int i = 0; i < request.getSeatIds().size(); i++) {
                 ticket = Ticket.of(request.getUserId(), request.getPerformanceId(),
                     request.getSeatIds().get(i), request.getTicketPrices().get(i), request.getReservationId());
+                errorPerHalf();
+                ticketRepository.save(ticket);
+                ticket.created(request.getUsername());
             }
-            ticket.created(request.getUsername());
-//            errorPerHalf();
-            ticketRepository.save(ticket);
         } catch (CustomException e) {
             log.error("===== [티켓 생성 오류] -> payment-rollback, 결제 금액 :{} / {} =====", request.getTicketPrices(), e.getMessage());
-            paymentRollbackProducer.rollbackPayment("payment-rollback", request);
+            paymentRollbackProducer.rollbackPayment("payment-rollback", response);
         }
     }
 

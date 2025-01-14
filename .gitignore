@@ -39,3 +39,10 @@ out/
 # Ignore macOS system files
 .DS_Store
 **/.DS_Store/**
+
+# Ignore compiler.xml
+*.iml
+.idea/compiler.xml
+
+### .pem ###
+culture-ticket.pem
