@@ -37,8 +37,7 @@ public class CouponController {
             @RequestHeader(value = "X-User-Role") String role,
             @PathVariable UUID couponId
     ) {
-        couponService.issueCoupon(username, role, couponId);
-        return new ResponseMessageDto(ResponseStatus.ISSUE_COUPON_SUCCESS);
+        return couponService.issueCoupon(username, role, couponId);
     }
 
     // 만료되지 않은 쿠폰 목록 조회

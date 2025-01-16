@@ -2,6 +2,7 @@ package com.culture_ticket.client.coupon.application.service;
 
 import com.culture_ticket.client.coupon.application.dto.request.CouponCreateRequestDto;
 import com.culture_ticket.client.coupon.application.dto.response.CouponResponseDto;
+import com.culture_ticket.client.coupon.common.ResponseMessageDto;
 import com.culture_ticket.client.coupon.common.util.RoleValidator;
 import com.culture_ticket.client.coupon.domain.model.Coupon;
 import com.culture_ticket.client.coupon.domain.model.CouponUser;
@@ -30,10 +31,10 @@ public class CouponService {
         couponRepository.save(Coupon.from(username, requestDto));
     }
 
-    public void issueCoupon(String username, String role, UUID couponId) {
+    public ResponseMessageDto issueCoupon(String username, String role, UUID couponId) {
         RoleValidator.validateIsUSER(role);
         String key = COUPON_KEY_PREFIX + couponId;
-        couponIssueService.issueCoupon(key, username, couponId);
+        return couponIssueService.issueCoupon(key, username, couponId);
     }
 
     @Transactional(readOnly = true)
