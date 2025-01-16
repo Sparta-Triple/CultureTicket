@@ -1,6 +1,6 @@
 package com.culture_ticket.client.coupon.application.service;
 
-import com.culture_ticket.client.coupon.domain.medel.Coupon;
+import com.culture_ticket.client.coupon.domain.model.Coupon;
 import com.culture_ticket.client.coupon.domain.repository.CouponRepository;
 import com.culture_ticket.client.coupon.infrastructure.annotation.DistributeLock;
 import lombok.RequiredArgsConstructor;
