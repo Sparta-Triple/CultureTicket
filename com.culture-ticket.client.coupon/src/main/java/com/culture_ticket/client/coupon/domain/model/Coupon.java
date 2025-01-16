@@ -6,7 +6,7 @@ import com.culture_ticket.client.coupon.common.ErrorType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +26,7 @@ public class Coupon extends BaseEntity {
     private Long discountPrice;
     private Long maxDiscountPrice;
     private Integer availableStock;
-    private LocalDateTime expirationDate;
+    private LocalDate expirationDate;
 
     public static Coupon from(String username, CouponCreateRequestDto requestDto){
         Coupon coupon = builder().name(requestDto.getName())

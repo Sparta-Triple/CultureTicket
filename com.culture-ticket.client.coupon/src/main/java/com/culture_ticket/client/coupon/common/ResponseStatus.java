@@ -24,7 +24,8 @@ public enum ResponseStatus {
 //    SEARCH_DELIVERY_MANAGER_SUCCESS(HttpStatus.OK, "배송 담당자 검색에 성공했습니다.");
 
     CREATE_COUPON_SUCCESS(HttpStatus.CREATED, "쿠폰이 생성되었습니다."),
-    ISSUE_COUPON_SUCCESS(HttpStatus.OK, "쿠폰이 발급되었습니다.");
+    ISSUE_COUPON_SUCCESS(HttpStatus.OK, "쿠폰이 발급되었습니다."),
+    GET_UNEXPIRED_COUPONS_SUCCESS(HttpStatus.OK, "만료되지 않은 쿠폰 목록이 조회되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

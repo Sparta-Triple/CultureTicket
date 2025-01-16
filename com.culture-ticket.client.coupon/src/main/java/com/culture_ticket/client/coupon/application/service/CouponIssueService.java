@@ -20,7 +20,7 @@ public class CouponIssueService {
     private final CouponUserRepository couponUserRepository;
 
     @DistributeLock(key = "#key")
-    public void couponDecrease(String key, String username, UUID couponId) {
+    public void issueCoupon(String key, String username, UUID couponId) {
         Coupon coupon = couponRepository.findById(couponId).orElseThrow(
                 () -> new CustomException(ErrorType.COUPON_NOT_FOUND)
         );

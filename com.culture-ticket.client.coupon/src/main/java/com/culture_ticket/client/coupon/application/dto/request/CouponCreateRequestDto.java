@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
@@ -16,6 +16,6 @@ public class CouponCreateRequestDto {
     private Long discountPrice;
     private Long maxDiscountPrice;
     private Integer availableStock;
-    private LocalDateTime expirationDate;
+    private LocalDate expirationDate;
 
 }
