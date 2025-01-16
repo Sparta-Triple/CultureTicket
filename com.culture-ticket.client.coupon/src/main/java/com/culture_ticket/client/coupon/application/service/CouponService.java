@@ -4,7 +4,9 @@ import com.culture_ticket.client.coupon.application.dto.request.CouponCreateRequ
 import com.culture_ticket.client.coupon.application.dto.response.CouponResponseDto;
 import com.culture_ticket.client.coupon.common.util.RoleValidator;
 import com.culture_ticket.client.coupon.domain.model.Coupon;
+import com.culture_ticket.client.coupon.domain.model.CouponUser;
 import com.culture_ticket.client.coupon.domain.repository.CouponRepository;
+import com.culture_ticket.client.coupon.domain.repository.CouponUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +20,7 @@ import java.util.UUID;
 public class CouponService {
     private final CouponIssueService couponIssueService;
     private final CouponRepository couponRepository;
+    private final CouponUserRepository couponUserRepository;
 
     private static final String COUPON_KEY_PREFIX = "COUPON_";
 
@@ -43,5 +46,15 @@ public class CouponService {
     public CouponResponseDto getCoupon(UUID couponId) {
         Coupon coupon = couponRepository.findCouponByIdAndDeletedAtIsNull(couponId);
         return new CouponResponseDto(coupon);
+    }
+
+    public List<CouponResponseDto> getCouponUsers(String username, String role) {
+        RoleValidator.validateIsUSER(role);
+        List<CouponUser> couponUsers = couponUserRepository.findAllByUsernameAndIsUsedFalse(username);
+        List<CouponResponseDto> responseDtos = couponUsers.stream()
+                .map(CouponUser::getCoupon)
+                .map(CouponResponseDto::new)
+                .toList();
+        return responseDtos;
     }
 }

@@ -54,4 +54,14 @@ public class CouponController {
         CouponResponseDto responseDto = couponService.getCoupon(couponId);
         return new ResponseDataDto<>(ResponseStatus.GET_COUPON_SUCCESS,responseDto);
     }
+
+    // 사용자 보유 쿠폰 목록 조회
+    @GetMapping("me")
+    public ResponseDataDto<List<CouponResponseDto>> getCouponUsers(
+            @RequestHeader(value = "X-User-Name") String username,
+            @RequestHeader(value = "X-User-Role") String role
+    ) {
+        List<CouponResponseDto> couponUsers = couponService.getCouponUsers(username, role);
+        return new ResponseDataDto<>(ResponseStatus.GET_COUPON_USERS_SUCCESS,couponUsers);
+    }
 }
