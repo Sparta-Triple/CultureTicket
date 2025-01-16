@@ -64,11 +64,13 @@ public class PaymentService {
         List<UUID> seatIds = request.getSeatIds();
         List<SeatResponseDto> seats = new ArrayList<>();
 
-        // TODO: 좌석 상태 확인 후 예매 불가 시 에러 추가
         for (UUID seatId : seatIds) {
             SeatResponseDto seat = performanceClient.getSeat(seatId).getData();
             if (seat == null) {
                 throw new CustomException(ErrorType.NOT_FOUND_SEAT); // TODO: 추후 fallback함수로 빼기
+            }
+            if (seat.getSeatStatus().equals(SeatStatus.UNAVAILABLE)) {
+                throw new CustomException(ErrorType.SEAT_ALREADY_RESERVED);
             }
             seats.add(seat);
         }

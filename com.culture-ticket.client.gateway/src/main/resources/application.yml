@@ -29,6 +29,11 @@ spring:
           predicates:
             - Path=/api/v1/tickets/**
 
+        - id: coupon-service
+          uri: lb://coupon-service
+          predicates:
+            - path=/api/v1/coupons
+
       discovery:
         locator:
           enabled: true
