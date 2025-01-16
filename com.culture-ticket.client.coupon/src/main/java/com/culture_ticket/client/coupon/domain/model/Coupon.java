@@ -1,10 +1,13 @@
 package com.culture_ticket.client.coupon.domain.model;
 
 import com.culture_ticket.client.coupon.application.dto.request.CouponCreateRequestDto;
+import com.culture_ticket.client.coupon.common.CustomException;
+import com.culture_ticket.client.coupon.common.ErrorType;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Builder
@@ -15,17 +18,17 @@ import java.time.LocalDateTime;
 public class Coupon extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     private String name;
     private Double discountRate;
     private Long discountPrice;
     private Long maxDiscountPrice;
-    private Long availableStock;
+    private Integer availableStock;
     private LocalDateTime expirationDate;
 
-    public static Coupon of(String username, CouponCreateRequestDto requestDto){
+    public static Coupon from(String username, CouponCreateRequestDto requestDto){
         Coupon coupon = builder().name(requestDto.getName())
                 .discountRate(requestDto.getDiscountRate())
                 .discountPrice(requestDto.getDiscountPrice())
@@ -44,7 +47,7 @@ public class Coupon extends BaseEntity {
 
     private void validateStockCount() {
         if (availableStock < 1) {
-            throw new IllegalArgumentException();
+            throw new CustomException(ErrorType.COUPON_STOCK_UNAVAILABLE);
         }
     }
 

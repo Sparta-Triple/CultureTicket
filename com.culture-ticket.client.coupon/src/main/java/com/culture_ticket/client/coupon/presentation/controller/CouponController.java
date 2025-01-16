@@ -7,6 +7,8 @@ import com.culture_ticket.client.coupon.common.ResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/v1/coupon")
 @RequiredArgsConstructor
@@ -18,9 +20,19 @@ public class CouponController {
     public ResponseMessageDto createCoupon(
             @RequestHeader(value = "X-User-Name") String username,
             @RequestHeader(value = "X-User-Role") String role,
-            @RequestBody CouponCreateRequestDto requestDto){
+            @RequestBody CouponCreateRequestDto requestDto
+    ) {
         couponService.createCoupon(username, role, requestDto);
         return new ResponseMessageDto(ResponseStatus.CREATE_COUPON_SUCCESS);
     }
 
+    @PutMapping("/{couponId}")
+    public ResponseMessageDto issueCoupon(
+            @RequestHeader(value = "X-User-Name") String username,
+            @RequestHeader(value = "X-User-Role") String role,
+            @PathVariable UUID couponId
+    ) {
+        couponService.issueCoupon(username, role, couponId);
+        return new ResponseMessageDto(ResponseStatus.ISSUE_COUPON_SUCCESS);
+    }
 }

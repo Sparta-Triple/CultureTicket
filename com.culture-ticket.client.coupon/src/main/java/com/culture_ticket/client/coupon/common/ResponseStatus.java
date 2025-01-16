@@ -23,7 +23,8 @@ public enum ResponseStatus {
 //    DELETE_DELIVERY_MANAGER_SUCCESS(HttpStatus.OK, "배송 담당자 삭제에 성공했습니다."),
 //    SEARCH_DELIVERY_MANAGER_SUCCESS(HttpStatus.OK, "배송 담당자 검색에 성공했습니다.");
 
-    CREATE_COUPON_SUCCESS(HttpStatus.CREATED, "쿠폰이 생성되었습니다.");
+    CREATE_COUPON_SUCCESS(HttpStatus.CREATED, "쿠폰이 생성되었습니다."),
+    ISSUE_COUPON_SUCCESS(HttpStatus.OK, "쿠폰이 발급되었습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
