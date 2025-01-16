@@ -57,7 +57,7 @@ public class PaymentService {
      */
     @Transactional
     public CreatePaymentResponseDto createPayment(String userId, String username, String role, SeatSelectionRequestDto request) {
-        RoleValidator.validateIsUser(role);
+        RoleValidator.validateIsAdminOrUser(role);
         // 좌석 유효성 검사
         // 타임 테이블을 통해서 좌석 데이터를 아예 가져와서 좌석 상태랑 존재 여부 확인 ?
 
