@@ -39,4 +39,9 @@ public class CouponService {
         List<CouponResponseDto> responseDtos = coupons.stream().map(CouponResponseDto::new).toList();
         return responseDtos;
     }
+
+    public CouponResponseDto getCoupon(UUID couponId) {
+        Coupon coupon = couponRepository.findCouponByIdAndDeletedAtIsNull(couponId);
+        return new CouponResponseDto(coupon);
+    }
 }

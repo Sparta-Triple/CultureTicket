@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public interface CouponRepository extends JpaRepository<Coupon, UUID> {
 
+    Coupon findCouponByIdAndDeletedAtIsNull(UUID id);
     List<Coupon> findAllByExpirationDateAfter(LocalDate expirationDate);
 
 }
