@@ -4,6 +4,7 @@
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/com.culture-ticket.client.gateway" />
     <file type="web" url="file://$PROJECT_DIR$/com.culture-ticket.client.performance" />
+    <file type="web" url="file://$PROJECT_DIR$/com.culture-ticket.client.queue" />
     <file type="web" url="file://$PROJECT_DIR$/com.culture-ticket.client.reservation-payment" />
     <file type="web" url="file://$PROJECT_DIR$/com.culture-ticket.client.ticket" />
     <file type="web" url="file://$PROJECT_DIR$/com.culture-ticket.client.user" />
