@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -21,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Redisson Lock 쿠폰 차감 테스트")
 @SpringBootTest
-@EnableJpaAuditing
 class CouponDecreaseLockTest {
 
     @Autowired
@@ -41,7 +41,7 @@ class CouponDecreaseLockTest {
                         0L,
                         30000L,
                         100,
-                        LocalDateTime.now()
+                        LocalDate.now()
                 ));
         couponRepository.save(coupon);
     }
@@ -56,11 +56,11 @@ class CouponDecreaseLockTest {
         int numberOfThreads = 100;
         ExecutorService executorService = Executors.newFixedThreadPool(32);
         CountDownLatch latch = new CountDownLatch(numberOfThreads);
-
         for (int i=0; i<numberOfThreads; i++) {
+            final int k = i;
             executorService.submit(() -> {
                 try {
-                    couponService.issueCoupon("yshong1998","ADMIN",coupon.getId());
+                    couponService.issueCoupon("testUser" + k,"ADMIN",coupon.getId());
                 } finally {
                     latch.countDown();
                 }
