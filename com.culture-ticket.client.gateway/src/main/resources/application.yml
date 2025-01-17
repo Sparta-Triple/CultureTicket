@@ -32,7 +32,7 @@ spring:
         - id: coupon-service
           uri: lb://coupon-service
           predicates:
-            - path=/api/v1/coupons
+            - Path=/api/v1/coupons/**
 
       discovery:
         locator:
