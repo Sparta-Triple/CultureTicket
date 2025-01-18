@@ -23,35 +23,12 @@ public enum ResponseStatus {
 //    DELETE_DELIVERY_MANAGER_SUCCESS(HttpStatus.OK, "배송 담당자 삭제에 성공했습니다."),
 //    SEARCH_DELIVERY_MANAGER_SUCCESS(HttpStatus.OK, "배송 담당자 검색에 성공했습니다.");
 
-    // category
-    CREATE_CATEGORY_SUCCESS(HttpStatus.CREATED, "카테고리 생성에 성공했습니다."),
-    GET_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 조회에 성공했습니다."),
-    UPDATE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 수정에 성공했습니다."),
-    DELETE_CATEGORY_SUCCESS(HttpStatus.OK, "카테고리 삭제에 성공했습니다."),
-
-    // performance
-    CREATE_PERFORMANCE_SUCCESS(HttpStatus.CREATED, "공연 생성에 성공했습니다."),
-    GET_PERFORMANCE_SUCCESS(HttpStatus.OK, "공연 조회에 성공했습니다."),
-    UPDATE_PERFORMANCE_STATUS_SUCCESS(HttpStatus.OK, "공연 상태 수정에 성공했습니다."),
-    UPDATE_PERFORMANCE(HttpStatus.OK, "공연 수정에 성공했습니다."),
-    DELETE_PERFORMANCE_SUCCESS(HttpStatus.OK, "공연 삭제에 성공했습니다."),
-    CREATE_PERFORMANCE_DOMAIN_SUCCESS(HttpStatus.CREATED, "공연 도메인 생성에 성공했습니다."),
-
-    // timetable
-    CREATE_TIME_TABLE_SUCCESS(HttpStatus.OK, "타임테이블 생성에 성공하였습니다."),
-    GET_TIME_TABLE_SUCCESS(HttpStatus.OK, "타임 테이블 조회에 성공했습니다."),
-    SEARCH_TIME_TABLE_SUCCESS(HttpStatus.OK, "타임테이블 검색에 성공했습니다."),
-    UPDATE_TIMETABLE_STATUS_SUCCESS(HttpStatus.OK, "타임테이블 상태 변경에 성공했습니다."),
-    DELETE_TIMETABLE_SUCCESS(HttpStatus.OK, "타임테이블 삭제에 성공했습니다."),
-    RESTORE_TIMETABLE_SUCCESS(HttpStatus.OK, "타임테이블 복원에 성공했습니다."),
-
-    // Seat
-    CREATE_SEAT_SUCCESS(HttpStatus.CREATED,"좌석 생성에 성공했습니다."),
-    GET_SEAT_INFO_SUCCESS(HttpStatus.OK, "좌석 목록 조회에 성공했습니다."),
-    UPDATE_SEAT_STATUS_SUCCESS(HttpStatus.OK, "좌석 상태 변경에 성공했습니다."),
-    DELETE_SEAT_SUCCESS(HttpStatus.OK,"좌석 삭제에 성공했습니다."),
-    RESTORE_SEAT_SUCCESS(HttpStatus.OK, "좌석 복구에 성공했습니다."),
-    UPDATE_SEAT_PRICE_SUCCESS(HttpStatus.OK,"좌석 가격 변경에 성공했습니다.");
+    CREATE_COUPON_SUCCESS(HttpStatus.CREATED, "쿠폰이 생성되었습니다."),
+    ISSUE_COUPON_SUCCESS(HttpStatus.OK, "쿠폰이 발급되었습니다."),
+    GET_UNEXPIRED_COUPONS_SUCCESS(HttpStatus.OK, "만료되지 않은 쿠폰 목록이 조회되었습니다."),
+    GET_COUPON_SUCCESS(HttpStatus.OK, "쿠폰 목록이 조회되었습니다."),
+    GET_COUPON_USERS_SUCCESS(HttpStatus.OK, "보유하고 계신 쿠폰 목록이 조회되었습니다."),
+    ALREADY_ISSUED_COUPON(HttpStatus.OK, "이미 발급 받은 쿠폰입니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

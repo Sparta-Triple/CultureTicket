@@ -57,7 +57,7 @@ public class TicketService {
     public void createTicket(KafkaTicketRequestDto request) {
         KafkaTicketRequestDto response = request;
         try {
-            RoleValidator.validateIsUser(request.getRole());
+            RoleValidator.validateIsAdminOrUser(request.getRole());
             Ticket ticket = null;
             for (int i = 0; i < request.getSeatIds().size(); i++) {
                 ticket = Ticket.of(request.getUserId(), request.getPerformanceId(),
