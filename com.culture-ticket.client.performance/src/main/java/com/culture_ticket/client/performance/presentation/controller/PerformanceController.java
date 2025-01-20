@@ -15,6 +15,9 @@ import com.culture_ticket.client.performance.domain.service.PerformanceDomainSer
 
 import java.util.List;
 import java.util.UUID;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -52,8 +55,12 @@ public class PerformanceController {
 
     // 공연 단일 조회
     @GetMapping("/info/{performanceId}")
-    public ResponseDataDto<PerformanceResponseDto> getPerformance(@PathVariable UUID performanceId) {
-        PerformanceResponseDto performanceResponseDto = performanceService.getPerformance(performanceId);
+    public ResponseDataDto<PerformanceResponseDto> getPerformance(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable UUID performanceId
+    ) {
+        PerformanceResponseDto performanceResponseDto = performanceService.getPerformance(request, response, performanceId);
         return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performanceResponseDto);
     }
 

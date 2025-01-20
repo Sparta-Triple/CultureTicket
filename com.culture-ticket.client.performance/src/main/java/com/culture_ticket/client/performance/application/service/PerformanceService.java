@@ -13,6 +13,9 @@ import com.culture_ticket.client.performance.domain.model.Category;
 import com.culture_ticket.client.performance.domain.model.Performance;
 import com.culture_ticket.client.performance.domain.repository.CategoryRepository;
 import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -21,9 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,27 +51,45 @@ public class PerformanceService {
 
     // 공연 단건 조회
     @Transactional(readOnly = true)
-    public PerformanceResponseDto getPerformance(UUID performanceId) {
-        // 1. Redis 캐시 키 생성
-        String cacheKey = RedisKeyHelper.getEventDetailCacheKey(performanceId);
-        String rankKey = RedisKeyHelper.getViewRankKey(); // 랭킹 키 생성
+    public PerformanceResponseDto getPerformance(HttpServletRequest request, HttpServletResponse response, UUID performanceId) {
+        String cacheKey = RedisKeyHelper.getPerformanceDetailsKey(performanceId);
+        // 1. 쿠키 확인 후 24시간 이내에 조회한 적 없는 사용자일 경우 조회수 증가
+        increaseViewCount(request, response, performanceId);
         // 2. 캐시에서 데이터 확인
-        PerformanceResponseDto cachedPerformance = getCachedPerformance(performanceId, cacheKey, rankKey);
+        PerformanceResponseDto cachedPerformance = (PerformanceResponseDto) redisTemplate.opsForValue().get(cacheKey);
         if (cachedPerformance != null) return cachedPerformance;
-        // 5. 캐시 데이터가 없으면 DB에서 조회
+        // 3. 캐시 데이터가 없으면 DB에서 조회
         Performance performance = findPerformanceById(performanceId);
-        // 6. 조회 결과를 Redis 캐시에 저장
+        // 4. 조회 결과를 Redis 캐시에 저장
         PerformanceResponseDto performanceResponseDto = new PerformanceResponseDto(performance);
         redisTemplate.opsForValue().set(cacheKey, performanceResponseDto, Duration.ofHours(24)); // TTL 설정
         return new PerformanceResponseDto(performance);
     }
 
-    private PerformanceResponseDto getCachedPerformance(UUID performanceId, String cacheKey, String rankKey) {
-        PerformanceResponseDto cachedPerformance = (PerformanceResponseDto) redisTemplate.opsForValue().get(cacheKey);
-        // 3. 조회수 증가
-        redisTemplate.opsForZSet().incrementScore(rankKey, String.valueOf(performanceId), 1);
-        // 4. 캐시 데이터가 존재하면 반환
-        return cachedPerformance;
+    private void increaseViewCount(HttpServletRequest request, HttpServletResponse response, UUID performanceId) {
+        String rankKey = RedisKeyHelper.getViewRankKey();
+        Cookie[] cookies = request.getCookies();
+        Optional<Cookie> oldCookie = cookies != null
+                ? Arrays.stream(cookies)
+                    .filter(cookie -> cookie.getName().equals("View_Count"))
+                    .findFirst()
+                : Optional.empty();
+        if (oldCookie.isPresent()) {
+            Cookie cookie = oldCookie.get();
+            if (!cookie.getValue().contains("[" + performanceId + "]")) {
+                cookie.setValue(cookie.getValue() + "[" + performanceId + "]");
+                redisTemplate.opsForZSet().incrementScore(rankKey, performanceId, 1);
+            }
+            cookie.setPath("/");
+            cookie.setHttpOnly(true);
+            cookie.setMaxAge(24 * 60 * 60);
+            response.addCookie(cookie);
+        } else {
+            Cookie newCookie = new Cookie("View_Count", "[" + performanceId + "]");
+            newCookie.setPath("/");
+            redisTemplate.opsForZSet().incrementScore(rankKey, performanceId, 1);
+            response.addCookie(newCookie);
+        }
     }
 
     // 공연 전체 조회 & 검색
@@ -92,8 +111,8 @@ public class PerformanceService {
         ).toList();
         List<PerformanceResponseDto> rankedPerformances = new ArrayList<>();
         for (UUID rankedPerformanceId : rankedPerformanceIds) {
-            String cacheKey = RedisKeyHelper.getEventDetailCacheKey(rankedPerformanceId);
-            PerformanceResponseDto cachedPerformance = getCachedPerformance(rankedPerformanceId, cacheKey, rankKey);
+            String cacheKey = RedisKeyHelper.getPerformanceDetailsKey(rankedPerformanceId);
+            PerformanceResponseDto cachedPerformance = (PerformanceResponseDto) redisTemplate.opsForValue().get(cacheKey);
             rankedPerformances.add(cachedPerformance);
         }
         return rankedPerformances;

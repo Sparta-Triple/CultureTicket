@@ -9,7 +9,7 @@ public class RedisKeyHelper {
     }
 
     // 매개변수로 받은 id값의 event의 details의 키를 반환.
-    public static String getEventDetailCacheKey(UUID performanceId) {
+    public static String getPerformanceDetailsKey(UUID performanceId) {
         return RedisKeyType.PERFORMANCE_INFO.format(performanceId);
     }
 
