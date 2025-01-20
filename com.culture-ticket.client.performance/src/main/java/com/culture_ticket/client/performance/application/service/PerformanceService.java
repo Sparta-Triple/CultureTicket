@@ -106,7 +106,7 @@ public class PerformanceService {
     @Transactional(readOnly = true)
     public List<PerformanceResponseDto> getPerformanceRank() {
         String rankKey = RedisKeyHelper.getViewRankKey();
-        List<UUID> rankedPerformanceIds = redisTemplate.opsForZSet().reverseRangeWithScores(rankKey, 0, 5).stream().map(
+        List<UUID> rankedPerformanceIds = redisTemplate.opsForZSet().reverseRangeWithScores(rankKey, 0, 4).stream().map(
                 z -> UUID.fromString(z.getValue().toString())
         ).toList();
         List<PerformanceResponseDto> rankedPerformances = new ArrayList<>();
