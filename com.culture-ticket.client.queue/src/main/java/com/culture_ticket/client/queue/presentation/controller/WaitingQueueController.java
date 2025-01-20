@@ -27,9 +27,9 @@ public class WaitingQueueController {
      * @return 토큰 정보와 대기열 정보를 반환한다.(토큰 요청값이 없으면 새로 발급하여 응답 반환, isActive 반환값에 따라 페이지 진입 가능 여부를 판단합니다)
      */
     @PostMapping("/token")
-    public ResponseEntity<ResponseDataDto<WaitingQueueResponseDto>> checkWaiting(
+    public ResponseDataDto<WaitingQueueResponseDto> checkWaiting(
         @RequestBody WaitingQueueRequestDto request) {
-        return ResponseEntity.ok(new ResponseDataDto<>(ResponseStatus.QUEUE_GET_SUCCESS,
-            waitingQueueFacade.checkWaiting(request)));
+        return new ResponseDataDto<>(ResponseStatus.QUEUE_GET_SUCCESS,
+            waitingQueueFacade.checkWaiting(request));
     }
 }
