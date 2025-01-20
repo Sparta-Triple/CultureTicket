@@ -13,13 +13,13 @@ public interface WaitingQueueRepository {
 
     Set<String> getWaitingTokens();
 
-    void saveActiveQueue(Long userId, String token);
+    void saveActiveQueue(String sessionId, String token);
 
-    void deleteWaitingQueue(Long userId, String token);
+    void deleteWaitingQueue(String sessionId, String token);
 
-    Long getMyWaitingNum(Long userId, String token);
+    Long getMyWaitingNum(String sessionId, String token);
 
-    void saveWaitingQueue(Long userId, String token);
+    void saveWaitingQueue(String sessionId, String token);
 
     void deleteWaitingTokens();
 

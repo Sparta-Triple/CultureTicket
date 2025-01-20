@@ -20,8 +20,8 @@ public class RedisRepository {
     private static final String ACTIVE_COUNT_KEY = "culture:waiting:active:*";
 
     // sorted_set 추가
-    public Boolean zSetAdd(String key, String value, double score) {
-        return redisTemplate.opsForZSet().addIfAbsent(REDIS_NAMESPACE + key, value, score);
+    public void zSetAdd(String key, String value, double score) {
+        redisTemplate.opsForZSet().addIfAbsent(REDIS_NAMESPACE + key, value, score);
     }
 
     // sorted_set 삭제
@@ -43,8 +43,8 @@ public class RedisRepository {
     }
 
     //set 사용
-    public Long setAdd(String key, String value) {
-        return redisTemplate.opsForSet().add(REDIS_NAMESPACE + key, value);
+    public void setAdd(String key, String value) {
+        redisTemplate.opsForSet().add(REDIS_NAMESPACE + key, value);
     }
 
     public void setAddRangeWithTtl(String key, Set<String> value, long timeout, TimeUnit unit) {

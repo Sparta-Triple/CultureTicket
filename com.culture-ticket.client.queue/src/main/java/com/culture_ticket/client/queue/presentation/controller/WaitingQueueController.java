@@ -28,10 +28,8 @@ public class WaitingQueueController {
      */
     @PostMapping("/token")
     public ResponseEntity<ResponseDataDto<WaitingQueueResponseDto>> checkWaiting(
-        @RequestHeader(value = "X-User-Id") String userId,
-        @RequestHeader(value = "X-User-Role", required = true) String role,
         @RequestBody WaitingQueueRequestDto request) {
         return ResponseEntity.ok(new ResponseDataDto<>(ResponseStatus.QUEUE_GET_SUCCESS,
-            waitingQueueFacade.checkWaiting(Long.parseLong(userId), request)));
+            waitingQueueFacade.checkWaiting(request)));
     }
 }

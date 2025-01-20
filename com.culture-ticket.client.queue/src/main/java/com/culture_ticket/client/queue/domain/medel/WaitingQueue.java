@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class WaitingQueue {
     private UUID waitingQueueId;
 
-    private Long userId;
+    private String sessionId;
 
     private String token;
 
@@ -32,10 +32,10 @@ public class WaitingQueue {
     private Long waitTimeInSeconds;
 
     @Builder(toBuilder = true)
-    private WaitingQueue(UUID waitingQueueId, Long userId, String token, WaitingQueueStatus status,
+    private WaitingQueue(UUID waitingQueueId, String sessionId, String token, WaitingQueueStatus status,
         LocalDateTime requestTime, LocalDateTime activeTime, Long waitingNum, Long waitTimeInSeconds) {
         this.waitingQueueId = waitingQueueId;
-        this.userId = userId;
+        this.sessionId = sessionId;
         this.token = token;
         this.status = status;
         this.requestTime = requestTime;
@@ -62,16 +62,16 @@ public class WaitingQueue {
         EXPIRED // 만료
     }
 
-    public static WaitingQueue toDomain(long availableActiveTokenCnt, Long userId, String token) {
+    public static WaitingQueue toDomain(long availableActiveTokenCnt, String sessionId, String token) {
 
-        if (availableActiveTokenCnt > 0) return WaitingQueue.toActiveDomain(userId, token);
+        if (availableActiveTokenCnt > 0) return WaitingQueue.toActiveDomain(sessionId, token);
 
-        return WaitingQueue.toWaitingDomain(userId, token);
+        return WaitingQueue.toWaitingDomain(sessionId, token);
     }
 
-    public static WaitingQueue toActiveDomain(Long userId, String token) {
+    public static WaitingQueue toActiveDomain(String sessionId, String token) {
         return WaitingQueue.builder()
-                .userId(userId)
+                .sessionId(sessionId)
                 .token(token)
                 .status(WaitingQueueStatus.ACTIVE)
                 .requestTime(now())
@@ -79,9 +79,9 @@ public class WaitingQueue {
                 .build();
     }
 
-    public static WaitingQueue toWaitingDomain(Long userId, String token) {
+    public static WaitingQueue toWaitingDomain(String sessionId, String token) {
         return WaitingQueue.builder()
-                .userId(userId)
+                .sessionId(sessionId)
                 .token(token)
                 .status(WaitingQueueStatus.WAIT)
                 .requestTime(now())

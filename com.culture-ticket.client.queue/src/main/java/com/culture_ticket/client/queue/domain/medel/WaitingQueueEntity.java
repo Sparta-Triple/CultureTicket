@@ -26,7 +26,7 @@ public class WaitingQueueEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private UUID waitingQueueId;
 
-    private Long userId;
+    private String sessionId;
 
     private String token;
 
@@ -40,7 +40,7 @@ public class WaitingQueueEntity {
     public static WaitingQueueEntity toEntity(WaitingQueue queue) {
         return builder()
                 .waitingQueueId(queue.getWaitingQueueId() != null ? queue.getWaitingQueueId() : null)
-                .userId(queue.getUserId())
+                .sessionId(queue.getSessionId())
                 .token(queue.getToken())
                 .status(queue.getStatus())
                 .requestTime(queue.getRequestTime())
@@ -51,7 +51,7 @@ public class WaitingQueueEntity {
     public WaitingQueue toDomain() {
         return WaitingQueue.builder()
                 .waitingQueueId(waitingQueueId)
-                .userId(userId)
+                .sessionId(sessionId)
                 .token(token)
                 .status(status)
                 .requestTime(requestTime)

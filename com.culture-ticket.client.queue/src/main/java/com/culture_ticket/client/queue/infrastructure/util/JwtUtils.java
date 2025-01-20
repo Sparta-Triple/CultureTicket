@@ -36,14 +36,14 @@ public class JwtUtils {
     /**
      * 토큰을 생성한다.
      *
-     * @param userId userId 정보
+     * @param sessionId sessionId 정보
      * @return String token 정보
      */
-    public String createToken(Long userId) {
+    public String createToken(String sessionId) {
 
         return Jwts
                 .builder()
-                .setSubject(String.valueOf(userId)) // JWT payload 에 저장되는 정보
+                .setSubject(sessionId) // JWT payload 에 저장되는 정보
                 .setIssuedAt(new Date(System.currentTimeMillis())) //발행 일자
                 .setExpiration(new Date(System.currentTimeMillis() + EXP_TIME)) // set Expire Time
                 .signWith(this.getSigningKey())  // 사용할 암호화 알고리즘과 secret key 세팅

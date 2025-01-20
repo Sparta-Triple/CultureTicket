@@ -33,8 +33,8 @@ public class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
     }
 
     @Override
-    public void saveActiveQueue(Long userId, String token) {
-        redisRepository.setAdd(ACTIVE_KEY + ":" + token, String.valueOf(userId));
+    public void saveActiveQueue(String sessionId, String token) {
+        redisRepository.setAdd(ACTIVE_KEY + ":" + token, sessionId);
     }
 
     @Override
@@ -43,18 +43,18 @@ public class WaitingQueueRepositoryImpl implements WaitingQueueRepository {
     }
 
     @Override
-    public void deleteWaitingQueue(Long userId, String token) {
-        redisRepository.zSetRemove(WAIT_KEY, token + ":" + userId);
+    public void deleteWaitingQueue(String sessionId, String token) {
+        redisRepository.zSetRemove(WAIT_KEY, token + ":" + sessionId);
     }
 
     @Override
-    public Long getMyWaitingNum(Long userId, String token) {
-        return redisRepository.zSetRank(WAIT_KEY, token + ":" + userId);
+    public Long getMyWaitingNum(String sessionId, String token) {
+        return redisRepository.zSetRank(WAIT_KEY, token + ":" + sessionId);
     }
 
     @Override
-    public void saveWaitingQueue(Long userId, String token) {
-        redisRepository.zSetAdd(WAIT_KEY, token + ":" + userId, System.currentTimeMillis());
+    public void saveWaitingQueue(String sessionId, String token) {
+        redisRepository.zSetAdd(WAIT_KEY, token + ":" + sessionId, System.currentTimeMillis());
     }
 
     @Override

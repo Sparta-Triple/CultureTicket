@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class WaitingQueueRequestDto {
+    private String sessionId;
     private String token;
 }
