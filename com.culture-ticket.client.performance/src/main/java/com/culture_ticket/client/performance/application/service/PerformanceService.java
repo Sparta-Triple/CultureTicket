@@ -87,6 +87,8 @@ public class PerformanceService {
         } else {
             Cookie newCookie = new Cookie("View_Count", "[" + performanceId + "]");
             newCookie.setPath("/");
+            newCookie.setHttpOnly(true);
+            newCookie.setMaxAge(24 * 60 * 60);
             redisTemplate.opsForZSet().incrementScore(rankKey, performanceId, 1);
             response.addCookie(newCookie);
         }
