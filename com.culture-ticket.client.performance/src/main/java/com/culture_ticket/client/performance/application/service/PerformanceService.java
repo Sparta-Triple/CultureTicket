@@ -1,7 +1,6 @@
 package com.culture_ticket.client.performance.application.service;
 
 
-import com.culture_ticket.client.performance.application.dto.feignclient.FeignClientResponseDataDto;
 import com.culture_ticket.client.performance.application.dto.feignclient.WaitingQueueRequestDto;
 import com.culture_ticket.client.performance.application.dto.feignclient.WaitingQueueResponseDto;
 import com.culture_ticket.client.performance.application.dto.pagination.RestPage;
