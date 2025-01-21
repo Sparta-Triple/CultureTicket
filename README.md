@@ -3,9 +3,9 @@
 <br>
 
 ## ❇️ [프로젝트 개요](https://github.com/project-gongsimchae/gongsimchae/wiki)
-#### 공구와 소분 등 지역 커뮤니티를 통해 1인 가구의 합리적 소비를 권장하는 쇼핑몰
+#### 대규모 트래픽을 효과적으로 처리하여 안정적이고 확장 가능한 '문화생활 티케팅 서비스'
 - [개발과정](https://github.com/project-gongsimchae/gongsimchae/wiki/%EA%B0%9C%EB%B0%9C%EA%B3%BC%EC%A0%95)
-- [ERD](https://github.com/project-gongsimchae/gongsimchae/wiki/ERD#-erd)
+- [ERD](https://github.com/user-attachments/assets/3ed7a77c-ba7e-4ec0-99f8-1a4837895466)
 - [Convention](https://github.com/project-gongsimchae/gongsimchae/wiki/Convention)
 - [그라운드 룰](https://github.com/project-gongsimchae/gongsimchae/wiki/%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C-%EB%A3%B0)
 
@@ -18,6 +18,32 @@
 | <div align="center"> `공통 기능` <br>이미지 CRUD<br/>`공구`<br>아이템 데이터 활용 전반, <br> 카테고리별 조회, 정렬 기능 <br> `관리자 페이지` <br> 이벤트, 쿠폰, 주문, <br> 상품, 관리 기능,  </div>          | <div align="center"> `공통`<br> 서버 배포 및 관리<br> 젠킨스 빌드 연동<br> NGINX 무중단 배포<br> HTTPS 인증 <br> `소분` <br> 소분글 CRUD <br> 소분 상세 페이지 <br> `공구` <br> 공동구매 성공 <br> 실패 로직 </div> | <div align="center"> `공구` <br> 아이템 & 이벤트 CRUD <br> 아이템 옵션 <br> `소분` <br> 메인페이지 <br> 지역 태그 및 내용 검색 <br> `공통` <br> 찜 </div>                     | <div align="center"> `공구`<br> 아이템 옵션 기능 구현 <br> 주문 내역, 주문 내역 상세<br/> 장바구니<br/>  `결제` <br> 주문서 페이지 <br> 포트원 API 연동 <br> 결제, 검증, 환불 <br>  </div>              | <div align="center">`유저 및 인증-인가 전반` <br>로그인, 회원가입, Oauth2 <br /> `공통 기능` <br>주소 관리, 문의<br/>알림, 알림키워드<br/>검색 및 정렬 <br>`소분`<br />단체채팅, AI 채팅<br>신고, 소분글후기 <br/>`공구`<br>조회수, 찜 </div>     |
 
   
+## ✨프로젝트 핵심 목표
+대규모 트래픽을 효과적으로 처리하여 안정적이고 확장 가능한 '문화생활 티켓팅 서비스'를 구축하여 사용자들에게 원활한 티켓 구매 경험을 제공
+
+- 대규모 트래픽 상황에 알맞은 메시징 시스템 Kafka or RabbitMQ
+- 모니터링 툴을 통해 병목 구간 파악 및 성능 개선
+- SAGA패턴을 사용한 자동 롤백과 데이터 일관성 유지
+- 알맞는 모니터링 시스템 Grafana, Prometheus or ELK Stack
+- Mock MVC를 이용한 테스트 코드
+- Database Replication 구성에 따른 Read / Write 분리
+    - Redis로 우선 처리, DB에 백업 저장
+- Cache를 사용한 DB 복제 지연 문제 해결
+
+
+
+
+
+## ✔️KEY SUMMARY
+
+
+
+
+
+## 🛠️인프라 아키텍처
+<img src="https://github.com/user-attachments/assets/8eb580bb-fd78-41a6-9f34-daaad359a21e" width=600; width=500 />
+
+
 
 
 ## 🚀 기술 스택
