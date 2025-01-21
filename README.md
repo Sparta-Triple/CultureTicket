@@ -4,10 +4,10 @@
 
 ## ❇️ [프로젝트 개요](https://github.com/project-gongsimchae/gongsimchae/wiki)
 #### 대규모 트래픽을 효과적으로 처리하여 안정적이고 확장 가능한 '문화생활 티케팅 서비스'
-- [개발과정](https://github.com/project-gongsimchae/gongsimchae/wiki/%EA%B0%9C%EB%B0%9C%EA%B3%BC%EC%A0%95)
+- [개발과정](https://github.com/Sparta-Triple/CultureTicket/wiki/%EA%B0%9C%EB%B0%9C%EA%B3%BC%EC%A0%95)
 - [ERD](https://github.com/user-attachments/assets/3ed7a77c-ba7e-4ec0-99f8-1a4837895466)
-- [Convention](https://github.com/project-gongsimchae/gongsimchae/wiki/Convention)
-- [그라운드 룰](https://github.com/project-gongsimchae/gongsimchae/wiki/%EA%B7%B8%EB%9D%BC%EC%9A%B4%EB%93%9C-%EB%A3%B0)
+- [Convention](https://github.com/Sparta-Triple/CultureTicket/wiki/Convention)
+- [그라운드 룰](https://github.com/Sparta-Triple/CultureTicket/wiki/GroundRule)
 
 </br>
 
