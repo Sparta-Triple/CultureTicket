@@ -61,277 +61,63 @@ DevOps | ![Amazon Web Services](https://img.shields.io/badge/amazon%20aws-232F3E
 Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white) ![git](https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white) ![slack](https://img.shields.io/badge/slack-4A154B?style=for-the-badge&logo=slack&logoColor=white) ![notion](https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white) ![jira](https://img.shields.io/badge/jira-0052CC?style=for-the-badge&logo=jira&logoColor=white) ![confluence](https://img.shields.io/badge/confluence-172B4D?style=for-the-badge&logo=confluence&logoColor=white) ![discord](https://img.shields.io/badge/discord-5865F2?style=for-the-badge&logo=discord&logoColor=white) ![kibana](https://img.shields.io/badge/kibana-005571?style=for-the-badge&logo=kibana&logoColor=white) ![dbeaver](https://img.shields.io/badge/dbeaver-382923?style=for-the-badge&logo=dbeaver&logoColor=white) ![figma](https://img.shields.io/badge/figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white) 
 
 
+## 🗣️ 기술적 의사결정
+서비스 | 요구 사항 | 기술명 | 선택 근거/목적
+--- | --- |--- | --- |
+공연 서비스 | 공연 조회 | Redis Cache | 공연 정보와 같은 자주 조회되는 데이터는 매번 DB에서 직접 조회하는 것보다 Redis 캐시 시스템을 활용하여 응답 속도를 개선
+공연 서비스 | 공연 랭킹 | Redis Sorted Set| 공연 랭킹과 같은 실시간으로 자주 업데이트, 조회 되는 데이터를 빠르게 처리하기 위해
+공연 서비스 | 공연 조회수 | Redis Sorted Set | 공연 조회수와 같은 실시간으로 자주 업데이트, 조회 되는 데이터를 빠르게 처리하기 위해
+공연 서비스 | 공연 조회 대기열 | Redis Sroted Set | 많은 사용자가 동시에 하나의 공연에 대해 조회하는 상황에 서버 과부하가 발생할 가능성 존재, 놀이동산 방식의 대기열을 구현하여 서버가 감당할 수 있는 사용자를 주기적으로 처리
+쿠폰 서비스 | 쿠폰 발급 | Distributed Lock | 동시성 문제, 중복 발급 방지, 쿠폰 수량 차감의 정확성을 보장하고, 시스템의 안정성과 데이터 일관성을 유지하기 위해
+티켓 서비스| 티켓 발급 | Kafka | 결제 완료 후, 티켓 발급을 비동기적으로 처리하고, 확장 가능한 방식으로 시스템을 운영하기 위해, 티켓 발급 시스템의 안정성을 확보하고 대규모 트래픽에 효율적
+티켓 서비스| 대기열 | Kafka | 많은 사용자가 동시에 티켓을 구매하려는 상황에 동시성 문제와 서버 과부하가 발생할 가능성 존재, 실시간으로 요청을 처리하는 대신 대기열에 요청을 저장하여 순차적으로 처리
+
 <details>
-<summary><strong>📣기술 & 라이브러리 사용 이유</strong></summary>
-<div markdown="1">   
-  <br/>
-  <details>
-  <summary><strong> 1️⃣ Query DSL</strong></summary>
-    <div markdown="1"> 
-      
-    1. 동적인 쿼리 작성이 필요했습니다.
-    2. 자동 완성 등 IDE의 도움을 받을 수 있어 편리합니다.
-    3. 문자가 아닌 코드로 쿼리를 작성함으로써, 컴파일 시점에 문법 오류를 쉽게 확인할 수 있어 더욱 안전합니다.
-    4. 쿼리 작성 시 제약 조건 등을 메서드 추출을 통해 재사용할 수 있었고 가독성이 좋아졌습니다.
-
-  </details> 
-  
-  <details>
-  <summary><strong> 2️⃣ Elastic Search</strong></summary>
-    <div markdown="1">     
-
-    1. 대용량 데이터에서 빠른 키워드 조회를 위해 사용했습니다.
-    2. 형태소 분석을 통한 지연어처리와 역색인 지원으로 빠른 검색을 위해 사용했습니다.
-
-  </details> 
-  
-  <details>
-  <summary><strong> 3️⃣ RDS- MySQL</strong></summary>
-    <div markdown="1">     
-
-    1. 프로젝트 전 MySQL을 미리 학습한 경험이 있어 다른 DB보다 빠르게 프로젝트에 적용이 가능하기 때문에 선택했습니다
-    2. 현업에서 MySQL의 점유율 높기 때문에 레퍼런스를 찾기 쉬웠습니다.
-   
-    
-  </details> 
-  
-    
-  <details>
-  <summary><strong> 4️⃣ AWS ElastiCache for Redis</strong></summary>
-    <div markdown="1">
-      
-    1. AWS 아키텍처로 구성된 프로젝트에서 최적화된 서비스와 팀 프로젝트 환경에서 효과적인 모니터링을 위해서 AWS 클라우드 제품을 사용했습니다.
-    2. 다양한 데이터 타입과 영속화가 필요했습니다.
-    3. 자동으로 만료되는 데이터를 다룰 수 있어 캐시 시스템으로 이상적입니다. 이를 통해 데이터의 유효성을 관리하고 불필요한 메모리 사용을 줄일 수 있었습니다.
-    
-  </details> 
-  
-    
-  <details>
-  <summary><strong> 5️⃣ Spring Batch</strong></summary>
+  <summary><strong> Distribution Lock</strong></summary>
     <div markdown="1">     
       
-    1. Spring Batch는 대량의 데이터를 효율적으로 처리할 수 있도록 설계된 프레임워크로, 안전하고 신뢰성 있는 데이터 이전 및 처리를 지원합니다.
-    2. 대용량 데이터를 읽고 쓰는 작업에 최적화되어 있어, 데이터 처리 속도가 빠르고 자원 관리가 용이합니다. 특히, 트랜잭션 관리와 병렬 처리 기능을 제공해 성능을 극대화할 수 있습니다.
-    3. 정기적으로 실행해야 하는 배치 작업을 손쉽게 스케줄링하고, 자동화할 수 있어 반복 작업을 효율적으로 관리할 수 있습니다.
-    
-  </details> 
-  
-    
-    
-  <details>
-  <summary><strong> 6️⃣ APACHE KAFKA</strong></summary>
-    <div markdown="1">     
-    
-    1. 초당 수백막 건의 데이터를 처리할 수 있어 실시간 데이터 처리에 적합합니다.
-    2. Pub/Sub기반으로 느슨한 처리가 가능해 확장성과 유연성이 뛰어납니다
-    3. 메시지를 저장해 데이터 손실 방지 기능을 제공합니다
-      
-  </details> 
-  
-    
-    
-  <details>
-  <summary><strong> 7️⃣ MongoDB</strong></summary>
-    <div markdown="1">
-    
-    1. 대용량 비정형 데이터를 처리할 수 있습니다.
-    2. 읽기 및 쓰기 속도가 빨라 빈번한 데이터 업데이트가 필요한 애플리케이션에 적합합니다.
-    3. 샤딩을 통해 데이터를 분산 저장할 수 있어 카프카와 호환성이 좋습니다.
-  
-  </details> 
-  
-    
-    
-  <details>
-  <summary><strong> 8️⃣ Spring AI</strong></summary>  
-  <div markdown="1">     
+   ### 문제 상황
+- 스프링은 멀티 쓰레드 방식으로 동작하기 때문에, 동시에 여러 쿠폰 발급 요청이 들어올 경우 하나의 쿠폰 데이터에 대해 여러 쓰레드에서 변경을 요청하게 되고 이 때 `Race Condition` 문제가 발생할 수 있음.
+- 쿠폰이 100개라고 했을 때 하나의 쓰레드에서 요청을 완료하기 전에 다른 쓰레드에서 재고 데이터를 조회하는 상황이 있을 수 있고 이 경우 쿠폰이 100개 이상 발급되는 문제가 발생할 수 있다.
 
-    1. 다양한 AI 서비스와 모델을 손쉽게 통합할 수 있습니다.
-    2. 스프링 프레임워크와 통합되어있어 빠르게 개발 및 배포할 수 있습니다.
- 
-  </details> 
-  
+    ### 선택 가능한 방안
+1. **프로세스 Lock(Synchronized), `채택 X`**
+> 프로세스에서 한 데이터를 쓰레드가 사용하면 다른 쓰레드가 사용하지 못하도록 막는 방식
+> 
+- 채택하지 않은 이유
+    대용량 트래픽을 고려한 MSA 아키텍처 서비스에서, 단일 서버로 동작해야만 하는 프로세스 Lock은 `scale-out` 의 상황에 유연하게 대처하지 못하는 방식이기 때문
+>
+2. **DB Lock `채택 X`**
+> 한 트랜잭션이 데이터베이스의 특정 데이터에서 작업을 하고 있다면 다른 트랜잭션이 접근하지 못하도록 막는 방식
+> 
+- 채택하지 않은 이유
+    DB Lock의 경우 해당 자원에 대한 접근 자체를 막기 때문에 쿠폰 발급 뿐만 아니라 조회의 경우에도 Lock이 발생하고 이는 의도하지 않은 `side effect`이기 때문에 채택 불가
+>
+3. **Distribution Lock `채택 O`**
+> 하나의 공유 자원에 대한 경쟁 상황에서 데이터에 접근할 때, 데이터의 결함이 발생하지 않도록 원자성(atomic)을 보장하는 방식
+> 
+- 채택 이유
+    Process Lock의 경우와 달리, redis가 요청 순서대로 lock을 반환해 주기 때문에 `scale-out`의 상황에서도 동시성 문제를 해결할 수 있음
     
-    
-  <details>
-  <summary><strong> 9️⃣ Jenkins</strong></summary>
-    <div markdown="1">     
-
-    1. 다양한 플러그인을 제공하여 빌드, 테스트, 배포, 모니터링 등 다양한 작업을 지원합니다
-    2. 높은 유연성과 확장성을 제공하여 특정 요구에 맞게 파이프라인을 구성하고 자동화할 수 있습니다.
-    3. 빌드 상태에 대한 알림 기능을 제공하며, 이벤트에 대한 알림을 설정하여 정보를 실시간으로 전달합니다.
-    
-  </details> 
-  
-      
-    
-  <details>
-  <summary><strong> 🔟 NGINX</strong></summary>
-    <div markdown="1">     
-    
-    1. 로드 밸런싱 기능을 제공하여 여러서버에 트래픽을 분산시키고 애플리케이션의 확장성과 가용성을 높일 수 있습니다.
-    2. 리버스 프록시 서버로 사용할 수 있어 캐싱, 보안, SSL등 다양한 기능을 제공합니다.
-    3. 간격하고 직관적인 설정 파일을 제공하여 서버 설정 및 관리에 용이합니다 
-
-
+    DB Lock과 달리, 자원 자체에 대한 Lock이 아니기 때문에 의도치 않은 `side effect`가 발생하지 않음.
+  - 분산락 구현 방식
+    - **Zookeeper**
+        - 분산 서버 관리시스템으로 분산 서비스 내 설정 등을 공유해주는 시스템.
+        - 추가적인 인프라 구성이 필요하고 성능 튜닝을 위한 러닝커브가 존재.
+        - Kafka에서 활용중이긴 하지만, 오버엔지니어링이라 판단.
+    - **Redis `채택 O`**
+        - **Key, Value** 구조의 비정형 데이터를 저장하고 관리하기 위한 NoSQL DB
+        - 추가적인 인프라 구성 필요하지만 러닝 커브가 낮음.
+        - 현재 이미 공연 조회 데이터 캐싱을 위해 사용 중
+        - 인메모리 DB로 속도가 빠름.(초당 100,000 QPS 의 속도)
+        - 싱글스레드 방식으로 동시성 문제 해결 가능
   </details> 
 
- <details>
-  <summary><strong> 1️⃣1️⃣ PortOne</strong></summary>
-    <div markdown="1">     
 
-    1. 다양한 결제 수단을 하나의 API로 통합하여 관리할 수 있어, 개발 및 유지보수 비용을 절감할 수 있습니다/
-    2. 개발 단계에서 실제 결제 없이 테스트할 수 있는 샌드박스 환경을 제공하여, 안전하고 효율적인 개발 및 테스트가 가능합니다.
-    3. 테스트 모드와 실제 운영 모드 간의 전환이 간단하여, 개발에서 운영으로의 이전이 원활합니다.
-    4. 다양한 결제 시나리오(성공, 실패, 취소 등)를 시뮬레이션할 수 있어, 프로덕션 환경 이전에 충분한 테스트가 가능합니다.
-  </details>
-  
-  
-</div>
-</details>
-</br>
 
 ## 📁 아키텍처
 <img width="1470" alt="image" src="https://github.com/user-attachments/assets/8f34ed25-b199-4c59-bd9d-d54be05633b6" />
 
-<br>
-
-## 🖥️ 화면 구성
-
-<details>
-  <summary><strong>공통</strong></summary>
-    <div markdown="1">
-
----
-
-1. 자주 찾는 메뉴
-
-<img src="https://github.com/user-attachments/assets/f3d72941-f8a9-40e4-9c71-8c9c41218ebd" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/a67e2640-5cf8-4b2b-95f2-f94d5662a19a" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/a1266576-5f71-415e-9e91-7adc8721944c" width="500px" height="300px"></img>
-
----
-
-2. 쇼핑
-
-<img src="https://github.com/user-attachments/assets/ae0bdde4-bfba-4046-8e6f-d302f2e26584" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/31f283a0-d44d-412f-ad48-321c92f27c7b" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/3653acc8-0db3-493a-9693-16f46f17f756" width="500px" height="300px"></img>
-
----
-
-3. 소분
-
-<img src="https://github.com/user-attachments/assets/272276ae-7d42-4115-8eb8-fe57ab1608ad" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/71abb8bb-a180-4f2b-a9c2-d053d14df83c" width="500px" height="300px"></img>
-
----
-
-4. 내 정보
-
-<img src="https://github.com/user-attachments/assets/578a77bc-06e2-429f-a110-f489f8fa590f" width="500px" height="300px"></img>
-<img src="https://github.com/user-attachments/assets/969a2425-c49d-4a88-ae0a-ae6b97932091" width="500px" height="300px"></img>
-
-</details>
-
-<br>
-
-<details>
-  <summary><strong>공구</strong></summary>
-    <div markdown="1">
-
----
-
-1. 아이템 페이지
-
-<img src="https://github.com/user-attachments/assets/e2d7fa06-da99-42ec-9959-ffc2af90c064" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/6c6c15f2-5581-44f9-a42d-3838f830053d" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/c70415de-2186-40c2-bac7-1f89ee71b7fc" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/3b9a0828-3f33-4874-9a33-0431b6965bd8" width="500px" height="300px"></img>
-
----
-
-2. 이벤트 페이지
-
-<img src="https://github.com/user-attachments/assets/0c1f6849-11ad-4b6a-9228-137969774ce3" width="500px" height="300px"></img>
-
----
-
-3. 찜, 장바구니, 결제
-
-<img src="https://github.com/user-attachments/assets/00d0eeee-11d4-49e5-bc5e-4f5c25dcac47" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/7f178f73-d296-436c-8c22-f44fe3b9d934" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/ab433baa-b525-4b43-bded-fd9327ae7e37" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/ea3b20b7-314c-4363-9bc2-a9df533caa93" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/291bef0a-4807-4b59-bab8-da65bb568248" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/ac0d77e4-8ea1-4465-bfe8-dd34706e90d2" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/8babbdba-b57f-493f-8625-132a020b901c" width="500px" height="300px"></img>
-
-</details>
-
-<br>
-
-<details>
-  <summary><strong>소분</strong></summary>
-    <div markdown="1">
-
----
-
-1. 소분
-
-<img src="https://github.com/user-attachments/assets/9bd72bca-b154-4e59-b153-75f4100b7760" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/e7644c41-0484-405a-bc2c-70304b83e143" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/feabcd80-75ce-4956-b679-bc04aa298a08" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/eebd2a55-4957-4f9b-9a2c-6b6589b31716" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/5e2f2092-8f9e-454a-9f3c-2a0aa5c500c5" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/8cdcef8b-7b0a-40a3-b8c7-fa6c1cba114a" width="500px" height="300px"></img>
-
-</details>
-
-<br>
-
-<details>
-  <summary><strong>관리자</strong></summary>
-    <div markdown="1">
-
-1. 관리자 메뉴
-
-<img src="https://github.com/user-attachments/assets/35b6ad9e-993b-4615-ab9c-c5760ef00c56" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/d3547d0e-4796-4b2c-baed-17f356d0952d" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/27e32ec3-e985-48e7-a48c-7e05cd37f2bd" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/58d711af-c688-4d30-8161-35bb5ebc7610" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/8286c579-490e-4654-a6c4-5f0d7a7fee74" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/c4d50346-fce8-4f74-87bc-266656ae5ab4" width="500px" height="300px"></img>
-
-<img src="https://github.com/user-attachments/assets/c4a8d7a4-ad05-4a08-8e67-716774b68e39" width="500px" height="300px"></img>
-</details>
-
-<br>
       
 ##  🛠 주요기능
 ```
@@ -477,26 +263,29 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 
 ## 🐞 Trouble Shooting
 <details>
-  <summary><strong> 조회수를 Redis에 저장하여 성능 향상</strong></summary>
+  <summary><strong> Redis Cache를 적용한 공연 조회</strong></summary>
     <div markdown="1"> 
-    - 문제: DB에 직접 조회수를 저장하면서 발생한 성능 저하 및 트래픽 폭주 문제 <br>
-    - 해결: Redis를 캐시로 활용하여 조회수를 실시간으로 저장 및 업데이트, 특정 주기에만 Redis 데이터를 DB로 동기화 <br>
-    - 결과: DB 부하를 줄이고 실시간 조회수가 필요한 서비스에서 속도와 성능 모두 향상
-    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/65cbc148-f121-43eb-a4c1-7ef5700709f2" />
-    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/dd3a2ab1-885b-4a73-9ed5-ce9011195c12" />
-
+    - 문제: 자주 조회하는 공연 정보를 DB에서 직접 조회하면 평균 응답 속도가 847ms가 나왔다. <br>
+    - 해결: Redis Cache를 활용하여 DB 부하를 줄였다.  <br>
+    - 결과: Redis Cache 조회시 847ms보다 약 141배 빠른 6ms가 나왔다. DB 부하를 줄이고 성능을 크게 향상시켰다.
+    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/53535619-8f8d-4c0d-8b3b-bdf557594d50" />
+    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/fc28bfef-0fd2-47ed-91fd-148675b8b082" />
 </details>
 <details>
-  <summary><strong> SSE 커넥션 풀이 고갈되는 현상 해결</strong></summary>
+  <summary><strong> 쿠폰 개수의 올바른 차감</strong></summary>
     <div markdown="1"> 
-  - 문제: SSE 사용 중 다수의 클라이언트 접속으로 인해 커넥션 풀 고갈, 특히 지속적인 연결로 리소스가 과도하게 소모됨 <br>
-  - 해결: 커넥션 풀 증가 및 OSIV를 비활성화 <br>
-  - 결과: 안정적으로 다수의 SSE 커넥션을 처리 가능하며, 서비스 가용성 유지
+  - 문제: 쿠폰 발급이 이루어질 때, 쿠폰 개수가 올바르지 않게 차감됐다. <br>
+  - 해결: Lock을 획득한 요청이 완료될 때까지 다른 요청이 대기하게 하여 트랜잭션 간 stock 조회를 방지 <br>
+  - 결과: 쿠폰 발급이 이루어질 때, 1개씩 쿠폰 개수가 차감됐다.
+    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/86ff8714-083a-42c3-b844-6194af56d6f9" />
+    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/d2c7aa51-c305-477d-a554-6a7d14f8ac33" />
 </details>
 <details>
-  <summary><strong> ElasticSearch를 활용한 연관 검색어 및 성능 최적화</strong></summary>
+  <summary><strong> 분산 Lock을 적용한 쿠폰 발급 - 처리 속도 목표</strong></summary>
     <div markdown="1"> 
-- 문제: 기존 SQL 기반 검색에서 느린 검색 속도와 관련 데이터 분석 어려움 <br>
-- 해결: ElasticSearch를 도입하여 연관 검색어와 역색인 방식으로 검색 기능 구현 <br>
-- 결과: 검색 성능이 비약적으로 개선되었으며 사용자 만족도 향상
+- 문제: 기대값인 하나의 요청 당 처리 시간이 1ms를 넘기지 않는 것이지만 5ms가 나왔다. <br>
+- 해결: 동시 접근과 경쟁 상태를 방지하기 위해 한 번에 하나의 요청만 자원에 접근할 수 있도록 분산 Lock 적용 <br>
+- 결과: 기대값인 1ms보다 약 11배 빠른 0.09ms 처리시간이 나왔다.
+    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/ffb5ecae-054b-4b64-a36a-c46721018d29" />
+    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/96ce90f8-b63f-4441-befe-e5d8b4fa26df" />
 </details>
