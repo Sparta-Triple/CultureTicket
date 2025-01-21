@@ -1,5 +1,6 @@
-# 🌿공심채 
-<img src="https://github.com/user-attachments/assets/cc48d799-6041-492f-ba40-7bb5b76d05b9" width=600; width=500 />
+# ![Hallstatt24HallstattGIF](https://github.com/user-attachments/assets/d3d8d330-8877-423b-9663-8f82e50a3476)
+Culture Ticket
+<img src="https://github.com/user-attachments/assets/99280765-13cd-463c-b60e-f60ec33a9d32" width=600; width=500 />
 <br>
 
 ## ❇️ [프로젝트 개요](https://github.com/project-gongsimchae/gongsimchae/wiki)
