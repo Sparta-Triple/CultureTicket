@@ -77,8 +77,8 @@ public class CacheConfig {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
         configuration.setHostName(redisServer);
         configuration.setPort(redisPort);
-        configuration.setUsername(redisUsername);
-        configuration.setPassword(redisPassword);
+//        configuration.setUsername(redisUsername);
+//        configuration.setPassword(redisPassword);
         return new LettuceConnectionFactory(configuration);
     }
 }

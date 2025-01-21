@@ -1,6 +1,8 @@
 package com.culture_ticket.client.performance.application.service;
 
 
+import com.culture_ticket.client.performance.application.dto.feignclient.WaitingQueueRequestDto;
+import com.culture_ticket.client.performance.application.dto.feignclient.WaitingQueueResponseDto;
 import com.culture_ticket.client.performance.application.dto.pagination.RestPage;
 import com.culture_ticket.client.performance.application.dto.requestDto.PerformanceCreateRequestDto;
 import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePerformanceRequestDto;
@@ -8,23 +10,30 @@ import com.culture_ticket.client.performance.application.dto.requestDto.UpdatePe
 import com.culture_ticket.client.performance.application.dto.responseDto.PerformanceResponseDto;
 import com.culture_ticket.client.performance.common.CustomException;
 import com.culture_ticket.client.performance.common.ErrorType;
+import com.culture_ticket.client.performance.common.ResponseDataDto;
+import com.culture_ticket.client.performance.common.ResponseStatus;
 import com.culture_ticket.client.performance.common.util.RedisKeyHelper;
 import com.culture_ticket.client.performance.domain.model.Category;
 import com.culture_ticket.client.performance.domain.model.Performance;
 import com.culture_ticket.client.performance.domain.repository.CategoryRepository;
 import com.culture_ticket.client.performance.domain.repository.PerformanceRepository;
+import com.culture_ticket.client.performance.infrastructure.client.QueueClient;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Duration;
-import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +42,8 @@ public class PerformanceService {
     private final PerformanceRepository performanceRepository;
     private final CategoryRepository categoryRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    @Qualifier("com.culture_ticket.client.performance.infrastructure.client.QueueClient")
+    private final QueueClient queueClient;
 
     // 공연 생성
     @Transactional
@@ -51,7 +62,25 @@ public class PerformanceService {
 
     // 공연 단건 조회
     @Transactional(readOnly = true)
-    public PerformanceResponseDto getPerformance(HttpServletRequest request, HttpServletResponse response, UUID performanceId) {
+    public Object getPerformance(
+        HttpServletRequest request, HttpServletResponse response, UUID performanceId) {
+
+        String sessionId = request.getSession().getId();
+        // redis 에서 sessionId로 token 조회
+        String token = (String) redisTemplate.opsForValue().get(sessionId);
+
+        WaitingQueueRequestDto requestDto = createWaitingRequestDto(sessionId, token);
+
+        // 대기열 확인
+        WaitingQueueResponseDto waitingQueueResponseDto = queueClient.checkWaiting(requestDto).getData();
+
+        if (!waitingQueueResponseDto.isActive()) {
+            // Redis에 저장
+            redisTemplate.opsForValue().set(sessionId, waitingQueueResponseDto.getToken());
+            // 대기열 순번 반환
+            return waitingQueueResponseDto.getWaitingInfo();
+        }
+
         String cacheKey = RedisKeyHelper.getPerformanceDetailsKey(performanceId);
         // 1. 쿠키 확인 후 24시간 이내에 조회한 적 없는 사용자일 경우 조회수 증가
         increaseViewCount(request, response, performanceId);
@@ -61,6 +90,7 @@ public class PerformanceService {
         // 3. 캐시 데이터가 없으면 DB에서 조회
         Performance performance = findPerformanceById(performanceId);
         // 4. 조회 결과를 Redis 캐시에 저장
+
         PerformanceResponseDto performanceResponseDto = new PerformanceResponseDto(performance);
         redisTemplate.opsForValue().set(cacheKey, performanceResponseDto, Duration.ofHours(24)); // TTL 설정
         return new PerformanceResponseDto(performance);
@@ -70,10 +100,10 @@ public class PerformanceService {
         String rankKey = RedisKeyHelper.getViewRankKey();
         Cookie[] cookies = request.getCookies();
         Optional<Cookie> oldCookie = cookies != null
-                ? Arrays.stream(cookies)
-                    .filter(cookie -> cookie.getName().equals("View_Count"))
-                    .findFirst()
-                : Optional.empty();
+            ? Arrays.stream(cookies)
+            .filter(cookie -> cookie.getName().equals("View_Count"))
+            .findFirst()
+            : Optional.empty();
         if (oldCookie.isPresent()) {
             Cookie cookie = oldCookie.get();
             if (!cookie.getValue().contains("[" + performanceId + "]")) {
@@ -148,6 +178,7 @@ public class PerformanceService {
         performance.setDeletedBy(username);
     }
 
+
     private void checkDuplicateTitle(String title) {
         if (performanceRepository.existsByTitle(title)) {
             throw new CustomException(ErrorType.PERFORMANCE_DUPLICATE);
@@ -173,5 +204,18 @@ public class PerformanceService {
         if (!role.equals("ADMIN")) {
             throw new CustomException(ErrorType.FORBIDDEN);
         }
+    }
+
+    private static WaitingQueueRequestDto createWaitingRequestDto(String sessionId,
+        String token) {
+        WaitingQueueRequestDto requestDto;
+        if (token != null) {
+            // 토큰이 존재하는 경우
+            requestDto = new WaitingQueueRequestDto(sessionId, token);
+        } else {
+            // 토큰이 존재하지 않는 경우
+            requestDto = new WaitingQueueRequestDto(sessionId, null);
+        }
+        return requestDto;
     }
 }

@@ -24,9 +24,13 @@ public enum ErrorType {
     TIMETABLE_NOT_FOUND(HttpStatus.NOT_FOUND, "타임테이블을 찾을 수 없습니다."),
 
     // seat
-    SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다.");
+    SEAT_NOT_FOUND(HttpStatus.NOT_FOUND, "좌석을 찾을 수 없습니다."),
 
-
+    //feign client
+    QUEUE_NOT_FOUND(HttpStatus.NOT_FOUND, "대기열이 존재하지 않습니다."),
+    FEIGN_CLIENT_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "FeignClient 요청에서 잘못된 요청이 발생했습니다."),
+    FEIGN_CLIENT_RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "FeignClient 요청에서 리소스를 찾을 수 없습니다."),
+    FEIGN_CLIENT_UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "FeignClient 요청 중 알 수 없는 에러가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

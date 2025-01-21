@@ -52,7 +52,8 @@ public enum ResponseStatus {
     UPDATE_SEAT_STATUS_SUCCESS(HttpStatus.OK, "좌석 상태 변경에 성공했습니다."),
     DELETE_SEAT_SUCCESS(HttpStatus.OK,"좌석 삭제에 성공했습니다."),
     RESTORE_SEAT_SUCCESS(HttpStatus.OK, "좌석 복구에 성공했습니다."),
-    UPDATE_SEAT_PRICE_SUCCESS(HttpStatus.OK,"좌석 가격 변경에 성공했습니다.");
+    UPDATE_SEAT_PRICE_SUCCESS(HttpStatus.OK,"좌석 가격 변경에 성공했습니다."),
+    WAITING_INFO_GET_SUCCESS(HttpStatus.OK, "대기열 정보를 반한했습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;

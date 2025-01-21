@@ -34,6 +34,11 @@ spring:
           predicates:
             - Path=/api/v1/coupons/**
 
+        - id: queue-service
+          uri: lb://queue-service
+          predicates:
+            - Path=/api/v1/queues/**
+
       discovery:
         locator:
           enabled: true
