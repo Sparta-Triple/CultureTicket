@@ -12,7 +12,12 @@ import com.culture_ticket.client.performance.common.ResponseDataDto;
 import com.culture_ticket.client.performance.common.ResponseMessageDto;
 import com.culture_ticket.client.performance.common.ResponseStatus;
 import com.culture_ticket.client.performance.domain.service.PerformanceDomainService;
+
+import java.util.List;
 import java.util.UUID;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -50,8 +55,12 @@ public class PerformanceController {
 
     // 공연 단일 조회
     @GetMapping("/info/{performanceId}")
-    public ResponseDataDto<PerformanceResponseDto> getPerformance(@PathVariable UUID performanceId) {
-        PerformanceResponseDto performanceResponseDto = performanceService.getPerformance(performanceId);
+    public ResponseDataDto<PerformanceResponseDto> getPerformance(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @PathVariable UUID performanceId
+    ) {
+        PerformanceResponseDto performanceResponseDto = performanceService.getPerformance(request, response, performanceId);
         return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performanceResponseDto);
     }
 
@@ -64,6 +73,12 @@ public class PerformanceController {
     ) {
         RestPage<PerformanceResponseDto> performances = performanceService.getPerformances(condition, keyword, pageable);
         return new ResponseDataDto<>(ResponseStatus.GET_PERFORMANCE_SUCCESS, performances);
+    }
+
+    @GetMapping("/rank")
+    public ResponseDataDto<List<PerformanceResponseDto>> getPerformanceRank(){
+        List<PerformanceResponseDto> rankedPerformances = performanceService.getPerformanceRank();
+        return new ResponseDataDto<>(ResponseStatus.GET_RANKED_PERFORMANCES_SUCCESS, rankedPerformances);
     }
 
     // 공연 상태 수정

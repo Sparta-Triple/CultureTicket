@@ -42,7 +42,7 @@ public class DistributeLockAop {
                 return false;
             }
 
-            log.info("get lock success {}" , key);
+//            log.info("get lock success {}" , key);
             return aopForTransaction.proceed(joinPoint);    // (5)
         } catch (Exception e) {
             Thread.currentThread().interrupt();
