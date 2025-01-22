@@ -36,7 +36,7 @@
 
 ## ✔️KEY SUMMARY
 <details>
-  <summary><strong> Redis Cache를 적용한 공연 조회</strong></summary>
+  <summary><strong> 1️⃣ Redis Cache를 적용한 공연 조회</strong></summary>
     <div markdown="1"> 
 
 #### 문제점
@@ -68,7 +68,7 @@ Redis Cache 조회 시, 평균 응답 속도가 6ms로 나타났다.
 
 </details>
 <details>
-  <summary><strong> 리팩톤 데이즈 요구 사항 - 대용량 트래픽 대비 안정적 선착순 쿠폰 발급</strong></summary>
+  <summary><strong> 2️⃣ 리팩톤 데이즈 요구 사항 - 대용량 트래픽 대비 안정적 선착순 쿠폰 발급</strong></summary>
     <div markdown="1">
 
 [대용량 트래픽 대비 안정적 선착순 쿠폰 발급 구현 과정](https://www.notion.so/teamsparta/15-d47f3d1366424423af85da024c2aa8cd)
