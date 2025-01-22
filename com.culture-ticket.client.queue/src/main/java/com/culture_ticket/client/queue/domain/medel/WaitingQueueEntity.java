@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "waiting_queue")
 public class WaitingQueueEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID waitingQueueId;
 
     private String sessionId;
