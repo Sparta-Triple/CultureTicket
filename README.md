@@ -12,7 +12,7 @@
 </br>
 
 ## 👨‍👩‍👧‍👦 팀원 소개
-| <div align="center">[홍예석](https://github.com/yshong1998)</div>                         | <div align="center">[김우진](https://github.com/kwj0605)</div>                                                                                                           | <div align="center">[성은](github.com/SEJ123)</div>                      | 
+| <div align="center">[홍예석](https://github.com/yshong1998)</div>                         | <div align="center">[김우진](https://github.com/kwj0605)</div>                                                                                                           | <div align="center">[성은정](github.com/SEJ123)</div>                      | 
 | :---------------------------------------------------------------------------- |:---------------------------------------------------------------------------------------------------------------------------------------------------------------------| :---------------------------------------------------------------------------- | 
 | <div align="center"><img src="https://github.com/user-attachments/assets/e4bb1ea5-ac3a-464d-aacc-c28159a61b31" width=150 /></div> | <div align="center"><img src="https://github.com/user-attachments/assets/2550cf81-f2db-4f4d-9243-9a91c66ca8f7" width=150 /></div>                                    | <div align="center"><img src="https://github.com/user-attachments/assets/c7f702fe-95ff-4a4e-8f6a-2b751f63a12d" width=150 /></div> 
 | <div align="center"> `공통 기능` <br>이미지 CRUD<br/>`공구`<br>아이템 데이터 활용 전반, <br> 카테고리별 조회, 정렬 기능 <br> `관리자 페이지` <br> 이벤트, 쿠폰, 주문, <br> 상품, 관리 기능,  </div>          | <div align="center"> `공통`<br> 서버 배포 및 관리<br> 젠킨스 빌드 연동<br> NGINX 무중단 배포<br> HTTPS 인증 <br> `소분` <br> 소분글 CRUD <br> 소분 상세 페이지 <br> `공구` <br> 공동구매 성공 <br> 실패 로직 </div> | <div align="center"> `공구` <br> 아이템 & 이벤트 CRUD <br> 아이템 옵션 <br> `소분` <br> 메인페이지 <br> 지역 태그 및 내용 검색 <br> `공통` <br> 찜 </div>                     | 
@@ -40,7 +40,7 @@
 
 
 
-## 🛠️인프라 아키텍처
+## 📁인프라 아키텍처
 <img src="https://github.com/user-attachments/assets/8eb580bb-fd78-41a6-9f34-daaad359a21e" width=600; width=500 />
 
 
@@ -115,18 +115,14 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 
 
 
-## 📁 아키텍처
-<img width="1470" alt="image" src="https://github.com/user-attachments/assets/8f34ed25-b199-4c59-bd9d-d54be05633b6" />
-
       
 ##  🛠 주요기능
 ```
-👨‍👨‍👧 유저 : 로그인 | 회원가입 | 이메일 인증 | 소셜 로그인(네이버/구글) | 아이디 찾기 | 비밀번호 찾기 | 임시 비밀번호 발송
-💰 상품 : 검색 | 리뷰 | 옵션 선택 | 찜하기 | 장바구니 | 결제
-🪢 소분: 글 작성 | 글 상태변환 | 채팅 | 검색 | 매너포인트 | 신고하기 | 조회수 | 유저 상태에 따른 상태변환 | 카카오 맵을 통한 위치찾기 | 알림키워드 등록 | 지역검색을 통한 원하는 글 찾기
-🎊 이벤트: 할인 | 쿠폰발급 | 쿠폰코드발급 | 
-🏡 마이페이지 : 주문내역 | 쿠폰 | 찜한 상품 | 상품 후기 | 1:1 문의 | 관심 목록 | 내가 쓴글 | 참여중인 소분 | 배송지 관리 | 개인정보 수정 
-📈 관리자페이지 : 유저관리 | 상품관리 | 카테고리 관리 | 이벤트 관리 | 문의 관리 | 신고글 관리 | 결제 관리
+👨‍👨‍👧 유저 : 로그인 | 회원가입 |
+🎬 공연 : 검색 | 카테고리 | 타임테이블 | 좌석 | redis 활용 빠른 조회 |
+💸 결제 : 결제 | 예약 |
+🎫 티켓 : Kafka 활용 비동기 생성 | 
+🎊 이벤트: 쿠폰발급 | 분산락 활용 쿠폰재고 감소 | 
 ```
 <details>
   <summary><strong>1️⃣ 채팅</strong></summary>
