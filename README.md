@@ -36,62 +36,67 @@
 
 ## ✔️KEY SUMMARY
 <details>
-  <summary><strong>1️⃣ 공연 </strong></summary>
+  <summary><strong> Redis Cache를 적용한 공연 조회</strong></summary>
+    <div markdown="1"> 
 
-- 공연 조회 시 대기열
-- [x] 공연 조회 시 sessionId를 기반으로 대기열 조회
-- [x] Feign Client 방식으로 대기열의 정보 조회
+#### 문제점
 
+티켓팅 서비스는 사용자들이 공연 정보를 자주 조회하기 때문에 DB는 계속해서 쿼리를 처리해야 하기 때문에 성능 저하 및 과부하가 올 수 있다.
 
-- 실시간 랭킹
-- [x] 공연마다 조회수를 Redis의 Sorted Set 데이터 타입으로 저장
-- [x] 랭킹 조회 시 상위 조회수를 기록한 5개의 공연을 반환
-</details>
+DB 조회 시, 평균 응답 속도가 847ms로 나타났다.
 
-<details>
-  <summary><strong>2️⃣ 선착순 쿠폰 발급 </strong></summary>
+  <img src="https://github.com/user-attachments/assets/a0b7d577-e099-45ea-ac59-b6bba6f7ef18"/>
 
-- 쿠폰 발급 요청 동시성 제어
-- [x] AOP 단계에서 분산락을 활용해 요청 간 동시성 문제 해결
+#### 해결 방법
 
-</details>
-<details>
-  <summary><strong>3️⃣ 대기열 </strong></summary>
+Redis Cache를 사용하면, DB 부하를 줄이고 성능을 크게 향상 시킬 수 있다.<br>
+-> 캐시 시스템은 빠른 응답 속도와 트래픽 처리 효율성을 제공하며, 대규모 트래픽을 처리하는 데 효율적
 
-- Redis Sorted Set 기반 대기열 구현
-- [x] 놀이동산 방식의 대기열을 구현
-- [x] 처음 1000명 이후부터 대기열을 기다림
-- [x] 매 10초마다 3000명씩 대기열에서 빠져나옴
-- [x] 10분이 지나면 다시 대기열을 기다림
-- [x] 분산락을 사용하여 지정된 사용자보다 더 많은 사용자가 대기열에서 빠져나오는 것을 방지
+Redis Cache 조회 시, 평균 응답 속도가 6ms로 나타났다.
 
-</details>
-<details>
-  <summary><strong>4️⃣ 모니터링 </strong></summary>
+  <img src="https://github.com/user-attachments/assets/5f10fbcc-5584-4fee-9947-6523badf393d"/>
+  <br>
 
-[모니터링 결과 보러 가기](https://www.notion.so/teamsparta/89343f86b17f469bb94c05df29ed1eb9)
+#### 정리
+> Redis 조회 시 평균 6ms 응답 속도가 나왔다.
+> - 빠른 응답 속도 제공 <br>
+    DB 조회 시 평균 847ms에서 Redis를 사용한 후 6ms로 응답 속도가 약 141배 빨라졌다. 이로 인해 사용자들이 공연 정보를 더 빠르게 조회할 수 있게 되었다.
+> - 서버 부하 감소
+    동일한 공연 정보를 조회할 때 DB 대신 Redis Cache에 저장된 데이터를 사용함으로써 DB의 부하를 줄이고, 서버 리소스를 효율적으로 관리할 수 있게 되었다.
+> - 사용자 경험 향상
+    Redis Cache를 통해 빠르고 일관된 응답을 제공함으로써, 사용자의 만족도를 향상 시켰다.
 
 </details>
 <details>
-  <summary><strong>5️⃣ CI / CD </strong></summary>
-추가 예정 (우진)
+  <summary><strong> 리팩톤 데이즈 요구 사항 - 대용량 트래픽 대비 안정적 선착순 쿠폰 발급</strong></summary>
+    <div markdown="1">
 
+[대용량 트래픽 대비 안정적 선착순 쿠폰 발급 구현 과정](https://www.notion.so/teamsparta/15-d47f3d1366424423af85da024c2aa8cd)
+1. 쿠폰 개수의 올바른 차감
+- 문제: 쿠폰 발급이 이루어질 때, 쿠폰이 중복으로 발급되어 개수가 적절하게 발급되지 않는 문제가 있었다. <br>
+- 해결: Lock을 획득한 요청이 완료될 때까지 다른 요청이 대기하게 하여 트랜잭션 간 stock 조회를 방지 <br>
+- 결과: 쿠폰 발급이 이루어질 때, 중복으로 쿠폰이 발급되는 문제가 해결되었다.
+- 분산락 적용 이전
+  <img width="1470" alt="image" src="https://github.com/user-attachments/assets/86ff8714-083a-42c3-b844-6194af56d6f9" />
+- 분산락 적용 이후
+  <img width="1470" alt="image" src="https://github.com/user-attachments/assets/d2c7aa51-c305-477d-a554-6a7d14f8ac33" />
+2. 분산 Lock을 적용한 쿠폰 발급 - 처리 속도 목표
+
+- 문제: 기대값인 하나의 요청 당 처리 시간이 1ms를 넘기지 않는 것이지만 5ms가 나왔다. <br>
+- 해결: 동시 접근과 경쟁 상태를 방지하기 위해 한 번에 하나의 요청만 자원에 접근할 수 있도록 분산 Lock 적용 <br>
+- 결과: 기대값인 1ms보다 약 11배 빠른 0.09ms 처리시간이 나왔다.
+    - 분산락 적용 이전
+      <img width="1470" alt="image" src="https://github.com/user-attachments/assets/ffb5ecae-054b-4b64-a36a-c46721018d29" />
+    - 분산락 적용 이후
+      <img width="1470" alt="image" src="https://github.com/user-attachments/assets/96ce90f8-b63f-4441-befe-e5d8b4fa26df" />
 </details>
 <details>
-  <summary><strong>6️⃣ 요약 </strong></summary>
+  <summary><strong>3️⃣ Redis Caching 공연 목록 조회 오류-직렬화 </strong></summary>
 
-| 서비스 | 요구 사항 | 기술명 | 구현 내용 |
-| --- | --- | --- | --- |
-| 공연 서비스 | 공연 조회 대기열 | Redis, Feign Client | Redis를 활용하여 sessionId, Token을 기반으로 사용자 식별, 대기열 기능 구현 |
-| 공연 서비스 | 공연 주간 랭킹 | Redis Sorted Set | Redis를 활용해 공연 랭킹과 같은 실시간으로 자주 업데이트, 조회 되는 데이터를 빠르게 처리, Sorted Set 구조를 활용해 정렬 후 Top5 공연 반환 |
-| 공연 서비스 | 공연 데이터 캐시 | Redis Cache | 공연 정보와 같은 자주 조회되는 데이터는 매번 DB에서 직접 조회하는 것보다 Redis 캐시 시스템을 활용하여 응답 속도를 개선 |
-| 공연 서비스 | 공연 조회 대기열 | Redis Sorted Set | 많은 사용자가 동시에 하나의 공연에 대해 조회하는 상황에 서버 과부하가 발생할 가능성 존재, 놀이동산 방식의 대기열을 구현하여 서버가 감당할 수 있는 사용자를 주기적으로 처리 |
-| 쿠폰 서비스 | 선착순 쿠폰 발급 | Redis, AOP, Distributed Lock | Redis 를 활용해 분산락을 AOP 단계에서 적용.동시성 문제, 중복 발급 방지를 보장하고, 시스템의 안정성과 데이터 일관성을 유지 |
-| 티켓 서비스 | 티켓 발급 | Kafka | 결제 완료 후, 티켓 발급을 비동기적으로 처리하고, 확장 가능한 방식으로 시스템을 운영하기 위해, 티켓 발급 시스템의 안정성을 확보하고 대규모 트래픽에 효율적 |
-| 티켓 서비스 | 대기열 | Kafka | 많은 사용자가 동시에 티켓을 구매하려는 상황에 동시성 문제와 서버 과부하가 발생할 가능성 존재, 실시간으로 요청을 처리하는 대신 대기열에 요청을 저장하여 순차적으로 처리 |
-| CI / CD | 추가 예정 | 추가 예정 | 추가 예정 |
+[공연 목록 캐시 데이터 조회 시 직렬화 오류](https://www.notion.so/teamsparta/Redis-Caching-9fba97f10cdd4296bfc621250c110d14)
 
 </details>
+
 
 ## 📁인프라 아키텍처
 <img src="https://github.com/user-attachments/assets/8eb580bb-fd78-41a6-9f34-daaad359a21e" width=600; width=500 />
@@ -389,79 +394,67 @@ Tools | ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge
 🎫 티켓 : Kafka 활용 비동기 생성 | 
 🎊 이벤트: 쿠폰발급 | 분산락 활용 쿠폰재고 감소 | 
 ```
+
+- 주요 기능 구현 방식
+
 <details>
-  <summary><strong>1️⃣ 리팩톤 데이즈 요구 사항 - 대용량 트래픽 대비 안정적 선착순 쿠폰 발급</strong></summary>
+  <summary><strong>1️⃣ 공연 </strong></summary>
 
- [대용량 트래픽 대비 안정적 선착순 쿠폰 발급 구현 과정](https://www.notion.so/teamsparta/15-d47f3d1366424423af85da024c2aa8cd)
+- 공연 조회 시 대기열
+- [x] 공연 조회 시 sessionId를 기반으로 대기열 조회
+- [x] Feign Client 방식으로 대기열의 정보 조회
 
+
+- 실시간 랭킹
+- [x] 공연마다 조회수를 Redis의 Sorted Set 데이터 타입으로 저장
+- [x] 랭킹 조회 시 상위 조회수를 기록한 5개의 공연을 반환
 </details>
 
+<details>
+  <summary><strong>2️⃣ 선착순 쿠폰 발급 </strong></summary>
 
+- 쿠폰 발급 요청 동시성 제어
+- [x] AOP 단계에서 분산락을 활용해 요청 간 동시성 문제 해결
 
+</details>
+<details>
+  <summary><strong>3️⃣ 대기열 </strong></summary>
+
+- Redis Sorted Set 기반 대기열 구현
+- [x] 놀이동산 방식의 대기열을 구현
+- [x] 처음 1000명 이후부터 대기열을 기다림
+- [x] 매 10초마다 3000명씩 대기열에서 빠져나옴
+- [x] 10분이 지나면 다시 대기열을 기다림
+- [x] 분산락을 사용하여 지정된 사용자보다 더 많은 사용자가 대기열에서 빠져나오는 것을 방지
+
+</details>
+<details>
+  <summary><strong>4️⃣ 모니터링 </strong></summary>
+
+[모니터링 결과 보러 가기](https://www.notion.so/teamsparta/89343f86b17f469bb94c05df29ed1eb9)
+
+</details>
+<details>
+  <summary><strong>5️⃣ CI / CD </strong></summary>
+추가 예정 (우진)
+
+</details>
+<details>
+  <summary><strong>6️⃣ 요약 </strong></summary>
+
+| 서비스 | 요구 사항 | 기술명 | 구현 내용 |
+| --- | --- | --- | --- |
+| 공연 서비스 | 공연 조회 대기열 | Redis, Feign Client | Redis를 활용하여 sessionId, Token을 기반으로 사용자 식별, 대기열 기능 구현 |
+| 공연 서비스 | 공연 주간 랭킹 | Redis Sorted Set | Redis를 활용해 공연 랭킹과 같은 실시간으로 자주 업데이트, 조회 되는 데이터를 빠르게 처리, Sorted Set 구조를 활용해 정렬 후 Top5 공연 반환 |
+| 공연 서비스 | 공연 데이터 캐시 | Redis Cache | 공연 정보와 같은 자주 조회되는 데이터는 매번 DB에서 직접 조회하는 것보다 Redis 캐시 시스템을 활용하여 응답 속도를 개선 |
+| 공연 서비스 | 공연 조회 대기열 | Redis Sorted Set | 많은 사용자가 동시에 하나의 공연에 대해 조회하는 상황에 서버 과부하가 발생할 가능성 존재, 놀이동산 방식의 대기열을 구현하여 서버가 감당할 수 있는 사용자를 주기적으로 처리 |
+| 쿠폰 서비스 | 선착순 쿠폰 발급 | Redis, AOP, Distributed Lock | Redis 를 활용해 분산락을 AOP 단계에서 적용.동시성 문제, 중복 발급 방지를 보장하고, 시스템의 안정성과 데이터 일관성을 유지 |
+| 티켓 서비스 | 티켓 발급 | Kafka | 결제 완료 후, 티켓 발급을 비동기적으로 처리하고, 확장 가능한 방식으로 시스템을 운영하기 위해, 티켓 발급 시스템의 안정성을 확보하고 대규모 트래픽에 효율적 |
+| 티켓 서비스 | 대기열 | Kafka | 많은 사용자가 동시에 티켓을 구매하려는 상황에 동시성 문제와 서버 과부하가 발생할 가능성 존재, 실시간으로 요청을 처리하는 대신 대기열에 요청을 저장하여 순차적으로 처리 |
+| CI / CD | 추가 예정 | 추가 예정 | 추가 예정 |
+
+</details>
 
 ## ⭐ CI-CD
 
 추가 예정
-
-## 🐞 Trouble Shooting
-<details>
-  <summary><strong> Redis Cache를 적용한 공연 조회</strong></summary>
-    <div markdown="1"> 
-
-#### 문제점
-
-티켓팅 서비스는 사용자들이 공연 정보를 자주 조회하기 때문에 DB는 계속해서 쿼리를 처리해야 하기 때문에 성능 저하 및 과부하가 올 수 있다.
-
-DB 조회 시, 평균 응답 속도가 847ms로 나타났다.
-
-  <img src="https://github.com/user-attachments/assets/a0b7d577-e099-45ea-ac59-b6bba6f7ef18"/>
-
-#### 해결 방법
-
-Redis Cache를 사용하면, DB 부하를 줄이고 성능을 크게 향상 시킬 수 있다.<br>
--> 캐시 시스템은 빠른 응답 속도와 트래픽 처리 효율성을 제공하며, 대규모 트래픽을 처리하는 데 효율적
-
-Redis Cache 조회 시, 평균 응답 속도가 6ms로 나타났다.
-
-  <img src="https://github.com/user-attachments/assets/5f10fbcc-5584-4fee-9947-6523badf393d"/>
-  <br>
-
-#### 정리
-> Redis 조회 시 평균 6ms 응답 속도가 나왔다.
-> - 빠른 응답 속도 제공 <br>
-    DB 조회 시 평균 847ms에서 Redis를 사용한 후 6ms로 응답 속도가 약 141배 빨라졌다. 이로 인해 사용자들이 공연 정보를 더 빠르게 조회할 수 있게 되었다.
-> - 서버 부하 감소
-    동일한 공연 정보를 조회할 때 DB 대신 Redis Cache에 저장된 데이터를 사용함으로써 DB의 부하를 줄이고, 서버 리소스를 효율적으로 관리할 수 있게 되었다.
-> - 사용자 경험 향상
-    Redis Cache를 통해 빠르고 일관된 응답을 제공함으로써, 사용자의 만족도를 향상 시켰다.
-
-</details>
-<details>
-  <summary><strong> 리팩톤 데이즈 요구 사항 - 대용량 트래픽 대비 안정적 선착순 쿠폰 발급</strong></summary>
-    <div markdown="1">
-
-[대용량 트래픽 대비 안정적 선착순 쿠폰 발급 구현 과정](https://www.notion.so/teamsparta/15-d47f3d1366424423af85da024c2aa8cd)
-1. 쿠폰 개수의 올바른 차감
-  - 문제: 쿠폰 발급이 이루어질 때, 쿠폰이 중복으로 발급되어 개수가 적절하게 발급되지 않는 문제가 있었다. <br>
-  - 해결: Lock을 획득한 요청이 완료될 때까지 다른 요청이 대기하게 하여 트랜잭션 간 stock 조회를 방지 <br>
-  - 결과: 쿠폰 발급이 이루어질 때, 중복으로 쿠폰이 발급되는 문제가 해결되었다.
-  - 분산락 적용 이전
-    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/86ff8714-083a-42c3-b844-6194af56d6f9" />
-  - 분산락 적용 이후
-    <img width="1470" alt="image" src="https://github.com/user-attachments/assets/d2c7aa51-c305-477d-a554-6a7d14f8ac33" />
-2. 분산 Lock을 적용한 쿠폰 발급 - 처리 속도 목표
-
-- 문제: 기대값인 하나의 요청 당 처리 시간이 1ms를 넘기지 않는 것이지만 5ms가 나왔다. <br>
-- 해결: 동시 접근과 경쟁 상태를 방지하기 위해 한 번에 하나의 요청만 자원에 접근할 수 있도록 분산 Lock 적용 <br>
-- 결과: 기대값인 1ms보다 약 11배 빠른 0.09ms 처리시간이 나왔다.
-  - 분산락 적용 이전
-      <img width="1470" alt="image" src="https://github.com/user-attachments/assets/ffb5ecae-054b-4b64-a36a-c46721018d29" />
-  - 분산락 적용 이후
-      <img width="1470" alt="image" src="https://github.com/user-attachments/assets/96ce90f8-b63f-4441-befe-e5d8b4fa26df" />
-</details>
-<details>
-  <summary><strong>3️⃣ Redis Caching 공연 목록 조회 오류-직렬화 </strong></summary>
-
-[공연 목록 캐시 데이터 조회 시 직렬화 오류](https://www.notion.so/teamsparta/Redis-Caching-9fba97f10cdd4296bfc621250c110d14)
-
-</details>
