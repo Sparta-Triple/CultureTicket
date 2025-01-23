@@ -30,7 +30,7 @@ public class SecurityConfig {
   private final JwtUtil jwtUtil;
   private final UserDetailsServiceImpl userDetailsService;
   private final AuthenticationConfiguration authenticationConfiguration;
-  private final String[] permitRequests = {"/api/v1/users/signup", "/api/v1/users/login", "api/v1/users/info/{userId}"};
+  private final String[] permitRequests = {"/api/v1/users/signup", "/api/v1/users/login", "/api/v1/users/info/{userId}", "/springdoc/**"};
 
   @Bean
   public PasswordEncoder passwordEncoder() {

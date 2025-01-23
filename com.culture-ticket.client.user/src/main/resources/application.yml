@@ -41,3 +41,15 @@ management:
   metrics:
     enable:
       all: true
+
+# 스웨거 설정
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /docs
+    url: /springdoc/openapi3-user-service.json
+    operations-sorter: alpha
+    tags-sorter: alpha
+  api-docs:
+    enabled: true
+    path: /api-docs-user-service

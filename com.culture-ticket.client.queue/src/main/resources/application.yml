@@ -44,6 +44,18 @@ management:
     enable:
       all: true
 
+# 스웨거 설정
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /docs
+    url: /springdoc/openapi3-queue-service.json
+    operations-sorter: alpha
+    tags-sorter: alpha
+  api-docs:
+    enabled: true
+    path: /api-docs-queue-service
+
 jwt:
   secret-key: cultureTicketPerformanceSecretKeyAuthenticationJwtToken
 
