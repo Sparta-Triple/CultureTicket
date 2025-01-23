@@ -3,7 +3,7 @@ spring:
     name: user-service
   # DB 설정
   datasource:
-    url: jdbc:postgresql://localhost:5432/culture_ticket_user
+    url: ${US_DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -20,12 +20,12 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: ${EUREKA_SERVER_URL}
 
 service:
   jwt:
     access-expiration: 36000000000
-    secret-key: "c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXNwYXJ0YS1ib290Y2FtcC1jaDItc3BhcnRhLWxvZ2lzdGljcy1tYWRlLWJ5LWphYmJlcndvY2tlcjA0"
+    secret-key: ${SECRET_KEY}
 
 admin:
   code: "1234"

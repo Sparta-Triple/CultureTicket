@@ -7,7 +7,7 @@ spring:
 
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: ${DB_URL}
+    url: ${Q_DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
@@ -22,7 +22,7 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST}
+      host: ${Q_REDIS_HOST}
       port: ${REDIS_PORT}
       username: ${REDIS_USERNAME}
       password: ${REDIS_PASSWORD}
@@ -30,7 +30,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: ${EUREKA_SERVER_URL}
 
 management:
   endpoints:
@@ -45,5 +45,5 @@ management:
       all: true
 
 jwt:
-  secret-key: cultureTicketPerformanceSecretKeyAuthenticationJwtToken
+  secret-key: ${Q_SECRET_KEY}
 

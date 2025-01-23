@@ -46,7 +46,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: ${EUREKA_SERVER_URL}
 
 management:
   endpoints:
@@ -63,4 +63,4 @@ management:
 
 service:
   jwt:
-    secret-key: "c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXNwYXJ0YS1ib290Y2FtcC1jaDItc3BhcnRhLWxvZ2lzdGljcy1tYWRlLWJ5LWphYmJlcndvY2tlcjA0"
+    secret-key: ${SECRET_KEY}
