@@ -3,7 +3,7 @@ spring:
     name: performance-service
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/culture_ticket_performance}
+    url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
@@ -77,3 +77,15 @@ logging:
     root: INFO
     com.sparta_express.order_shipment.infrastructure: DEBUG # com.example은 FeignClient 패키지 기준
     feign: DEBUG
+
+# 스웨거 설정
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /docs
+    url: /springdoc/openapi3-performance-service.json
+    operations-sorter: alpha
+    tags-sorter: alpha
+  api-docs:
+    enabled: true
+    path: /api-docs-performance-service

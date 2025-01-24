@@ -12,32 +12,32 @@ spring:
         - id: user-service
           uri: lb://user-service
           predicates:
-            - Path=/api/v1/users/**
+            - Path=/api/v1/users/**, /springdoc/openapi3-user-service.json
 
         - id: performance-service
           uri: lb://performance-service
           predicates:
-            - Path=/api/v1/performances/**, /api/v1/categories/**, /api/v1/timetables/**, /api/v1/seats/**
+            - Path=/api/v1/performances/**, /api/v1/categories/**, /api/v1/timetables/**, /api/v1/seats/**, /springdoc/openapi3-performance-service.json
 
         - id: reservation-payment-service
           uri: lb://reservation-payment-service
           predicates:
-            - Path=/api/v1/reservations/**, /api/v1/payments/**
+            - Path=/api/v1/reservations/**, /api/v1/payments/**, /springdoc/openapi3-reservation-payment-service.json
 
         - id: ticket-service
           uri: lb://ticket-service
           predicates:
-            - Path=/api/v1/tickets/**
+            - Path=/api/v1/tickets/**, /springdoc/openapi3-ticket-service.json
 
         - id: coupon-service
           uri: lb://coupon-service
           predicates:
-            - Path=/api/v1/coupons/**
+            - Path=/api/v1/coupons/**, /springdoc/openapi3-coupon-service.json
 
         - id: queue-service
           uri: lb://queue-service
           predicates:
-            - Path=/api/v1/queues/**
+            - Path=/api/v1/queues/**, /springdoc/openapi3-queue-service.json
 
       discovery:
         locator:
@@ -60,6 +60,31 @@ management:
     enable:
       all: true
 
+springdoc:
+  swagger-ui:
+    urls[0]:
+      name: user-service
+      url: /springdoc/openapi3-user-service.json
+    urls[1]:
+      name: coupon-service
+      url: /springdoc/openapi3-coupon-service.json
+    urls[2]:
+      name: performance-service
+      url: /springdoc/openapi3-performance-service.json
+    urls[3]:
+      name: queue-service
+      url: /springdoc/openapi3-queue-service.json
+    urls[4]:
+      name: reservation-payment-service
+      url: /springdoc/openapi3-reservation-payment-service.json
+    urls[5]:
+      name: ticket-service
+      url: /springdoc/openapi3-ticket-service.json
+    urls[6]:
+      name: user-service
+      url: /springdoc/openapi3-reservation-user-service.json
+    #    use-root-path: true
+    path: /docs
 
 service:
   jwt:

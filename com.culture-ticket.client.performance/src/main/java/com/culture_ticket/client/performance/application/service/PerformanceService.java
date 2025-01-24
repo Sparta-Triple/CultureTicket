@@ -42,7 +42,6 @@ public class PerformanceService {
     private final PerformanceRepository performanceRepository;
     private final CategoryRepository categoryRepository;
     private final RedisTemplate<String, Object> redisTemplate;
-    @Qualifier("com.culture_ticket.client.performance.infrastructure.client.QueueClient")
     private final QueueClient queueClient;
 
     // 공연 생성
