@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: user-service
+  # DB 설정
+  datasource:
+    url: ${US_DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+# server port
+server:
+  port: 19092
+
+# eureka 설정
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL}
+
+service:
+  jwt:
+    access-expiration: 36000000000
+    secret-key: ${SECRET_KEY}
+
+admin:
+  code: "1234"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    enable:
+      all: true
