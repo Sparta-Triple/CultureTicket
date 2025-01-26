@@ -1,8 +1,10 @@
 name: gateway-github-actions
 
 on:
-  push:
-    branches: [ feat/#39-distribution ]
+  workflow_run:
+    workflows: ["Main Workflow"]
+    types:
+      - completed
 
 env:
   DOCKER_IMAGE_TAG_NAME: filter-pattern
