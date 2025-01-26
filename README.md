@@ -24,7 +24,7 @@
 - Kafka를 활용한 대규모 트래픽 상황에 알맞은 메시징 시스템
   - SAGA패턴을 사용한 자동 롤백과 데이터 일관성 유지
 - Grafana, Prometheus를 통한 모니터링
-  - 병목 구간 파악 및 성능 개선
+  - 병목 구간 파악 및 성능 개선 
 - Mock MVC를 이용한 테스트 코드
 - Database Replication 구성에 따른 Read / Write 분리
     - Redis로 우선 처리, DB에 백업 저장
