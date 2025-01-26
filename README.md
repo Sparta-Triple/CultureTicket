@@ -9,7 +9,7 @@
 - [Convention](https://github.com/Sparta-Triple/CultureTicket/wiki/Convention)
 - [그라운드 룰](https://github.com/Sparta-Triple/CultureTicket/wiki/GroundRule)
 
-</br>
+</br> 
 
 ## 👨‍👩‍👧‍👦 팀원 소개
 | <div align="center">[홍예석](https://github.com/yshong1998)</div>                                                                    | <div align="center">[김우진](https://github.com/kwj0605)</div>                                                                       | <div align="center">[성은정](github.com/SEJ123)</div>                      | 
