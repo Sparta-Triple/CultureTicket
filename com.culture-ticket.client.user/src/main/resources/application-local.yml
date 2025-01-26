@@ -1,32 +1,34 @@
-server:
-  port: 19094
-
 spring:
   application:
-    name: reservation-payment-service
-
+    name: user-service
+  # DB 설정
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: ${RV_DB_URL}
+    url: ${US_DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-
+    driver-class-name: org.postgresql.Driver
   jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        use_sql_comments: true
+    show-sql: true
+# server port
+server:
+  port: 19092
 
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
-
+# eureka 설정
 eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVER_URL}
+
+service:
+  jwt:
+    access-expiration: 36000000000
+    secret-key: ${SECRET_KEY}
+
+admin:
+  code: "1234"
 
 management:
   endpoints:
@@ -45,9 +47,9 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /docs
-    url: /springdoc/openapi3-reservation-payment-service.json
+    url: /springdoc/openapi3-user-service.json
     operations-sorter: alpha
     tags-sorter: alpha
   api-docs:
     enabled: true
-    path: /api-docs-reservation-payment-service
+    path: /api-docs-user-service

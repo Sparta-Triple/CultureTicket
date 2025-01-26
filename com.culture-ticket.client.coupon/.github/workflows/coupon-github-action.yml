@@ -2,7 +2,7 @@ name: coupon-github-actions
 
 on:
   push:
-    branches: [ main ]
+    branches: [ feat/#39-distribution ]
 
 env:
   DOCKER_IMAGE_TAG_NAME: filter-pattern

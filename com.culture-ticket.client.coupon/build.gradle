@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.1'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.epages.restdocs-api-spec' version "0.19.2"
 }
 
 ext {
@@ -28,18 +29,26 @@ repositories {
 }
 
 dependencies {
-    // Redisson
-    implementation 'org.redisson:redisson-spring-boot-starter:3.22.1'
-    runtimeOnly 'org.postgresql:postgresql'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	// eureka
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-	compileOnly 'org.projectlombok:lombok'
+	// spring boot
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// redisson
+	implementation 'org.redisson:redisson-spring-boot-starter:3.18.0'
+	// DB
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
+	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// restdocs & openapi
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.19.2'
 }
 
 dependencyManagement {
@@ -50,4 +59,56 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// 이하 Swagger 문서 생성 설정
+compileJava {
+	dependsOn 'clean'
+}
+
+postman {
+	baseUrl = 'http://localhost:19091' // gateway에 호출이 들어오기 때문에 gateway의 포트를 설정해 주어야 함
+	title = 'COUPON API' // 각 서비스 제목 적기
+	version = '1.0.0'
+}
+
+openapi3 {
+	servers = [
+			{
+				url = 'http://localhost:19091' // 마찬가지로
+			}
+	]
+	title = 'COUPON API' // 각 서비스 제목 적기
+	description = ''
+	version = '1.0.0'
+	format = 'json'
+}
+
+tasks.register('setDocs') {
+	dependsOn 'postman'
+	dependsOn 'openapi3'
+	doLast {
+		copy {
+			from "build/api-spec"
+			include "*.json"
+			include "*.yaml"
+			into "build/resources/main/static/springdoc"
+			rename { String fileName ->
+				if (fileName.endsWith('.json')) {
+					return fileName.replace('.json', '-coupon-service.json') // 각 서비스 제목 적기
+				} else if (fileName.endsWith('.yaml')) {
+					return fileName.replace('.yaml', '-coupon-service.yml') // 각 서비스 제목 적기
+				}
+				return fileName
+			}
+		}
+	}
+}
+
+bootRun {
+	dependsOn 'setDocs'
+}
+
+bootJar {
+	dependsOn 'setDocs'
 }
