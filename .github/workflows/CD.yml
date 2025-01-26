@@ -19,55 +19,55 @@ jobs:
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://github.com/Sparta-Triple/CultureTicket/com.culture-ticket.client.coupon/.github/workflows/coupon-github-action.yml/dispatches \
+            https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/coupon-github-action.yml/dispatches \
             -d '{"ref":"feat/#39-distribution"}'
 
           echo "Triggering gateway workflow..."
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://github.com/Sparta-Triple/CultureTicket/com.culture-ticket.client.coupon/.github/workflows/gateway-github-action.yml/dispatches \
+            https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/gateway-github-action.yml/dispatches \
             -d '{"ref":"feat/#39-distribution"}'
 
           echo "Triggering gateway workflow..."
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://github.com/Sparta-Triple/CultureTicket/com.culture-ticket.client.coupon/.github/workflows/performance-github-action.yml/dispatches \
+            https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/performance-github-action.yml/dispatches \
             -d '{"ref":"feat/#39-distribution"}'
           
           echo "Triggering gateway workflow..."
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://github.com/Sparta-Triple/CultureTicket/com.culture-ticket.client.coupon/.github/workflows/queue-github-action.yml/dispatches \
+            https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/queue-github-action.yml/dispatches \
             -d '{"ref":"feat/#39-distribution"}'
           
           echo "Triggering gateway workflow..."
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://github.com/Sparta-Triple/CultureTicket/com.culture-ticket.client.coupon/.github/workflows/reservation-github-action.yml/dispatches \
+            https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/reservation-github-action.yml/dispatches \
             -d '{"ref":"feat/#39-distribution"}'
           
           echo "Triggering gateway workflow..."
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://github.com/Sparta-Triple/CultureTicket/com.culture-ticket.client.coupon/.github/workflows/ticket-github-action.yml/dispatches \
+            https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/ticket-github-action.yml/dispatches \
             -d '{"ref":"feat/#39-distribution"}'
           
           echo "Triggering gateway workflow..."
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://github.com/Sparta-Triple/CultureTicket/com.culture-ticket.client.coupon/.github/workflows/user-github-action.yml/dispatches \
+            https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/user-github-action.yml/dispatches \
             -d '{"ref":"feat/#39-distribution"}'
           
           echo "Triggering gateway workflow..."
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
-            https://github.com/Sparta-Triple/CultureTicket/com.culture-ticket.client.coupon/.github/workflows/server-github-action.yml/dispatches \
+            https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/server-github-action.yml/dispatches \
             -d '{"ref":"feat/#39-distribution"}'
           
