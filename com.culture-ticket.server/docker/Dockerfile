@@ -14,4 +14,4 @@ COPY build/libs/*.jar /apps/app.jar
 EXPOSE 19090
 
 # 애플리케이션을 실행하기 위한 엔트리포인트 정의
-ENTRYPOINT ["java", "-jar", "/apps/app.jar"]
+ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active-prod","/apps/app.jar"]
