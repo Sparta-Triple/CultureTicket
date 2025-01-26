@@ -20,55 +20,61 @@ jobs:
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/coupon-github-action.yml/dispatches \
-            -d '{"ref":"feat/#39-distribution"}'
+            -d '{"ref":"feat/#39-distribution"}')
+          echo "Coupon workflow response: $response"
 
           echo "Triggering gateway workflow..."
-          curl -X POST \
+          response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/gateway-github-action.yml/dispatches \
-            -d '{"ref":"feat/#39-distribution"}'
+            -d '{"ref":"feat/#39-distribution"}')
+          echo "Gateway workflow response: $response"
 
-          echo "Triggering gateway workflow..."
-          curl -X POST \
+          echo "Triggering performance workflow..."
+          response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/performance-github-action.yml/dispatches \
-            -d '{"ref":"feat/#39-distribution"}'
-          
-          echo "Triggering gateway workflow..."
-          curl -X POST \
+            -d '{"ref":"feat/#39-distribution"}')
+          echo "Performance workflow response: $response"
+
+          echo "Triggering queue workflow..."
+          response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/queue-github-action.yml/dispatches \
-            -d '{"ref":"feat/#39-distribution"}'
-          
-          echo "Triggering gateway workflow..."
-          curl -X POST \
+            -d '{"ref":"feat/#39-distribution"}')
+          echo "Queue workflow response: $response"
+
+          echo "Triggering reservation workflow..."
+          response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/reservation-github-action.yml/dispatches \
-            -d '{"ref":"feat/#39-distribution"}'
-          
-          echo "Triggering gateway workflow..."
-          curl -X POST \
+            -d '{"ref":"feat/#39-distribution"}')
+          echo "Reservation workflow response: $response"
+
+          echo "Triggering ticket workflow..."
+          response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/ticket-github-action.yml/dispatches \
-            -d '{"ref":"feat/#39-distribution"}'
-          
-          echo "Triggering gateway workflow..."
-          curl -X POST \
+            -d '{"ref":"feat/#39-distribution"}')
+          echo "Ticket workflow response: $response"
+
+          echo "Triggering user workflow..."
+          response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/user-github-action.yml/dispatches \
-            -d '{"ref":"feat/#39-distribution"}'
-          
-          echo "Triggering gateway workflow..."
-          curl -X POST \
+            -d '{"ref":"feat/#39-distribution"}')
+          echo "User workflow response: $response"
+
+          echo "Triggering server workflow..."
+          response=$(curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Accept: application/vnd.github.v3+json" \
             https://api.github.com/repos/Sparta-Triple/CultureTicket/actions/workflows/server-github-action.yml/dispatches \
-            -d '{"ref":"feat/#39-distribution"}'
-          
-          echo "Response: $response"
+            -d '{"ref":"feat/#39-distribution"}')
+          echo "Server workflow response: $response"
