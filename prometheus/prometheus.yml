@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'server'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:19090']
+
+  - job_name: 'gateway-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:19091']
+
+  - job_name: 'user-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:19092']
+
+  - job_name: 'performance-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:19093']
+
+  - job_name: 'reservation-payment-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+    - targets: ['host.docker.internal:19094']
+
+  - job_name: 'ticket-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+    - targets: ['host.docker.internal:19095']

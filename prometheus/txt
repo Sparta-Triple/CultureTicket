@@ -1,0 +1,11 @@
+docker run -d --name=prometheus -p 9090:9090 -v prometheus.yml 파일의 경로
+\prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+prometheus 접속 : http://localhost:9090
+
+docker run -d --name=grafana -p 3000:3000 grafana/grafana
+grafana 접속 : http://localhost:3000
+
+C:\Users\user\Desktop\sparta\CultureTicket
+
+// 예시
+docker run -d --name=prometheus -p 9090:9090 -v C:\Users\user\Desktop\sparta\CultureTicket\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus

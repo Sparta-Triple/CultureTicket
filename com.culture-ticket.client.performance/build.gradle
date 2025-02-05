@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.0'
 	id 'io.spring.dependency-management' version '1.1.6'
+	id 'com.epages.restdocs-api-spec' version "0.19.2"
 }
 
 group = 'com.culture-ticket.client'
@@ -22,10 +23,45 @@ ext {
 }
 
 dependencies {
+    // resilience4j
+    implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	compileOnly group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// restdocs & openapi
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.19.2'
 }
 
 dependencyManagement {
@@ -36,4 +72,56 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// 이하 Swagger 문서 생성 설정
+compileJava {
+	dependsOn 'clean'
+}
+
+postman {
+	baseUrl = 'http://localhost:19091' // gateway에 호출이 들어오기 때문에 gateway의 포트를 설정해 주어야 함
+	title = 'PERFORMANCE API' // 각 서비스 제목 적기
+	version = '1.0.0'
+}
+
+openapi3 {
+	servers = [
+			{
+				url = 'http://localhost:19091' // 마찬가지로
+			}
+	]
+	title = 'PERFORMANCE API' // 각 서비스 제목 적기
+	description = ''
+	version = '1.0.0'
+	format = 'json'
+}
+
+tasks.register('setDocs') {
+	dependsOn 'postman'
+	dependsOn 'openapi3'
+	doLast {
+		copy {
+			from "build/api-spec"
+			include "*.json"
+			include "*.yaml"
+			into "build/resources/main/static/springdoc"
+			rename { String fileName ->
+				if (fileName.endsWith('.json')) {
+					return fileName.replace('.json', '-performance-service.json') // 각 서비스 제목 적기
+				} else if (fileName.endsWith('.yaml')) {
+					return fileName.replace('.yaml', '-performance-service.yml') // 각 서비스 제목 적기
+				}
+				return fileName
+			}
+		}
+	}
+}
+
+bootRun {
+	dependsOn 'setDocs'
+}
+
+bootJar {
+	dependsOn 'setDocs'
 }

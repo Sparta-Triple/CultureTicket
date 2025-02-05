@@ -1,0 +1,91 @@
+server:
+  port: 19091
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/v1/users/**, /springdoc/openapi3-user-service.json
+
+        - id: performance-service
+          uri: lb://performance-service
+          predicates:
+            - Path=/api/v1/performances/**, /api/v1/categories/**, /api/v1/timetables/**, /api/v1/seats/**, /springdoc/openapi3-performance-service.json
+
+        - id: reservation-payment-service
+          uri: lb://reservation-payment-service
+          predicates:
+            - Path=/api/v1/reservations/**, /api/v1/payments/**, /springdoc/openapi3-reservation-payment-service.json
+
+        - id: ticket-service
+          uri: lb://ticket-service
+          predicates:
+            - Path=/api/v1/tickets/**, /springdoc/openapi3-ticket-service.json
+
+        - id: coupon-service
+          uri: lb://coupon-service
+          predicates:
+            - Path=/api/v1/coupons/**, /springdoc/openapi3-coupon-service.json
+
+        - id: queue-service
+          uri: lb://queue-service
+          predicates:
+            - Path=/api/v1/queues/**, /springdoc/openapi3-queue-service.json
+
+      discovery:
+        locator:
+          enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    enable:
+      all: true
+
+springdoc:
+  swagger-ui:
+    urls[0]:
+      name: user-service
+      url: /springdoc/openapi3-user-service.json
+    urls[1]:
+      name: coupon-service
+      url: /springdoc/openapi3-coupon-service.json
+    urls[2]:
+      name: performance-service
+      url: /springdoc/openapi3-performance-service.json
+    urls[3]:
+      name: queue-service
+      url: /springdoc/openapi3-queue-service.json
+    urls[4]:
+      name: reservation-payment-service
+      url: /springdoc/openapi3-reservation-payment-service.json
+    urls[5]:
+      name: ticket-service
+      url: /springdoc/openapi3-ticket-service.json
+    urls[6]:
+      name: user-service
+      url: /springdoc/openapi3-reservation-user-service.json
+    #    use-root-path: true
+    path: /docs
+
+service:
+  jwt:
+    secret-key: "c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXNwYXJ0YS1ib290Y2FtcC1jaDItc3BhcnRhLWxvZ2lzdGljcy1tYWRlLWJ5LWphYmJlcndvY2tlcjA0"
