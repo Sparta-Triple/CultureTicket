@@ -57,86 +57,96 @@ public class PaymentService {
      */
     @Transactional
     public CreatePaymentResponseDto createPayment(String userId, String username, String role, SeatSelectionRequestDto request) {
+        // 역할 검증
         RoleValidator.validateIsAdminOrUser(role);
-        // 좌석 유효성 검사
-        // 타임 테이블을 통해서 좌석 데이터를 아예 가져와서 좌석 상태랑 존재 여부 확인 ?
 
-        List<UUID> seatIds = request.getSeatIds();
+        // 좌석 목록 검증
+        List<SeatResponseDto> seats = validateAndRetrieveSeats(request.getSeatIds());
+
+        // 결제 총 금액 계산
+        Long totalPrice = calculateTotalPrice(seats);
+
+        // 결제 생성 및 저장
+        Payment savedPayment = createPaymentAndSave(userId, totalPrice);
+
+        // 좌석 결제 생성
+        createSeatPayments(seats, savedPayment);
+
+        // 좌석 상태 업데이트 (Kafka)
+        updateSeatsStatus(request.getSeatIds(), username);
+
+        // 예매 생성
+        UUID reservationId = createReservation(savedPayment, userId);
+
+        // 티켓 생성
+        createTickets(reservationId, seats, userId, username, role);
+
+        return new CreatePaymentResponseDto(totalPrice);
+    }
+
+    private List<SeatResponseDto> validateAndRetrieveSeats(List<UUID> seatIds) {
         List<SeatResponseDto> seats = new ArrayList<>();
-
         for (UUID seatId : seatIds) {
             SeatResponseDto seat = performanceClient.getSeat(seatId).getData();
             if (seat == null) {
-                throw new CustomException(ErrorType.NOT_FOUND_SEAT); // TODO: 추후 fallback함수로 빼기
+                throw new CustomException(ErrorType.NOT_FOUND_SEAT);
             }
             if (seat.getSeatStatus().equals(SeatStatus.UNAVAILABLE)) {
                 throw new CustomException(ErrorType.SEAT_ALREADY_RESERVED);
             }
             seats.add(seat);
         }
-
-        // 좌석 금액 가져오기
-        Long totalPrice = seats.stream()
-            .mapToLong(SeatResponseDto::getSeatPrice)
-            .sum();
-
-        // 결제 생성
-        Payment payment = Payment.builder()
-            .userId(Long.valueOf(userId))
-            .totalPrice(totalPrice)
-            .build();
-
-        Payment savedPayment = paymentRepository.save(payment);
-
-        // 좌석 결제 생성
-        List<SeatPayment> seatPayments = seats.stream()
-            .map(seat -> SeatPayment.of(seat, savedPayment))
-            .collect(Collectors.toList());// 리스트로 수집
-        seatPaymentRepository.saveAll(seatPayments);
-
-        // 좌석 예매 불가로 변경(feign client)
-//        performanceClient.
-//            updateSeatsStatusAvailable(username, SeatStatus.UNAVAILABLE, request.getSeatIds());
-        // 좌석 예매 불가로 변경(kafka)
-        KafkaSeatStatusRequestDto requestDto = KafkaSeatStatusRequestDto.of(username, SeatStatus.UNAVAILABLE, request.getSeatIds());
-        seatStatusProducer.seatStatusSend("seat-topic", requestDto);
-
-        // 예매 생성
-        UUID reservationId = reservationService.createReservation(
-            new ReservationRequestDto(savedPayment.getId(), Long.valueOf(userId)));
-
-        // 티켓 생성을 위한 데이터 준비
-        UUID performanceId = performanceClient.getTimeTable(
-            seats.get(0).getTimeTableId()).getData().getPerfomanceId();
-
-        Map<UUID, Long> seatPriceMap = new HashMap<>();
-        for (SeatResponseDto seat : seats) {
-            seatPriceMap.put(seat.getSeatId(), seat.getSeatPrice());
-        }
-
-        List<Long> seatPrices = new ArrayList<>();
-        // 티켓 생성 -> kafka 처리 가능
-        for (UUID seatId : seatIds) {
-            Long seatPrice = seatPriceMap.get(seatId);
-            if (seatPrice == null) {
-                throw new CustomException(ErrorType.NOT_FOUND_SEAT_PRICE);
-            }
-
-            seatPrices.add(seatPrice);
-
-            // feign client 활용
-//            TicketRequestDto ticketRequestDto = TicketRequestDto.
-//                of(performanceId, seatId, seatPrice, reservationId);
-//            ticketClient.createTicket(userId, username, role, ticketRequestDto);
-        }
-
-        // kafka 활용
-        KafkaTicketRequestDto kafkaTicketRequestDto = KafkaTicketRequestDto.
-            of(performanceId, seatIds, seatPrices, reservationId, userId, username, role);
-        ticketCreateProducer.ticketSend("ticket-topic", kafkaTicketRequestDto);
-
-        return new CreatePaymentResponseDto(totalPrice);
+        return seats;
     }
+
+    private Long calculateTotalPrice(List<SeatResponseDto> seats) {
+        return seats.stream()
+                .mapToLong(SeatResponseDto::getSeatPrice)
+                .sum();
+    }
+
+    private Payment createPaymentAndSave(String userId, Long totalPrice) {
+        Payment payment = Payment.builder()
+                .userId(Long.valueOf(userId))
+                .totalPrice(totalPrice)
+                .build();
+        return paymentRepository.save(payment);
+    }
+
+    private void createSeatPayments(List<SeatResponseDto> seats, Payment savedPayment) {
+        List<SeatPayment> seatPayments = seats.stream()
+                .map(seat -> SeatPayment.of(seat, savedPayment))
+                .collect(Collectors.toList());
+        seatPaymentRepository.saveAll(seatPayments);
+    }
+
+    private void updateSeatsStatus(List<UUID> seatIds, String username) {
+        KafkaSeatStatusRequestDto requestDto = KafkaSeatStatusRequestDto.of(username, SeatStatus.UNAVAILABLE, seatIds);
+        seatStatusProducer.seatStatusSend("seat-topic", requestDto);
+    }
+
+    private UUID createReservation(Payment savedPayment, String userId) {
+        ReservationRequestDto reservationRequestDto = new ReservationRequestDto(savedPayment.getId(), Long.valueOf(userId));
+        return reservationService.createReservation(reservationRequestDto);
+    }
+
+    private void createTickets(UUID reservationId, List<SeatResponseDto> seats, String userId, String username, String role) {
+        UUID performanceId = performanceClient.getTimeTable(seats.get(0).getTimeTableId()).getData().getPerfomanceId();
+
+        Map<UUID, Long> seatPriceMap = seats.stream()
+                .collect(Collectors.toMap(SeatResponseDto::getSeatId, SeatResponseDto::getSeatPrice));
+
+        List<Long> seatPrices = seats.stream()
+                .map(seat -> seatPriceMap.get(seat.getSeatId()))
+                .collect(Collectors.toList());
+
+        KafkaTicketRequestDto kafkaTicketRequestDto = KafkaTicketRequestDto.of(performanceId, seats.stream()
+                .map(SeatResponseDto::getSeatId)
+                .collect(Collectors.toList()), seatPrices, reservationId, userId, username, role);
+
+        ticketCreateProducer.ticketSend("ticket-topic", kafkaTicketRequestDto);
+    }
+
 
     /**
      * 좌석 결제 취소
